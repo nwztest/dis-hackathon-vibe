@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Room Detail - GuardianSafe</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed": "#360f00",
+                      "on-tertiary": "#ffffff",
+                      "background": "#f7f9fb",
+                      "on-secondary-container": "#54647a",
+                      "primary-fixed-dim": "#aec6ff",
+                      "on-error": "#ffffff",
+                      "on-surface": "#191c1e",
+                      "on-primary-fixed-variant": "#004396",
+                      "surface-dim": "#d8dadc",
+                      "on-secondary": "#ffffff",
+                      "outline": "#727785",
+                      "on-primary-container": "#cfdcff",
+                      "surface": "#f7f9fb",
+                      "primary-fixed": "#d8e2ff",
+                      "inverse-primary": "#aec6ff",
+                      "surface-tint": "#005ac4",
+                      "inverse-surface": "#2d3133",
+                      "on-background": "#191c1e",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-fixed": "#d3e4fe",
+                      "tertiary-container": "#a73f00",
+                      "on-primary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "outline-variant": "#c2c6d5",
+                      "on-secondary-fixed-variant": "#38485d",
+                      "on-tertiary-fixed-variant": "#7d2d00",
+                      "on-tertiary-container": "#ffd2c0",
+                      "secondary-fixed-dim": "#b7c8e1",
+                      "surface-bright": "#f7f9fb",
+                      "secondary-container": "#d0e1fb",
+                      "secondary": "#505f76",
+                      "error": "#ba1a1a",
+                      "inverse-on-surface": "#eff1f3",
+                      "surface-container-low": "#f2f4f6",
+                      "tertiary-fixed": "#ffdbcd",
+                      "primary": "#00459a",
+                      "surface-container-highest": "#e0e3e5",
+                      "on-secondary-fixed": "#0b1c30",
+                      "primary-container": "#005cc8",
+                      "surface-container": "#eceef0",
+                      "on-surface-variant": "#424753",
+                      "tertiary-fixed-dim": "#ffb596",
+                      "surface-variant": "#e0e3e5",
+                      "tertiary": "#802f00",
+                      "surface-container-high": "#e6e8ea",
+                      "on-primary-fixed": "#001a42"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "sidebar-width": "280px",
+                      "margin-desktop": "32px",
+                      "margin-mobile": "16px",
+                      "container-max": "1440px",
+                      "unit": "4px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": ["Inter"],
+                      "body-md": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "display": ["Inter"],
+                      "headline-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "display": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-md">
+<!-- Top Navigation -->
+<header class="docked full-width top-0 sticky border-b border-outline-variant dark:border-outline bg-surface dark:bg-surface-dim flat no shadows flex justify-between items-center h-16 px-gutter ml-sidebar-width w-[calc(100%-280px)] z-40 hidden md:flex">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">GuardianSafe</span>
+<div aria-label="Top Navigation Links" class="hidden items-center gap-6 ml-8">
+<!-- Links hidden per instruction to suppress top row text links on mobile, but this is desktop header, omitting links based on JSON intent for TopNavBar which lacks tab_labels -->
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 bg-error text-on-error px-4 py-2 rounded-lg font-label-md text-label-md hover:bg-error-container hover:text-on-error-container transition-colors shadow-sm">
+<span class="material-symbols-outlined text-sm">emergency</span>
+                Emergency Dispatch
+            </button>
+<div class="flex items-center gap-2 border-l border-outline-variant pl-4 ml-2">
+<button aria-label="Notifications" class="p-2 text-on-surface-variant hover:text-primary transition-colors active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button aria-label="User Profile" class="p-2 text-on-surface-variant hover:text-primary transition-colors active:scale-95">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Side Navigation -->
+<nav class="w-sidebar-width h-screen fixed left-0 top-0 bg-surface-container-low dark:bg-surface-container-lowest flex flex-col border-r border-outline-variant dark:border-outline z-50 hidden md:flex">
+<div class="p-6 border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold font-label-md">
+                    FM
+                </div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed leading-tight">GuardianSafe</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Facility Manager</p>
+</div>
+</div>
+</div>
+<div class="flex-1 py-4 overflow-y-auto">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-body-md text-body-md">Alerts</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 bg-surface-container-highest dark:bg-surface-container-high border-l-4 border-primary text-on-surface font-semibold cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">door_open</span>
+<span class="font-body-md text-body-md">Rooms</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">sensors</span>
+<span class="font-body-md text-body-md">Devices</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="md:ml-sidebar-width min-h-screen pt-4 pb-12 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<!-- Page Header & Status -->
+<div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<a class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined text-sm">arrow_back</span>
+                        Back to Rooms
+                    </a>
+</div>
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-1 flex items-center gap-3">
+                    Room 204 - Toilet
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-error-container text-on-error-container border border-error ml-2">
+                        Suspicious
+                    </span>
+</h1>
+<p class="text-on-surface-variant font-body-md text-body-md">Resident: John Doe • Sensor Node ID: TX-882</p>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 bg-surface text-on-surface border border-outline-variant rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-colors shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">tune</span>
+                    Adjust Sensitivity
+                </button>
+</div>
+</div>
+<!-- High-Contrast Alert Panel -->
+<section class="mb-8 border-2 border-error bg-error-container bg-opacity-10 rounded-xl p-6 shadow-sm">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-full bg-error flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-error text-2xl">warning</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-error-container mb-1">Active Alert: High Severity</h2>
+<p class="font-body-md text-body-md text-on-error-container opacity-90"><strong>Reason:</strong> Impact detected followed by prolonged stillness.</p>
+<p class="font-label-sm text-label-sm text-on-error-container opacity-75 mt-1">Triggered: 2 mins ago</p>
+</div>
+</div>
+<div class="flex gap-3 w-full md:w-auto">
+<button class="flex-1 md:flex-none px-6 py-2 bg-surface text-error border border-error rounded-lg font-label-md text-label-md hover:bg-error-container transition-colors">
+                        Acknowledge
+                    </button>
+<button class="flex-1 md:flex-none px-6 py-2 bg-error text-on-error rounded-lg font-label-md text-label-md hover:bg-[#93000a] transition-colors shadow-sm">
+                        Resolve
+                    </button>
+</div>
+</div>
+</section>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Current Situation Panel -->
+<div class="md:col-span-5 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm relative overflow-hidden group">
+<div class="absolute inset-0 bg-surface-container-lowest opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.05)] pointer-events-none rounded-xl"></div>
+<div class="flex items-center justify-between mb-6 relative z-10">
+<h3 class="font-headline-md text-headline-md text-on-surface">Current Situation</h3>
+<span class="material-symbols-outlined text-on-surface-variant">person</span>
+</div>
+<div class="grid grid-cols-2 gap-4 relative z-10">
+<div class="bg-surface-container-low rounded-lg p-4">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Occupancy Duration</p>
+<div class="flex items-baseline gap-2">
+<span class="font-display text-display text-on-surface">14</span>
+<span class="font-body-md text-body-md text-on-surface-variant">mins</span>
+</div>
+<p class="font-label-sm text-label-sm text-error mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+                            Exceeds normal (5m)
+                        </p>
+</div>
+<div class="bg-surface-container-low rounded-lg p-4 border-t-4 border-error">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Est. Heart Rate</p>
+<div class="flex items-baseline gap-2">
+<span class="font-display text-display text-error">110</span>
+<span class="font-body-md text-body-md text-on-surface-variant">bpm</span>
+</div>
+<p class="font-label-sm text-label-sm text-error mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">vital_signs</span>
+                            Elevated
+                        </p>
+</div>
+</div>
+<div class="mt-6 p-4 bg-surface-container rounded-lg border border-outline-variant relative z-10">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">radar</span>
+<span class="font-label-md text-label-md text-on-surface">Micro-Motion Status</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">Minimal micro-motion detected. Subject appears largely stationary at floor level.</p>
+</div>
+</div>
+<!-- Advanced Sensor Panel (Telemetry) -->
+<div class="md:col-span-7 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm relative group">
+<div class="absolute inset-0 bg-surface-container-lowest opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.05)] pointer-events-none rounded-xl"></div>
+<div class="flex items-center justify-between mb-6 relative z-10">
+<h3 class="font-headline-md text-headline-md text-on-surface">Advanced Telemetry</h3>
+<span class="material-symbols-outlined text-on-surface-variant">speed</span>
+</div>
+<!-- Simulated Clean Data Points -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 relative z-10">
+<div class="border-l-2 border-primary pl-3">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Accel Peak</p>
+<p class="font-headline-md text-headline-md text-on-surface">3.2g</p>
+</div>
+<div class="border-l-2 border-outline-variant pl-3">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Orientation</p>
+<p class="font-headline-md text-headline-md text-on-surface">Horizontal</p>
+</div>
+<div class="border-l-2 border-outline-variant pl-3">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Motion Score</p>
+<p class="font-headline-md text-headline-md text-on-surface">0.1/10</p>
+</div>
+<div class="border-l-2 border-outline-variant pl-3">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Distance to Floor</p>
+<p class="font-headline-md text-headline-md text-on-surface">0.2m</p>
+</div>
+</div>
+<!-- Abstract Sensor Graph representation -->
+<div class="bg-surface-container h-40 rounded-lg relative overflow-hidden flex items-end justify-center border border-outline-variant z-10">
+<!-- Placeholder for simple CSS graph rendering -->
+<div class="absolute inset-0 flex items-center justify-center opacity-50">
+<span class="font-label-sm text-label-sm text-on-surface-variant">[Radar Telemetry Visualization - Privacy Preserved]</span>
+</div>
+<div class="w-full h-1/2 flex items-end gap-1 px-4 pb-2 opacity-30">
+<div class="w-full bg-outline-variant h-[10%] rounded-t-sm"></div>
+<div class="w-full bg-outline-variant h-[12%] rounded-t-sm"></div>
+<div class="w-full bg-outline-variant h-[15%] rounded-t-sm"></div>
+<div class="w-full bg-outline-variant h-[20%] rounded-t-sm"></div>
+<div class="w-full bg-outline-variant h-[10%] rounded-t-sm"></div>
+<div class="w-full bg-error h-[90%] rounded-t-sm opacity-100"></div> <!-- Spike -->
+<div class="w-full bg-outline-variant h-[5%] rounded-t-sm"></div>
+<div class="w-full bg-outline-variant h-[2%] rounded-t-sm"></div>
+<div class="w-full bg-outline-variant h-[3%] rounded-t-sm"></div>
+<div class="w-full bg-outline-variant h-[2%] rounded-t-sm"></div>
+</div>
+</div>
+</div>
+<!-- Recent Timeline -->
+<div class="md:col-span-12 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm relative group">
+<div class="absolute inset-0 bg-surface-container-lowest opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.05)] pointer-events-none rounded-xl"></div>
+<div class="flex items-center justify-between mb-6 relative z-10">
+<h3 class="font-headline-md text-headline-md text-on-surface">Recent Timeline</h3>
+<button class="text-primary hover:text-primary-container font-label-sm text-label-sm flex items-center gap-1">
+                        View Full Logs <span class="material-symbols-outlined text-sm">open_in_new</span>
+</button>
+</div>
+<div class="relative border-l-2 border-outline-variant ml-4 space-y-6 relative z-10 pb-4">
+<div class="relative pl-6">
+<div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-error border-2 border-surface-container-lowest"></div>
+<div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
+<div>
+<p class="font-label-md text-label-md text-error">Impact Detected / Fall Alert</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Sudden acceleration spike followed by horizontal orientation and low motion score.</p>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">08:42 AM</span>
+</div>
+</div>
+<div class="relative pl-6">
+<div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-outline-variant border-2 border-surface-container-lowest"></div>
+<div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
+<div>
+<p class="font-label-md text-label-md text-on-surface">Prolonged Stay Warning</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Occupancy exceeded normal expected duration for this room type.</p>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">08:40 AM</span>
+</div>
+</div>
+<div class="relative pl-6">
+<div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-outline-variant border-2 border-surface-container-lowest"></div>
+<div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
+<div>
+<p class="font-label-md text-label-md text-on-surface">Room Entered</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Standard motion detected at entryway.</p>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">08:30 AM</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Mobile Bottom Navigation (Visible only on small screens) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant z-50 pb-safe">
+<div class="flex justify-around items-center h-16">
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-medium mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="text-[10px] font-medium mt-1">Alerts</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-primary border-t-2 border-primary" href="#">
+<span class="material-symbols-outlined icon-fill">door_open</span>
+<span class="text-[10px] font-bold mt-1">Rooms</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-medium mt-1">Settings</span>
+</a>
+</div>
+</nav>
+</body></html>

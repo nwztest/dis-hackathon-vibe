@@ -1,0 +1,404 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>CareGuardian Pro - Device Setup</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#ffffff",
+                    "surface-dim": "#d8dadc",
+                    "primary-fixed": "#d8e2ff",
+                    "primary-container": "#005cc8",
+                    "error-container": "#ffdad6",
+                    "background": "#f7f9fb",
+                    "surface-tint": "#005ac4",
+                    "tertiary": "#802f00",
+                    "on-tertiary-fixed-variant": "#7d2d00",
+                    "on-primary-container": "#cfdcff",
+                    "on-background": "#191c1e",
+                    "tertiary-fixed-dim": "#ffb596",
+                    "surface-container-low": "#f2f4f6",
+                    "surface": "#f7f9fb",
+                    "surface-container-highest": "#e0e3e5",
+                    "outline": "#727785",
+                    "on-secondary-fixed-variant": "#38485d",
+                    "on-surface-variant": "#424753",
+                    "error": "#ba1a1a",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed-dim": "#aec6ff",
+                    "on-primary-fixed-variant": "#004396",
+                    "secondary-fixed": "#d3e4fe",
+                    "on-secondary-fixed": "#0b1c30",
+                    "surface-variant": "#e0e3e5",
+                    "on-secondary-container": "#54647a",
+                    "on-primary-fixed": "#001a42",
+                    "surface-container-high": "#e6e8ea",
+                    "inverse-surface": "#2d3133",
+                    "tertiary-fixed": "#ffdbcd",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#360f00",
+                    "on-surface": "#191c1e",
+                    "inverse-primary": "#aec6ff",
+                    "secondary-fixed-dim": "#b7c8e1",
+                    "outline-variant": "#c2c6d5",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-container": "#a73f00",
+                    "surface-container": "#eceef0",
+                    "primary": "#00459a",
+                    "surface-bright": "#f7f9fb",
+                    "on-tertiary-container": "#ffd2c0",
+                    "secondary": "#505f76",
+                    "secondary-container": "#d0e1fb",
+                    "inverse-on-surface": "#eff1f3",
+                    "on-error-container": "#93000a",
+                    "on-error": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "gutter": "24px",
+                    "margin-desktop": "32px",
+                    "unit": "4px",
+                    "container-max": "1440px",
+                    "sidebar-width": "280px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Inter"],
+                    "display": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c2c6d5; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #727785; 
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased flex h-screen overflow-hidden">
+<!-- Shared Component: SideNavBar -->
+<nav class="bg-surface-container-low dark:bg-surface-container-low w-sidebar-width h-screen fixed left-0 top-0 bg-surface-container-low border-r border-outline-variant flex flex-col h-full w-[280px] z-50">
+<!-- Header -->
+<div class="px-6 py-8 flex flex-col gap-4 border-b border-outline-variant/50"><div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold font-label-md">
+                    FM
+                </div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed leading-tight">GuardianSafe</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Facility Manager</p>
+</div>
+</div></div>
+<!-- Main Tabs -->
+<div class="flex-1 overflow-y-auto py-4 flex flex-col gap-1"><ul class="space-y-1"><li class="">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-body-md text-body-md">Alerts</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">door_open</span>
+<span class="font-body-md text-body-md">Rooms</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">sensors</span>
+<span class="font-body-md text-body-md">Devices</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</li></ul></div>
+<!-- Footer Tabs -->
+<div class="border-t border-outline-variant/50 p-4 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md transition-all duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+                Help Center
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md transition-all duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Logout
+            </a>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<main class="flex-1 ml-[280px] flex flex-col h-screen relative bg-background">
+<!-- Shared Component: TopNavBar -->
+<header class="docked full-width top-0 sticky border-b border-outline-variant dark:border-outline bg-surface dark:bg-surface-dim flat no shadows flex justify-between items-center h-16 px-gutter ml-sidebar-width w-[calc(100%-280px)] z-40 hidden md:flex"><div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">GuardianSafe</span>
+<div aria-label="Top Navigation Links" class="hidden items-center gap-6 ml-8">
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 bg-error text-on-error px-4 py-2 rounded-lg font-label-md text-label-md hover:bg-error-container hover:text-on-error-container transition-colors shadow-sm">
+<span class="material-symbols-outlined text-sm">emergency</span>
+                Emergency Dispatch
+            </button>
+<div class="flex items-center gap-2 border-l border-outline-variant pl-4 ml-2">
+<button aria-label="Notifications" class="p-2 text-on-surface-variant hover:text-primary transition-colors active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button aria-label="User Profile" class="p-2 text-on-surface-variant hover:text-primary transition-colors active:scale-95">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div></header>
+<!-- Page Canvas -->
+<div class="flex-1 overflow-y-auto px-margin-desktop py-8 pb-32">
+<div class="max-w-container-max mx-auto">
+<!-- Header Section -->
+<div class="mb-8">
+<!-- Step Indicator -->
+<div class="flex items-center gap-3 mb-4">
+<span class="bg-primary-container text-on-primary-container font-label-sm text-label-sm px-3 py-1 rounded-full border border-primary/20">Step 1 of 4</span>
+<div class="h-1 w-32 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary w-1/4 rounded-full"></div>
+</div>
+</div>
+<h1 class="font-display text-display text-on-background mb-2">Select Target Room</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                        Choose the specific room or area where the new sensor or communication device will be physically installed. 
+                    </p>
+</div>
+<!-- Filters / Search -->
+<div class="flex items-center gap-4 mb-6 bg-surface-container-lowest p-2 rounded-xl border border-outline-variant/60 shadow-sm inline-flex">
+<div class="flex items-center pl-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="border-none bg-transparent font-body-md text-body-md text-on-surface focus:ring-0 w-64 placeholder-on-surface-variant/50" placeholder="Search by room number..." type="text">
+<div class="h-6 w-px bg-outline-variant/50 mx-2"></div>
+<select class="border-none bg-transparent font-body-md text-body-md text-on-surface focus:ring-0 pr-8 cursor-pointer">
+<option>All Wings</option>
+<option>North Wing</option>
+<option>South Wing</option>
+<option>Memory Care</option>
+</select>
+</div>
+<!-- Room Grid Layout -->
+<div class="space-y-10">
+<!-- Wing Section: North Wing (1st Floor) -->
+<section>
+<h3 class="font-headline-md text-headline-md text-on-background mb-4 flex items-center gap-2 border-b border-outline-variant/30 pb-2">
+<span class="material-symbols-outlined text-secondary">domain</span>
+                            North Wing - 1st Floor
+                        </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+<!-- Room Card 1 -->
+<div class="room-card group bg-surface-container-lowest border border-outline-variant rounded-xl p-5 cursor-pointer hover:shadow-md transition-all duration-200 relative overflow-hidden" data-room-id="101">
+<div class="absolute top-0 left-0 w-full h-1 bg-surface-variant group-hover:bg-primary/50 transition-colors"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="font-headline-lg text-headline-lg text-on-surface group-hover:text-primary transition-colors">101</div>
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">bed</span>
+</div>
+</div>
+<div class="font-label-md text-label-md text-on-surface-variant mb-1">Standard Suite</div>
+<div class="font-body-md text-body-md text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">wifi</span> Good Signal
+                                </div>
+</div>
+<!-- Room Card 2 -->
+<div class="room-card group bg-surface-container-lowest border border-outline-variant rounded-xl p-5 cursor-pointer hover:shadow-md transition-all duration-200 relative overflow-hidden" data-room-id="102">
+<div class="absolute top-0 left-0 w-full h-1 bg-surface-variant group-hover:bg-primary/50 transition-colors"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="font-headline-lg text-headline-lg text-on-surface group-hover:text-primary transition-colors">102</div>
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">bed</span>
+</div>
+</div>
+<div class="font-label-md text-label-md text-on-surface-variant mb-1">Standard Suite</div>
+<div class="font-body-md text-body-md text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">wifi</span> Good Signal
+                                </div>
+</div>
+<!-- Room Card 3 -->
+<div class="room-card group bg-surface-container-lowest border border-outline-variant rounded-xl p-5 cursor-pointer hover:shadow-md transition-all duration-200 relative overflow-hidden" data-room-id="103">
+<div class="absolute top-0 left-0 w-full h-1 bg-surface-variant group-hover:bg-primary/50 transition-colors"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="font-headline-lg text-headline-lg text-on-surface group-hover:text-primary transition-colors">103</div>
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">accessible</span>
+</div>
+</div>
+<div class="font-label-md text-label-md text-on-surface-variant mb-1">Accessible Suite</div>
+<div class="font-body-md text-body-md text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">wifi</span> Moderate Signal
+                                </div>
+</div>
+<!-- Room Card 4 -->
+<div class="room-card group bg-surface-container-lowest border border-outline-variant rounded-xl p-5 cursor-pointer hover:shadow-md transition-all duration-200 relative overflow-hidden" data-room-id="104">
+<div class="absolute top-0 left-0 w-full h-1 bg-surface-variant group-hover:bg-primary/50 transition-colors"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="font-headline-lg text-headline-lg text-on-surface group-hover:text-primary transition-colors">104</div>
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">bed</span>
+</div>
+</div>
+<div class="font-label-md text-label-md text-on-surface-variant mb-1">Standard Suite</div>
+<div class="font-body-md text-body-md text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">wifi</span> Good Signal
+                                </div>
+</div>
+</div>
+</section>
+<!-- Wing Section: North Wing (2nd Floor) -->
+<section>
+<h3 class="font-headline-md text-headline-md text-on-background mb-4 flex items-center gap-2 border-b border-outline-variant/30 pb-2">
+<span class="material-symbols-outlined text-secondary">domain</span>
+                            North Wing - 2nd Floor
+                        </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+<!-- Room Card 5 -->
+<div class="room-card group bg-surface-container-lowest border border-outline-variant rounded-xl p-5 cursor-pointer hover:shadow-md transition-all duration-200 relative overflow-hidden" data-room-id="201">
+<div class="absolute top-0 left-0 w-full h-1 bg-surface-variant group-hover:bg-primary/50 transition-colors"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="font-headline-lg text-headline-lg text-on-surface group-hover:text-primary transition-colors">201</div>
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">bed</span>
+</div>
+</div>
+<div class="font-label-md text-label-md text-on-surface-variant mb-1">Standard Suite</div>
+<div class="font-body-md text-body-md text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">wifi_off</span> Poor Signal
+                                </div>
+</div>
+<!-- Room Card 6 -->
+<div class="room-card group bg-surface-container-lowest border border-outline-variant rounded-xl p-5 cursor-pointer hover:shadow-md transition-all duration-200 relative overflow-hidden" data-room-id="204">
+<div class="absolute top-0 left-0 w-full h-1 bg-surface-variant group-hover:bg-primary/50 transition-colors"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="font-headline-lg text-headline-lg text-on-surface group-hover:text-primary transition-colors">204</div>
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">chair</span>
+</div>
+</div>
+<div class="font-label-md text-label-md text-on-surface-variant mb-1">Common Area</div>
+<div class="font-body-md text-body-md text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">wifi</span> Excellent Signal
+                                </div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Action Bar -->
+<div class="absolute bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant/50 p-4 px-margin-desktop shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-40">
+<div class="max-w-container-max mx-auto flex justify-between items-center">
+<button class="px-6 py-2.5 rounded-lg border border-outline-variant text-on-surface font-label-md text-label-md hover:bg-surface-container-low transition-colors bg-surface-container-lowest">
+                    Cancel Setup
+                </button>
+<div class="flex items-center gap-4">
+<span class="font-body-md text-body-md text-secondary" id="selection-status">No room selected</span>
+<button class="px-8 py-2.5 rounded-lg bg-surface-variant text-on-surface-variant font-label-md text-label-md cursor-not-allowed transition-all duration-200 flex items-center gap-2" disabled="" id="next-btn">
+                        Next Step
+                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const roomCards = document.querySelectorAll('.room-card');
+            const nextBtn = document.getElementById('next-btn');
+            const selectionStatus = document.getElementById('selection-status');
+            let selectedRoomId = null;
+
+            roomCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    // Remove selected state from all cards
+                    roomCards.forEach(c => {
+                        c.classList.remove('border-primary', 'bg-primary-fixed-dim/10', 'ring-1', 'ring-primary');
+                        c.classList.add('border-outline-variant', 'bg-surface-container-lowest');
+                        const topBar = c.querySelector('div.absolute');
+                        topBar.classList.remove('bg-primary');
+                        topBar.classList.add('bg-surface-variant');
+                        
+                        // Reset text colors
+                        c.querySelector('.font-headline-lg').classList.remove('text-primary');
+                        c.querySelector('.font-headline-lg').classList.add('text-on-surface');
+                    });
+
+                    // Add selected state to clicked card
+                    card.classList.remove('border-outline-variant', 'bg-surface-container-lowest');
+                    card.classList.add('border-primary', 'bg-primary-fixed-dim/10', 'ring-1', 'ring-primary');
+                    const topBar = card.querySelector('div.absolute');
+                    topBar.classList.remove('bg-surface-variant', 'group-hover:bg-primary/50');
+                    topBar.classList.add('bg-primary');
+                    
+                    // Highlight text
+                    card.querySelector('.font-headline-lg').classList.remove('text-on-surface');
+                    card.querySelector('.font-headline-lg').classList.add('text-primary');
+
+                    // Update State
+                    selectedRoomId = card.getAttribute('data-room-id');
+                    selectionStatus.innerHTML = `<span class="text-primary font-medium">Room ${selectedRoomId}</span> selected`;
+
+                    // Enable Next Button
+                    nextBtn.removeAttribute('disabled');
+                    nextBtn.classList.remove('bg-surface-variant', 'text-on-surface-variant', 'cursor-not-allowed');
+                    nextBtn.classList.add('bg-primary', 'text-on-primary', 'cursor-pointer', 'hover:bg-primary/90', 'shadow-md');
+                });
+            });
+        });
+    </script>
+
+
+</body></html>

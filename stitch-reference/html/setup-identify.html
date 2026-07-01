@@ -1,0 +1,263 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Device Setup - Identify Device</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#ffffff",
+                    "surface-dim": "#d8dadc",
+                    "primary-fixed": "#d8e2ff",
+                    "primary-container": "#005cc8",
+                    "error-container": "#ffdad6",
+                    "background": "#f7f9fb",
+                    "surface-tint": "#005ac4",
+                    "tertiary": "#802f00",
+                    "on-tertiary-fixed-variant": "#7d2d00",
+                    "on-primary-container": "#cfdcff",
+                    "on-background": "#191c1e",
+                    "tertiary-fixed-dim": "#ffb596",
+                    "surface-container-low": "#f2f4f6",
+                    "surface": "#f7f9fb",
+                    "surface-container-highest": "#e0e3e5",
+                    "outline": "#727785",
+                    "on-secondary-fixed-variant": "#38485d",
+                    "on-surface-variant": "#424753",
+                    "error": "#ba1a1a",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed-dim": "#aec6ff",
+                    "on-primary-fixed-variant": "#004396",
+                    "secondary-fixed": "#d3e4fe",
+                    "on-secondary-fixed": "#0b1c30",
+                    "surface-variant": "#e0e3e5",
+                    "on-secondary-container": "#54647a",
+                    "on-primary-fixed": "#001a42",
+                    "surface-container-high": "#e6e8ea",
+                    "inverse-surface": "#2d3133",
+                    "tertiary-fixed": "#ffdbcd",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#360f00",
+                    "on-surface": "#191c1e",
+                    "inverse-primary": "#aec6ff",
+                    "secondary-fixed-dim": "#b7c8e1",
+                    "outline-variant": "#c2c6d5",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-container": "#a73f00",
+                    "surface-container": "#eceef0",
+                    "primary": "#00459a",
+                    "surface-bright": "#f7f9fb",
+                    "on-tertiary-container": "#ffd2c0",
+                    "secondary": "#505f76",
+                    "secondary-container": "#d0e1fb",
+                    "inverse-on-surface": "#eff1f3",
+                    "on-error-container": "#93000a",
+                    "on-error": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "gutter": "24px",
+                    "margin-desktop": "32px",
+                    "unit": "4px",
+                    "container-max": "1440px",
+                    "sidebar-width": "280px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Inter"],
+                    "display": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .icon-fill { font-variation-settings: 'FILL' 1; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- SideNavBar (from JSON) -->
+<nav class="w-sidebar-width h-screen fixed left-0 top-0 bg-surface-container-low border-r border-outline-variant flex flex-col z-20">
+<!-- Header -->
+<div class="p-6 pb-8">
+<div class="flex items-center gap-3 mb-6"><div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold font-label-md">FM</div><div class=""><h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed leading-tight">GuardianSafe</h1><p class="font-label-sm text-label-sm text-on-surface-variant">Facility Manager</p></div></div>
+
+</div>
+<!-- Navigation Tabs -->
+<div class="flex-1 overflow-y-auto py-2"><ul class="space-y-1"><li class="">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-body-md text-body-md">Alerts</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">door_open</span>
+<span class="font-body-md text-body-md">Rooms</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">sensors</span>
+<span class="font-body-md text-body-md">Devices</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-4 py-3 bg-surface-container-highest dark:bg-surface-container-high border-l-4 border-primary text-on-surface font-semibold cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</li></ul></div>
+<!-- Footer Tabs -->
+<div class="mt-auto border-t border-outline-variant p-2">
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">help</span>
+                Help Center
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Logout
+            </a>
+</div>
+</nav>
+<!-- TopNavBar (from JSON) -->
+<header class="w-full top-0 sticky border-b border-outline-variant flex justify-between items-center h-16 px-margin-desktop ml-[280px] z-10 bg-surface" style="width: calc(100% - 280px);"><div class="flex items-center gap-4"><span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">GuardianSafe</span></div><div class="flex items-center gap-4"><button class="flex items-center gap-2 bg-error text-on-error px-4 py-2 rounded-lg font-label-md text-label-md hover:bg-error-container hover:text-on-error-container transition-colors shadow-sm"><span class="material-symbols-outlined text-sm">emergency</span>Emergency Dispatch</button><div class="flex items-center gap-2 border-l border-outline-variant pl-4 ml-2"><button aria-label="Notifications" class="p-2 text-on-surface-variant hover:text-primary transition-colors active:scale-95"><span class="material-symbols-outlined">notifications</span></button><button aria-label="User Profile" class="p-2 text-on-surface-variant hover:text-primary transition-colors active:scale-95"><span class="material-symbols-outlined">account_circle</span></button></div></div></header>
+<!-- Main Content Area -->
+<main class="ml-[280px] p-margin-desktop min-h-[calc(100vh-64px)] flex flex-col">
+<div class="max-w-4xl mx-auto w-full flex-1 flex flex-col">
+<!-- Step Indicator -->
+<div class="mb-12">
+<p class="font-label-sm text-label-sm text-secondary uppercase tracking-wider mb-2">Step 2 of 4</p>
+<div class="w-full bg-surface-variant h-2 rounded-full overflow-hidden">
+<div class="bg-primary w-2/4 h-full"></div>
+</div>
+</div>
+<!-- Page Header -->
+<div class="mb-10">
+<h1 class="font-display text-display text-on-surface mb-4">Identify Device</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                    Locate the unique identification code on your new sensor. You can pair it automatically using the camera scanner, or enter the ID manually to confirm connection.
+                </p>
+</div>
+<!-- Options Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter mb-12 flex-1">
+<!-- Option 1: QR Scan -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-8 flex flex-col hover:shadow-sm transition-shadow">
+<div class="w-12 h-12 bg-secondary-container text-on-secondary-container rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined">qr_code_scanner</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface mb-3">Scan QR Code</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 flex-1">
+                        Use your mobile device or tablet camera to scan the QR code located on the back panel of the sensor unit.
+                    </p>
+<div class="w-full aspect-video bg-surface-container rounded-lg border border-outline-variant border-dashed flex items-center justify-center relative overflow-hidden group cursor-pointer mb-6">
+<div class="absolute inset-0 bg-cover bg-center opacity-50 group-hover:opacity-70 transition-opacity" data-alt="A clean, minimalist flat illustration of a white smart home sensor device being scanned by a mobile phone wireframe, emphasizing professional tech installation in a light mode palette of soft blues and grays." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDEq6quTLAr8c7PQXA-6nKvDWLkI1vdTgo6qHv_p4Z9lxEyCcQx-KrxEqBNI6rzT2lbO1aBmpTEsO0ihmyaTpvkq2JUrelrlEHYVhmfo3bGsn5P1BbuUdwSoXDaMTwOBXi4AZomQkzW-CFFwHcbUZS-AFvLSqHqah9fY9f7vsvn148hnFnmQvn531u_6HhcyTixbF0R9a-lGzTkZGM79sGhdCOv0kXatIFWwEtP_AkBZmjJ_f5F2xAKXg')"></div>
+<div class="relative z-10 flex flex-col items-center text-primary">
+<span class="material-symbols-outlined text-4xl mb-2">photo_camera</span>
+<span class="font-label-md text-label-md">Activate Scanner</span>
+</div>
+</div>
+</div>
+<!-- Option 2: Manual Entry -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-8 flex flex-col relative overflow-hidden">
+<!-- Subtle background decoration -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-fixed-dim rounded-bl-full opacity-20 -z-0"></div>
+<div class="relative z-10 flex-1 flex flex-col">
+<div class="w-12 h-12 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined">keyboard</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface mb-3">Manual Entry</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8">
+                            Enter the 12-digit alphanumeric ID printed below the barcode on the sensor.
+                        </p>
+<div class="mt-auto">
+<label class="block font-label-md text-label-md text-on-surface mb-2" for="device-id">Device ID Number</label>
+<input class="w-full bg-background border border-outline-variant rounded-DEFAULT p-4 font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary transition-all mb-4 outline-none" id="device-id" placeholder="e.g., SN-1A2B-3C4D-5E6F" type="text">
+<div class="flex items-start gap-3 bg-surface-container p-4 rounded-lg mb-6">
+<span class="material-symbols-outlined text-primary mt-0.5">info</span>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">
+                                    Clicking 'Identify' will send a test signal. The sensor's indicator light will blink blue twice to confirm it has been found.
+                                </p>
+</div>
+<button class="w-full bg-surface-container-lowest border border-primary text-primary font-label-md text-label-md py-3 rounded-DEFAULT hover:bg-primary-fixed transition-colors flex items-center justify-center gap-2" id="identify-btn">
+<span class="material-symbols-outlined">wifi_tethering</span>
+                                Identify Device
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="mt-auto pt-6 border-t border-surface-variant flex justify-between items-center">
+<button class="px-6 py-3 border border-outline-variant bg-surface-container-lowest text-on-surface font-label-md text-label-md rounded-DEFAULT hover:bg-surface-container transition-colors">
+                    Back
+                </button>
+<button class="px-8 py-3 bg-primary text-on-primary font-label-md text-label-md rounded-DEFAULT hover:opacity-90 transition-opacity flex items-center gap-2">
+                    Next Step
+                    <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</main>
+<script>
+        // Simple micro-interaction for the Identify button
+        const identifyBtn = document.getElementById('identify-btn');
+        if(identifyBtn) {
+            identifyBtn.addEventListener('click', function() {
+                const originalText = this.innerHTML;
+                this.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Sending Signal...';
+                this.classList.add('bg-primary-fixed', 'opacity-80');
+                
+                setTimeout(() => {
+                    this.innerHTML = '<span class="material-symbols-outlined text-green-600">check_circle</span> Signal Confirmed';
+                    this.classList.remove('opacity-80');
+                    
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.classList.remove('bg-primary-fixed');
+                    }, 3000);
+                }, 1500);
+            });
+        }
+    </script>
+
+
+</body></html>

@@ -1,0 +1,331 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>GuardianSafe - Live Dashboard</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background-color: #c2c6d5; border-radius: 10px; }
+    </style>
+<!-- Tailwind CSS with configuration -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#360f00",
+                        "on-tertiary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "on-secondary-container": "#54647a",
+                        "primary-fixed-dim": "#aec6ff",
+                        "on-error": "#ffffff",
+                        "on-surface": "#191c1e",
+                        "on-primary-fixed-variant": "#004396",
+                        "surface-dim": "#d8dadc",
+                        "on-secondary": "#ffffff",
+                        "outline": "#727785",
+                        "on-primary-container": "#cfdcff",
+                        "surface": "#f7f9fb",
+                        "primary-fixed": "#d8e2ff",
+                        "inverse-primary": "#aec6ff",
+                        "surface-tint": "#005ac4",
+                        "inverse-surface": "#2d3133",
+                        "on-background": "#191c1e",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#d3e4fe",
+                        "tertiary-container": "#a73f00",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#c2c6d5",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "on-tertiary-container": "#ffd2c0",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "surface-bright": "#f7f9fb",
+                        "secondary-container": "#d0e1fb",
+                        "secondary": "#505f76",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-container-low": "#f2f4f6",
+                        "tertiary-fixed": "#ffdbcd",
+                        "primary": "#00459a",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-secondary-fixed": "#0b1c30",
+                        "primary-container": "#005cc8",
+                        "surface-container": "#eceef0",
+                        "on-surface-variant": "#424753",
+                        "tertiary-fixed-dim": "#ffb596",
+                        "surface-variant": "#e0e3e5",
+                        "tertiary": "#802f00",
+                        "surface-container-high": "#e6e8ea",
+                        "on-primary-fixed": "#001a42"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "sidebar-width": "280px",
+                        "margin-desktop": "32px",
+                        "margin-mobile": "16px",
+                        "container-max": "1440px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "label-md": ["Inter", "sans-serif"],
+                        "headline-md": ["Inter", "sans-serif"],
+                        "body-lg": ["Inter", "sans-serif"],
+                        "label-sm": ["Inter", "sans-serif"],
+                        "display": ["Inter", "sans-serif"],
+                        "headline-lg": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "display": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen">
+<!-- SideNavBar (Shared Component) -->
+<nav class="bg-surface-container-low dark:bg-surface-container-lowest w-sidebar-width h-screen fixed left-0 top-0 flex flex-col h-full border-r border-outline-variant dark:border-outline z-20">
+<!-- Header Area -->
+<div class="p-6 border-b border-outline-variant dark:border-outline mb-4 flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-highest shrink-0 border border-outline-variant">
+<img alt="Staff user avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a female facility manager wearing a navy blue blazer, standing in a well-lit modern office environment. Soft, natural lighting. Shallow depth of field." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWfGBSztbDMxdoFMYTAUxsW55VBJFO2VCF6R9McqM-mn1nEyrOINXb1KNnCF_tibZfLMvmgOcq73q5hslVsDeDBjWWD9W26drb255BerQfT2FFMWHCJ8z2dv7OKKRbyBNa4noQF7jxs537aXv4Nvw7peW9dojc84anixQJqerKW0TkeunGigKKRy1CNpDfqZ-B2sOfaOOeTMlRtSir-UNiZqZV0hKin_j2zi4q-Lh8XvqPoovBc2iPYQ">
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">GuardianSafe</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Facility Manager</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex flex-col flex-grow">
+<!-- Active Tab: Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 bg-surface-container-highest dark:bg-surface-container-high border-l-4 border-primary text-on-surface font-semibold cursor-pointer active:opacity-80 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-primary" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<!-- Inactive Tabs -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container cursor-pointer active:opacity-80 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="font-body-md text-body-md">Alerts</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container cursor-pointer active:opacity-80 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="door_open">door_open</span>
+<span class="font-body-md text-body-md">Rooms</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container cursor-pointer active:opacity-80 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+<span class="font-body-md text-body-md">Devices</span>
+</a>
+<!-- Spacer to push settings to bottom -->
+
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container cursor-pointer active:opacity-80 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="ml-sidebar-width flex flex-col min-h-screen">
+<!-- TopNavBar (Shared Component) -->
+<header class="bg-surface dark:bg-surface-dim flex justify-between items-center h-16 px-gutter w-full docked top-0 sticky border-b border-outline-variant dark:border-outline z-10">
+<div class="flex items-center">
+<!-- Product name handled in sidebar for this layout, but JSON says it should be here. Following JSON strictly if it mandates it, but usually standard dashboards deduplicate. Will leave visually empty on left to balance sidebar, or put product name if requested. Prompt implies standard layout. -->
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed md:hidden">GuardianSafe</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-error text-on-error font-label-md text-label-md px-4 py-2 rounded flex items-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[18px]">emergency</span>
+                    Emergency Dispatch
+                </button>
+<button class="text-on-surface-variant hover:text-primary transition-colors transition-transform active:scale-95 p-2 rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors transition-transform active:scale-95 p-2 rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Dashboard Canvas -->
+<main class="flex-grow p-gutter space-y-8 bg-background max-w-container-max mx-auto w-full">
+<!-- Page Header & Filters -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">One Care @ Jurong Spring</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Live monitoring dashboard updated real-time.</p>
+</div>
+<div class="flex flex-wrap items-center gap-3">
+<!-- Ghost Button Style for Selectors -->
+<div class="relative">
+<select class="appearance-none bg-surface-container-lowest border border-outline-variant text-on-surface font-label-md text-label-md py-2 pl-4 pr-10 rounded focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer hover:bg-surface-container-low transition-colors">
+<option>All Floors</option>
+<option>Floor 1</option>
+<option>Floor 2</option>
+<option>Floor 3</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant text-[20px]">expand_more</span>
+</div>
+<div class="relative">
+<select class="appearance-none bg-surface-container-lowest border border-outline-variant text-on-surface font-label-md text-label-md py-2 pl-4 pr-10 rounded focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer hover:bg-surface-container-low transition-colors">
+<option>All Rooms</option>
+<option>Toilets</option>
+<option>Showers</option>
+<option>Bedrooms</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant text-[20px]">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Status Summary Row -->
+<div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+<div class="bg-surface-container-lowest border border-outline-variant rounded p-4 flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Unoccupied</span>
+<div class="flex items-end justify-between mt-2">
+<span class="font-display text-display text-on-surface">42</span>
+<span class="material-symbols-outlined text-outline-variant text-[28px]">sensor_door</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-primary rounded p-4 flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-wider">Occupied</span>
+<div class="flex items-end justify-between mt-2">
+<span class="font-display text-display text-primary">18</span>
+<span class="material-symbols-outlined text-primary text-[28px]" data-weight="fill">sensor_occupied</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-tertiary-container rounded p-4 flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-tertiary-container uppercase tracking-wider">Suspicious</span>
+<div class="flex items-end justify-between mt-2">
+<span class="font-display text-display text-tertiary-container">1</span>
+<span class="material-symbols-outlined text-tertiary-container text-[28px]" data-weight="fill">warning</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-error rounded p-4 flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-error uppercase tracking-wider">Danger</span>
+<div class="flex items-end justify-between mt-2">
+<span class="font-display text-display text-error">0</span>
+<span class="material-symbols-outlined text-error text-[28px]" data-weight="fill">error</span>
+</div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant rounded p-4 flex flex-col justify-between opacity-70">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Offline</span>
+<div class="flex items-end justify-between mt-2">
+<span class="font-display text-display text-on-surface-variant">3</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[28px]">wifi_off</span>
+</div>
+</div>
+</div>
+<!-- Room Cards Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
+<!-- Room Card: Unoccupied -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-5 flex flex-col relative overflow-hidden transition-all duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] border-t-[4px] border-t-outline-variant">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Room 101</h3>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Toilet</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant">meeting_room</span>
+</div>
+<div class="mt-auto pt-4 border-t border-surface-container-highest">
+<span class="font-label-md text-label-md text-on-surface-variant">Unoccupied</span>
+</div>
+</div>
+<!-- Room Card: Occupied -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-5 flex flex-col relative overflow-hidden transition-all duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] border-t-[4px] border-t-primary">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Room 102</h3>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Shower</span>
+</div>
+<span class="material-symbols-outlined text-primary" data-weight="fill">sensor_occupied</span>
+</div>
+<div class="mt-auto pt-4 border-t border-surface-container-highest flex justify-between items-center">
+<span class="font-label-md text-label-md text-primary">Occupied</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">5 mins</span>
+</div>
+</div>
+<!-- Room Card: Suspicious (High-Contrast Alert Panel style applied to grid item) -->
+<div class="bg-tertiary-container bg-opacity-10 border-2 border-tertiary-container rounded-lg p-5 flex flex-col relative overflow-hidden transition-all duration-200 hover:shadow-[0_4px_12px_rgba(167,63,0,0.1)]">
+<div class="absolute top-0 left-0 w-full h-1 bg-tertiary-container"></div>
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Room 105</h3>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Toilet</span>
+</div>
+<span class="material-symbols-outlined text-tertiary-container text-[28px] animate-pulse" data-weight="fill">warning</span>
+</div>
+<div class="mt-auto pt-4 border-t border-tertiary-container border-opacity-20 flex flex-col">
+<span class="font-headline-md text-headline-md text-tertiary-container">Suspicious Activity</span>
+<span class="font-label-sm text-label-sm text-on-surface mt-1">Occupied: 45 mins</span>
+</div>
+</div>
+<!-- Room Card: Unoccupied -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-5 flex flex-col relative overflow-hidden transition-all duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] border-t-[4px] border-t-outline-variant">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Room 106</h3>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Bedroom</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant">meeting_room</span>
+</div>
+<div class="mt-auto pt-4 border-t border-surface-container-highest">
+<span class="font-label-md text-label-md text-on-surface-variant">Unoccupied</span>
+</div>
+</div>
+<!-- Room Card: Occupied -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-5 flex flex-col relative overflow-hidden transition-all duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] border-t-[4px] border-t-primary">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Room 201</h3>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Toilet</span>
+</div>
+<span class="material-symbols-outlined text-primary" data-weight="fill">sensor_occupied</span>
+</div>
+<div class="mt-auto pt-4 border-t border-surface-container-highest flex justify-between items-center">
+<span class="font-label-md text-label-md text-primary">Occupied</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">2 mins</span>
+</div>
+</div>
+<!-- Room Card: Offline -->
+<div class="bg-surface-container-low border border-outline-variant rounded-lg p-5 flex flex-col relative overflow-hidden transition-all duration-200 opacity-60 border-t-[4px] border-t-surface-dim">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface-variant">Room 204</h3>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Shower</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">wifi_off</span>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant flex justify-between items-center">
+<span class="font-label-md text-label-md text-on-surface-variant">Sensor Offline</span>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+
+</body></html>

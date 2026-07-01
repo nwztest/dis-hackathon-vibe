@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GuardianSafe - Sign In</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed": "#360f00",
+                    "on-tertiary": "#ffffff",
+                    "background": "#f7f9fb",
+                    "on-secondary-container": "#54647a",
+                    "primary-fixed-dim": "#aec6ff",
+                    "on-error": "#ffffff",
+                    "on-surface": "#191c1e",
+                    "on-primary-fixed-variant": "#004396",
+                    "surface-dim": "#d8dadc",
+                    "on-secondary": "#ffffff",
+                    "outline": "#727785",
+                    "on-primary-container": "#cfdcff",
+                    "surface": "#f7f9fb",
+                    "primary-fixed": "#d8e2ff",
+                    "inverse-primary": "#aec6ff",
+                    "surface-tint": "#005ac4",
+                    "inverse-surface": "#2d3133",
+                    "on-background": "#191c1e",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed": "#d3e4fe",
+                    "tertiary-container": "#a73f00",
+                    "on-primary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "outline-variant": "#c2c6d5",
+                    "on-secondary-fixed-variant": "#38485d",
+                    "on-tertiary-fixed-variant": "#7d2d00",
+                    "on-tertiary-container": "#ffd2c0",
+                    "secondary-fixed-dim": "#b7c8e1",
+                    "surface-bright": "#f7f9fb",
+                    "secondary-container": "#d0e1fb",
+                    "secondary": "#505f76",
+                    "error": "#ba1a1a",
+                    "inverse-on-surface": "#eff1f3",
+                    "surface-container-low": "#f2f4f6",
+                    "tertiary-fixed": "#ffdbcd",
+                    "primary": "#00459a",
+                    "surface-container-highest": "#e0e3e5",
+                    "on-secondary-fixed": "#0b1c30",
+                    "primary-container": "#005cc8",
+                    "surface-container": "#eceef0",
+                    "on-surface-variant": "#424753",
+                    "tertiary-fixed-dim": "#ffb596",
+                    "surface-variant": "#e0e3e5",
+                    "tertiary": "#802f00",
+                    "surface-container-high": "#e6e8ea",
+                    "on-primary-fixed": "#001a42"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "sidebar-width": "280px",
+                    "margin-desktop": "32px",
+                    "margin-mobile": "16px",
+                    "container-max": "1440px",
+                    "unit": "4px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "display": ["Inter"],
+                    "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "display": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          }
+        }
+      }
+    </script>
+</head>
+<body class="bg-background min-h-screen flex items-center justify-center p-4">
+<!-- Decorative background elements -->
+<div aria-hidden="true" class="fixed inset-0 overflow-hidden pointer-events-none">
+<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary-container/10 rounded-full blur-3xl"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary-container/10 rounded-full blur-3xl"></div>
+</div>
+<div class="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant p-8 md:p-10 relative z-10 flex flex-col gap-8">
+<!-- Header -->
+<div class="text-center flex flex-col gap-2">
+<div class="flex items-center justify-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="shield_lock" style="font-variation-settings: 'FILL' 1;">shield_lock</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">GuardianSafe</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Sign in to your dashboard</p>
+</div>
+<!-- Form -->
+<form class="flex flex-col gap-6" onsubmit="event.preventDefault(); window.location.href='#';">
+<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface" for="email">Email Address</label>
+<input class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" id="email" name="email" placeholder="name@facility.com" required="" type="email"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-label-md text-on-surface" for="password">Password</label>
+<a class="font-label-sm text-label-sm text-primary hover:text-on-primary-fixed-variant transition-colors" href="#">Forgot password?</a>
+</div>
+<input class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+</div>
+</div>
+<button class="w-full h-12 mt-2 bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:bg-on-primary-fixed-variant active:scale-[0.98] transition-all duration-200 flex items-center justify-center shadow-sm" type="submit">
+                Sign in
+            </button>
+</form>
+<!-- Privacy Reassurance -->
+<div class="mt-4 flex items-start gap-3 p-4 bg-surface-container-low rounded-lg border border-outline-variant/50">
+<span class="material-symbols-outlined text-secondary text-xl mt-0.5" data-icon="privacy_tip">privacy_tip</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant leading-relaxed">
+<span class="font-semibold text-on-surface block mb-0.5">Privacy First</span>
+                No cameras. Motion and distance sensing only.
+            </p>
+</div>
+</div>
+</body></html>

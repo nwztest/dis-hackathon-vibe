@@ -1,0 +1,267 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Device Setup - Complete</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "surface-dim": "#d8dadc",
+                        "primary-fixed": "#d8e2ff",
+                        "primary-container": "#005cc8",
+                        "error-container": "#ffdad6",
+                        "background": "#f7f9fb",
+                        "surface-tint": "#005ac4",
+                        "tertiary": "#802f00",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "on-primary-container": "#cfdcff",
+                        "on-background": "#191c1e",
+                        "tertiary-fixed-dim": "#ffb596",
+                        "surface-container-low": "#f2f4f6",
+                        "surface": "#f7f9fb",
+                        "surface-container-highest": "#e0e3e5",
+                        "outline": "#727785",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "on-surface-variant": "#424753",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#aec6ff",
+                        "on-primary-fixed-variant": "#004396",
+                        "secondary-fixed": "#d3e4fe",
+                        "on-secondary-fixed": "#0b1c30",
+                        "surface-variant": "#e0e3e5",
+                        "on-secondary-container": "#54647a",
+                        "on-primary-fixed": "#001a42",
+                        "surface-container-high": "#e6e8ea",
+                        "inverse-surface": "#2d3133",
+                        "tertiary-fixed": "#ffdbcd",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#360f00",
+                        "on-surface": "#191c1e",
+                        "inverse-primary": "#aec6ff",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "outline-variant": "#c2c6d5",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#a73f00",
+                        "surface-container": "#eceef0",
+                        "primary": "#00459a",
+                        "surface-bright": "#f7f9fb",
+                        "on-tertiary-container": "#ffd2c0",
+                        "secondary": "#505f76",
+                        "secondary-container": "#d0e1fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "margin-desktop": "32px",
+                        "unit": "4px",
+                        "container-max": "1440px",
+                        "sidebar-width": "280px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter"],
+                        "display": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex">
+<!-- Sidebar Navigation -->
+<aside class="w-sidebar-width h-screen fixed left-0 top-0 bg-surface-container-low border-r border-outline-variant flex flex-col hidden md:flex z-40 dark:bg-surface-container-lowest">
+<div class="p-6"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold font-label-md">FM</div><div><h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed leading-tight">GuardianSafe</h1><p class="font-label-sm text-label-sm text-on-surface-variant">Facility Manager</p></div></div></div>
+<nav class="flex-1 px-4 space-y-2 mt-4 overflow-y-auto"><ul class="space-y-1">
+<li class="">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-body-md text-body-md">Alerts</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-4 py-3 bg-surface-container-highest border-l-4 border-primary text-on-surface font-semibold cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">door_open</span>
+<span class="font-body-md text-body-md">Rooms</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">sensors</span>
+<span class="font-body-md text-body-md">Devices</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</li>
+</ul></nav>
+<div class="p-4">
+<button class="w-full bg-primary text-on-primary py-3 px-4 rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+                Register New Device
+            </button>
+</div>
+<div class="px-4 py-6 border-t border-outline-variant space-y-2 mt-auto">
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                Help Center
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+                Logout
+            </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col min-w-0 md:ml-sidebar-width">
+<!-- Top App Bar -->
+<header class="bg-surface-container-lowest border-b border-outline-variant h-16 px-margin-mobile md:px-margin-desktop sticky top-0 z-30 flex justify-between items-center">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-on-surface p-2 rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h2 class="font-headline-md text-headline-md font-bold text-primary" data-stitch-orig-opacity="0">GuardianSafe</h2>
+</div>
+<nav class="hidden md:flex gap-6 items-center">
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Dashboard</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">System Health</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="bg-error text-on-error px-4 py-2 rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity hidden sm:flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">emergency</span>
+                    Emergency Dispatch
+                </button>
+<div class="flex gap-2">
+<button class="text-on-surface-variant hover:text-primary p-2 rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary p-2 rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 overflow-y-auto p-margin-mobile md:p-margin-desktop pb-24 md:pb-margin-desktop">
+<!-- Setup Progress -->
+<div class="max-w-3xl mx-auto mb-10">
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-md text-label-md text-primary">Step 4 of 4</span>
+<span class="font-label-md text-label-md text-secondary">Finish &amp; Test</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-full rounded-full"></div>
+</div>
+</div>
+<!-- Content Canvas - Bento Grid Style -->
+<div class="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Success Message -->
+<div class="col-span-1 md:col-span-12 bg-surface-container-lowest p-8 rounded-xl border border-outline-variant shadow-sm text-center">
+<div class="w-16 h-16 bg-primary-fixed rounded-full flex items-center justify-center mx-auto mb-6">
+<span class="material-symbols-outlined text-primary text-4xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h3 class="font-display text-display text-on-surface mb-2">Setup Complete</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg mx-auto">
+                        The motion and fall detection sensor has been successfully paired and is now online.
+                    </p>
+</div>
+<!-- Device Summary -->
+<div class="col-span-1 md:col-span-7 bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
+<h4 class="font-headline-md text-headline-md text-on-surface border-b border-outline-variant pb-4 mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">info</span>
+                        Device Summary
+                    </h4>
+<dl class="space-y-4">
+<div class="flex justify-between items-center">
+<dt class="font-label-md text-label-md text-on-surface-variant">Device Type</dt>
+<dd class="font-body-md text-body-md text-on-surface font-medium">Guardian Vision Pro (Ceiling)</dd>
+</div>
+<div class="flex justify-between items-center">
+<dt class="font-label-md text-label-md text-on-surface-variant">Assigned Room</dt>
+<dd class="font-body-md text-body-md text-on-surface font-medium">Room 204 - Smith, J.</dd>
+</div>
+<div class="flex justify-between items-center">
+<dt class="font-label-md text-label-md text-on-surface-variant">Connection Status</dt>
+<dd class="font-body-md text-body-md text-on-surface flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#10b981]"></span>
+                                Online &amp; Stable
+                            </dd>
+</div>
+<div class="flex justify-between items-center">
+<dt class="font-label-md text-label-md text-on-surface-variant">MAC Address</dt>
+<dd class="font-body-md text-body-md text-on-surface-variant font-mono text-sm">00:1B:44:11:3A:B7</dd>
+</div>
+</dl>
+</div>
+<!-- Test Action -->
+<div class="col-span-1 md:col-span-5 bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col">
+<h4 class="font-headline-md text-headline-md text-on-surface border-b border-outline-variant pb-4 mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">verified_user</span>
+                        Verify Connection
+                    </h4>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 flex-1">
+                        Run a simulated alert to ensure the dashboard receives notifications correctly from this device.
+                    </p>
+<button class="w-full bg-surface-container text-on-surface border border-outline-variant py-3 px-4 rounded-lg font-label-md text-label-md hover:bg-surface-container-high transition-colors flex justify-center items-center gap-2">
+<span class="material-symbols-outlined">network_ping</span>
+                        Test Alert
+                    </button>
+</div>
+<!-- Final Actions -->
+<div class="col-span-1 md:col-span-12 flex justify-end gap-4 mt-6">
+<button class="bg-surface text-on-surface border border-outline-variant py-3 px-6 rounded-lg font-label-md text-label-md hover:bg-surface-container-high transition-colors">
+                        Review Settings
+                    </button>
+<button class="bg-primary text-on-primary py-3 px-8 rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity shadow-sm">
+                        Finish Setup
+                    </button>
+</div>
+</div>
+</main>
+</div>
+
+
+</body></html>
