@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { AlertTriangle } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import { DashboardHomeGroup } from "@/components/DashboardHomeGroup";
 import { AddHomeButton, AddRoomButton } from "@/components/DashboardModals";
+import { DashboardSearchView } from "@/components/DashboardSearchView";
 import { DashboardStatusFilter } from "@/components/DashboardStatusFilter";
 import { homeAddress, homeById, homes, rooms, statusCounts } from "@/lib/mock-data";
 
@@ -41,16 +41,7 @@ export default function DashboardPage() {
           </section>
         ) : null}
         <DashboardStatusFilter counts={counts} total={rooms.length} />
-        <section className="home-group-list">
-          {homes.map((home) => (
-            <DashboardHomeGroup
-              home={home}
-              homes={homes}
-              rooms={rooms.filter((room) => room.homeId === home.id)}
-              key={home.id}
-            />
-          ))}
-        </section>
+        <DashboardSearchView homes={homes} rooms={rooms} />
       </main>
     </AppShell>
   );
