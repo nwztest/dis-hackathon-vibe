@@ -8,12 +8,12 @@ export default function SignInPage() {
         <div className="auth-header">
           <ShieldCheck size={36} />
           <h1>CareGuard</h1>
-          <p>Sign in to the privacy dashboard.</p>
+          <p>Sign in to monitor senior homes.</p>
         </div>
         <form className="form-stack">
           <label>
             Email address
-            <input type="email" placeholder="name@facility.com" />
+            <input type="email" placeholder="name@example.com" />
           </label>
           <label>
             <span className="split-label">
@@ -22,15 +22,15 @@ export default function SignInPage() {
             </span>
             <input type="password" placeholder="Password" />
           </label>
-          <Link className="primary-button full" href="/facilities">
+          <Link className="primary-button full" href="/homes">
             Sign in
           </Link>
         </form>
         <div className="privacy-note">
           <LockKeyhole size={18} />
           <p>
-            <strong>Privacy first.</strong> No camera feed, no video, and no resident identity data in this prototype.
-            Monitoring uses motion, orientation, and distance signals only.
+            <strong>Privacy first.</strong> Room cameras analyze still photos every 5 seconds. Showers use depth sensing only,
+            and microphone support is left for a later module.
           </p>
         </div>
       </section>

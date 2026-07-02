@@ -1,15 +1,15 @@
-# CareGuard Privacy Dashboard
+# CareGuard Home Safety Dashboard
 
-UI-only Next.js prototype for a privacy-preserving fall detection dashboard.
+UI-only Next.js prototype for senior home fall detection in a Singapore HDB context.
 
 The interface uses mock data only. There is no authentication, MQTT, database, device command, or realtime backend in this phase.
 
 ## Routes
 
 - `/sign-in`
-- `/facilities`
+- `/homes`
 - `/dashboard`
-- `/rooms/shower-01`
+- `/rooms/bedroom-123`
 - `/alerts`
 - `/devices`
 - `/setup/select-room`

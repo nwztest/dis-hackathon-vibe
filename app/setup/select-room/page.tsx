@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Search, Wifi, WifiOff, Wrench } from "lucide-react";
 import { SetupShell } from "@/components/SetupShell";
-import { devices, rooms } from "@/lib/mock-data";
+import { devices, homeAddress, homeById, rooms } from "@/lib/mock-data";
 
 export default function SetupSelectRoomPage() {
   return (
@@ -9,19 +9,20 @@ export default function SetupSelectRoomPage() {
       <section className="setup-card">
         <div className="section-heading">
           <h1>Select target</h1>
-          <p>Choose the toilet or shower sensor position to install, replace, or recalibrate.</p>
+          <p>Choose the senior home area to install, replace, or recalibrate.</p>
         </div>
         <div className="search-row compact">
           <Search size={18} />
-          <input placeholder="Search rooms" />
-          <select aria-label="Floor">
-            <option>All floors</option>
-            <option>Floor 1</option>
-            <option>Floor 2</option>
+          <input placeholder="Search by senior, block, unit, or area" />
+          <select aria-label="Area type">
+            <option>All areas</option>
+            <option>Rooms</option>
+            <option>Showers</option>
           </select>
         </div>
         <div className="setup-room-grid">
           {rooms.map((room) => {
+            const home = homeById(room.homeId);
             const device = devices.find((item) => item.roomId === room.id);
             const deviceStatus = device?.status ?? "unassigned";
             const StatusIcon =
@@ -37,8 +38,8 @@ export default function SetupSelectRoomPage() {
               <button className="setup-room-card" type="button" key={room.id}>
                 <div className="setup-room-card-head">
                   <div>
-                    <strong>{room.name}</strong>
-                    <span>{room.floor} · {room.type}</span>
+                    <strong>{home.seniorName} · {room.name}</strong>
+                    <span>{homeAddress(room.homeId)} · {room.type === "shower" ? "Shower ToF" : "Room camera"}</span>
                   </div>
                   <span className={`status-pill ${deviceStatus}`}>{deviceStatus}</span>
                 </div>

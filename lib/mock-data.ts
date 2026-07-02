@@ -2,10 +2,11 @@ import {
   Activity,
   AlertTriangle,
   Bell,
-  Building2,
+  Camera,
   CheckCircle2,
   ClipboardList,
   Gauge,
+  Home,
   LayoutDashboard,
   LogOut,
   Settings,
@@ -26,245 +27,328 @@ export type RoomStatus =
   | "offline"
   | "maintenance";
 
-export type RoomType = "toilet" | "shower";
+export type RoomType = "room" | "shower";
+export type DeviceType = "room_camera" | "tof_shower" | "future_microphone";
+
+export type SeniorHome = {
+  id: string;
+  seniorName: string;
+  seniorPhone: string;
+  emergencyContactName: string;
+  emergencyContactPhone: string;
+  medicalDetails: string;
+  blockNumber: string;
+  unitNumber: string;
+  address: string;
+};
 
 export type Room = {
   id: string;
+  homeId: string;
   name: string;
   type: RoomType;
-  floor: string;
   status: RoomStatus;
   occupied: boolean;
   timeInStatus: string;
   lastSeen: string;
   deviceId: string;
+  deviceType: DeviceType;
   alertReason?: string;
   confidence?: number;
-  accelPeakG?: number;
-  angleChangeDeg?: number;
+  personLocation?: "bed" | "sofa" | "chair" | "floor" | "unknown";
+  personPosture?: "standing" | "sitting" | "lying" | "unknown";
+  movement?: "none" | "small" | "active" | "unknown";
+  faceExpression?: "neutral" | "negative" | "unknown";
+  bloodDetected?: boolean;
+  frameIntervalSeconds?: number;
+  changedZoneCount?: number;
+  largeBlobDetected?: boolean;
   floorDistanceMm?: number;
-  stillnessSeconds?: number;
+  baselineState?: string;
+  noMovementDuration?: string;
 };
 
 export type AlertStatus = "open" | "acknowledged" | "resolved";
 
 export type AlertRecord = {
   id: string;
+  homeId: string;
   roomId: string;
   severity: "suspicious" | "danger";
   status: AlertStatus;
   openedAt: string;
   reason: string;
   confidence: number;
-  stillnessSeconds: number;
-  floorDistanceMm: number;
-  angleChangeDeg: number;
-  accelPeakG: number;
+  duration: string;
+  evidence: string;
   acknowledgedBy?: string;
 };
 
-export const facilities = [
+export const homes: SeniorHome[] = [
   {
-    id: "onecare",
-    name: "One Care @ Jurong Spring",
-    address: "123 Elm St, Springfield",
-    activeRooms: 18,
-    openAlerts: 2,
+    id: "home-123-08-456",
+    seniorName: "Tan Ah Kow",
+    seniorPhone: "+65 9123 4567",
+    emergencyContactName: "Tan Mei Ling",
+    emergencyContactPhone: "+65 9876 5432",
+    medicalDetails: "Diabetes, fall risk, mild hypertension",
+    blockNumber: "123",
+    unitNumber: "08-456",
+    address: "Jurong West Street 41",
   },
   {
-    id: "pinecrest",
-    name: "Pinecrest Memory Care",
-    address: "456 Pine Ave, Boulder",
-    activeRooms: 12,
-    openAlerts: 0,
+    id: "home-219-04-118",
+    seniorName: "Mdm Siti Aminah",
+    seniorPhone: "+65 9111 2408",
+    emergencyContactName: "Nur Hidayah",
+    emergencyContactPhone: "+65 9666 1204",
+    medicalDetails: "Post-surgery mobility support, uses walking frame",
+    blockNumber: "219",
+    unitNumber: "04-118",
+    address: "Tampines Street 24",
   },
   {
-    id: "maple",
-    name: "Maple Grove Estates",
-    address: "789 Maple Blvd, Austin",
-    activeRooms: 24,
-    openAlerts: 1,
+    id: "home-505-12-302",
+    seniorName: "Lim Bee Choo",
+    seniorPhone: "+65 9222 7788",
+    emergencyContactName: "Lim Wei Han",
+    emergencyContactPhone: "+65 9333 8877",
+    medicalDetails: "History of fainting, lives alone",
+    blockNumber: "505",
+    unitNumber: "12-302",
+    address: "Ang Mo Kio Avenue 8",
   },
 ];
 
 export const rooms: Room[] = [
   {
-    id: "toilet-01",
-    name: "Toilet 01",
-    type: "toilet",
-    floor: "Floor 1",
-    status: "unoccupied",
-    occupied: false,
-    timeInStatus: "12 min",
-    lastSeen: "14 sec ago",
-    deviceId: "ESP32-T01",
-  },
-  {
-    id: "shower-01",
-    name: "Shower 01",
-    type: "shower",
-    floor: "Floor 1",
+    id: "bedroom-123",
+    homeId: "home-123-08-456",
+    name: "Bedroom",
+    type: "room",
     status: "danger",
     occupied: true,
-    timeInStatus: "2 min",
+    timeInStatus: "1 min",
     lastSeen: "5 sec ago",
-    deviceId: "ESP32-S01",
-    alertReason: "Impact, orientation change, stillness, and near-floor distance confirmed.",
-    confidence: 91,
-    accelPeakG: 3.4,
-    angleChangeDeg: 72,
-    floorDistanceMm: 420,
-    stillnessSeconds: 8,
+    deviceId: "CAM-BED-123",
+    deviceType: "room_camera",
+    alertReason: "Person lying on floor for more than 1 minute.",
+    confidence: 92,
+    personLocation: "floor",
+    personPosture: "lying",
+    movement: "small",
+    faceExpression: "negative",
+    bloodDetected: false,
+    frameIntervalSeconds: 5,
   },
   {
-    id: "toilet-02",
-    name: "Toilet 02",
-    type: "toilet",
-    floor: "Floor 1",
+    id: "living-123",
+    homeId: "home-123-08-456",
+    name: "Living room",
+    type: "room",
     status: "occupied",
     occupied: true,
-    timeInStatus: "5 min",
-    lastSeen: "11 sec ago",
-    deviceId: "ESP32-T02",
+    timeInStatus: "34 min",
+    lastSeen: "4 sec ago",
+    deviceId: "CAM-LIV-123",
+    deviceType: "room_camera",
+    personLocation: "sofa",
+    personPosture: "lying",
+    movement: "small",
+    faceExpression: "neutral",
+    bloodDetected: false,
+    frameIntervalSeconds: 5,
   },
   {
-    id: "shower-02",
-    name: "Shower 02",
+    id: "shower-123",
+    homeId: "home-123-08-456",
+    name: "Shower",
     type: "shower",
-    floor: "Floor 1",
     status: "suspicious",
     occupied: true,
-    timeInStatus: "38 sec",
-    lastSeen: "8 sec ago",
-    deviceId: "ESP32-S02",
-    alertReason: "Possible fall pattern detected; confirmation delay is still running.",
-    confidence: 68,
-    accelPeakG: 2.8,
-    angleChangeDeg: 51,
-    floorDistanceMm: 610,
-    stillnessSeconds: 3,
+    timeInStatus: "42 sec",
+    lastSeen: "7 sec ago",
+    deviceId: "TOF-SHW-123",
+    deviceType: "tof_shower",
+    alertReason: "Large low blob detected; waiting for stability threshold.",
+    confidence: 71,
+    changedZoneCount: 24,
+    largeBlobDetected: true,
+    floorDistanceMm: 480,
+    baselineState: "Clutter-tolerant baseline active",
   },
   {
-    id: "toilet-03",
-    name: "Toilet 03",
-    type: "toilet",
-    floor: "Floor 2",
+    id: "bedroom-219",
+    homeId: "home-219-04-118",
+    name: "Bedroom",
+    type: "room",
+    status: "occupied",
+    occupied: true,
+    timeInStatus: "8 hr 20 min",
+    lastSeen: "5 sec ago",
+    deviceId: "CAM-BED-219",
+    deviceType: "room_camera",
+    personLocation: "bed",
+    personPosture: "lying",
+    movement: "small",
+    faceExpression: "neutral",
+    bloodDetected: false,
+    frameIntervalSeconds: 5,
+    noMovementDuration: "18 min",
+  },
+  {
+    id: "shower-219",
+    homeId: "home-219-04-118",
+    name: "Shower",
+    type: "shower",
+    status: "unoccupied",
+    occupied: false,
+    timeInStatus: "16 min",
+    lastSeen: "11 sec ago",
+    deviceId: "TOF-SHW-219",
+    deviceType: "tof_shower",
+    changedZoneCount: 3,
+    largeBlobDetected: false,
+    floorDistanceMm: 1710,
+    baselineState: "Small moved toiletries ignored",
+  },
+  {
+    id: "living-505",
+    homeId: "home-505-12-302",
+    name: "Living room",
+    type: "room",
     status: "offline",
     occupied: false,
-    timeInStatus: "7 min",
+    timeInStatus: "9 min",
     lastSeen: "9 min ago",
-    deviceId: "ESP32-T03",
+    deviceId: "CAM-LIV-505",
+    deviceType: "room_camera",
   },
   {
-    id: "shower-03",
-    name: "Shower 03",
+    id: "shower-505",
+    homeId: "home-505-12-302",
+    name: "Shower",
     type: "shower",
-    floor: "Floor 2",
     status: "maintenance",
     occupied: false,
-    timeInStatus: "22 min",
+    timeInStatus: "24 min",
     lastSeen: "1 min ago",
-    deviceId: "ESP32-S03",
+    deviceId: "TOF-SHW-505",
+    deviceType: "tof_shower",
+    baselineState: "Baseline refresh paused",
   },
 ];
 
 export const alerts: AlertRecord[] = [
   {
     id: "alert-1001",
-    roomId: "shower-01",
+    homeId: "home-123-08-456",
+    roomId: "bedroom-123",
     severity: "danger",
     status: "open",
     openedAt: "08:42",
-    reason: "Impact + orientation change + stillness + near-floor reading",
-    confidence: 91,
-    stillnessSeconds: 8,
-    floorDistanceMm: 420,
-    angleChangeDeg: 72,
-    accelPeakG: 3.4,
+    reason: "lying_on_floor_more_than_60_seconds",
+    confidence: 92,
+    duration: "1 min",
+    evidence: "Bedroom camera classified lying posture on floor across 12 still frames.",
   },
   {
     id: "alert-1002",
-    roomId: "shower-02",
+    homeId: "home-123-08-456",
+    roomId: "shower-123",
     severity: "suspicious",
     status: "open",
     openedAt: "08:45",
-    reason: "Impact and orientation change detected; confirmation pending",
-    confidence: 68,
-    stillnessSeconds: 3,
-    floorDistanceMm: 610,
-    angleChangeDeg: 51,
-    accelPeakG: 2.8,
+    reason: "large_low_blob_in_shower",
+    confidence: 71,
+    duration: "42 sec",
+    evidence: "VL53L5X depth map shows a large low blob; small clutter changes are ignored.",
   },
   {
     id: "alert-0998",
-    roomId: "toilet-02",
+    homeId: "home-219-04-118",
+    roomId: "bedroom-219",
     severity: "suspicious",
     status: "resolved",
     openedAt: "07:55",
-    reason: "Long occupancy with low motion",
-    confidence: 61,
-    stillnessSeconds: 4,
-    floorDistanceMm: 780,
-    angleChangeDeg: 22,
-    accelPeakG: 1.4,
-    acknowledgedBy: "Nurse Tan",
+    reason: "no_movement_on_bed_sofa_chair_watch",
+    confidence: 64,
+    duration: "18 min",
+    evidence: "Lying on bed is normal; long no-movement watch did not cross 12 hours.",
+    acknowledgedBy: "Caregiver Lee",
   },
 ];
 
 export const devices = [
   {
-    id: "ESP32-T01",
-    roomId: "toilet-01",
-    firmware: "0.1.0",
-    status: "online",
-    heartbeat: "14 sec ago",
-    signal: "-63 dBm",
-    hardware: "ESP32 + BNO085 + VL53L5X",
-  },
-  {
-    id: "ESP32-S01",
-    roomId: "shower-01",
-    firmware: "0.1.0",
+    id: "CAM-BED-123",
+    roomId: "bedroom-123",
+    firmware: "0.2.0",
     status: "online",
     heartbeat: "5 sec ago",
     signal: "-61 dBm",
-    hardware: "ESP32 + BNO085 + VL53L5X",
+    hardware: "Room camera, still frame every 5 sec",
+    privacy: "Event snapshots only",
   },
   {
-    id: "ESP32-S02",
-    roomId: "shower-02",
-    firmware: "0.1.0",
+    id: "CAM-LIV-123",
+    roomId: "living-123",
+    firmware: "0.2.0",
     status: "online",
-    heartbeat: "8 sec ago",
-    signal: "-67 dBm",
-    hardware: "ESP32 + BNO085 + VL53L5X",
+    heartbeat: "4 sec ago",
+    signal: "-63 dBm",
+    hardware: "Room camera, still frame every 5 sec",
+    privacy: "No live video",
   },
   {
-    id: "ESP32-T02",
-    roomId: "toilet-02",
-    firmware: "0.1.0",
+    id: "TOF-SHW-123",
+    roomId: "shower-123",
+    firmware: "0.1.1",
+    status: "online",
+    heartbeat: "7 sec ago",
+    signal: "-67 dBm",
+    hardware: "ESP32 + VL53L5X ToF",
+    privacy: "No camera in shower",
+  },
+  {
+    id: "CAM-BED-219",
+    roomId: "bedroom-219",
+    firmware: "0.2.0",
+    status: "online",
+    heartbeat: "5 sec ago",
+    signal: "-58 dBm",
+    hardware: "Room camera, still frame every 5 sec",
+    privacy: "Event snapshots only",
+  },
+  {
+    id: "TOF-SHW-219",
+    roomId: "shower-219",
+    firmware: "0.1.1",
     status: "online",
     heartbeat: "11 sec ago",
     signal: "-65 dBm",
-    hardware: "ESP32 + BNO085 + VL53L5X",
+    hardware: "ESP32 + VL53L5X ToF",
+    privacy: "Clutter-tolerant depth only",
   },
   {
-    id: "ESP32-T03",
-    roomId: "toilet-03",
-    firmware: "0.1.0",
+    id: "CAM-LIV-505",
+    roomId: "living-505",
+    firmware: "0.2.0",
     status: "offline",
     heartbeat: "9 min ago",
     signal: "No heartbeat",
-    hardware: "ESP32 + BNO085 + VL53L5X",
+    hardware: "Room camera, still frame every 5 sec",
+    privacy: "No live video",
   },
   {
-    id: "ESP32-S03",
-    roomId: "shower-03",
-    firmware: "0.1.0",
+    id: "TOF-SHW-505",
+    roomId: "shower-505",
+    firmware: "0.1.1",
     status: "maintenance",
     heartbeat: "1 min ago",
-    signal: "-58 dBm",
-    hardware: "ESP32 + BNO085 + VL53L5X",
+    signal: "-59 dBm",
+    hardware: "ESP32 + VL53L5X ToF",
+    privacy: "No camera in shower",
   },
 ];
 
@@ -272,23 +356,25 @@ export const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/alerts", label: "Alerts", icon: Bell },
   { href: "/devices", label: "Devices", icon: Wifi },
+  { href: "/homes", label: "Homes", icon: Home },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 export const setupSteps = [
-  { href: "/setup/select-room", label: "Select target" },
+  { href: "/setup/select-room", label: "Select area" },
   { href: "/setup/identify", label: "Pair node" },
-  { href: "/setup/calibration", label: "Calibrate sensors" },
+  { href: "/setup/calibration", label: "Calibrate" },
   { href: "/setup/complete", label: "Verify" },
 ];
 
 export const iconMap = {
   Activity,
   AlertTriangle,
-  Building2,
+  Camera,
   CheckCircle2,
   ClipboardList,
   Gauge,
+  Home,
   LogOut,
   ShieldCheck,
   ShowerHead,
@@ -298,12 +384,23 @@ export const iconMap = {
   Wrench,
 };
 
+export function homeById(homeId: string) {
+  return homes.find((home) => home.id === homeId) ?? homes[0];
+}
+
 export function roomById(roomId: string) {
   return rooms.find((room) => room.id === roomId) ?? rooms[0];
 }
 
 export function roomLabel(roomId: string) {
-  return roomById(roomId).name;
+  const room = roomById(roomId);
+  const home = homeById(room.homeId);
+  return `${home.seniorName} · ${room.name}`;
+}
+
+export function homeAddress(homeId: string) {
+  const home = homeById(homeId);
+  return `Blk ${home.blockNumber}, #${home.unitNumber}`;
 }
 
 export function statusCounts() {

@@ -17,7 +17,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
           <div>
             <div className="brand-name">CareGuard</div>
-            <div className="brand-role">Facility dashboard</div>
+            <div className="brand-role">Home safety dashboard</div>
           </div>
         </div>
         <nav className="side-nav" aria-label="Primary navigation">
@@ -47,7 +47,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="topbar-actions">
             <button className="danger-button" type="button">
               <AlertTriangle size={16} />
-              Emergency dispatch
+              Call emergency contact
             </button>
             <button className="icon-button" aria-label="Notifications" type="button">
               <Bell size={18} />

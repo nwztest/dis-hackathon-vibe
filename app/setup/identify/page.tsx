@@ -8,15 +8,15 @@ export default function SetupIdentifyPage() {
       <section className="setup-card">
         <div className="section-heading">
           <h1>Pair sensor node</h1>
-          <p>Match the physical ESP32 node to the selected toilet or shower before calibration.</p>
+          <p>Match the physical node to the selected home area before calibration.</p>
         </div>
         <div className="two-column">
           <article className="panel">
             <Keyboard size={22} />
             <h2>Printed node ID</h2>
             <label>
-              ESP32 node ID
-              <input placeholder="ESP32-S01" />
+              Node ID
+              <input placeholder="CAM-BED-123 or TOF-SHW-123" />
             </label>
             <button type="button">Send identify command</button>
           </article>
@@ -25,8 +25,9 @@ export default function SetupIdentifyPage() {
             <h2>Expected node checks</h2>
             <ul className="plain-list">
               <li>Publishes heartbeat over Wi-Fi/MQTT.</li>
-              <li>Reports BNO085 motion and orientation.</li>
-              <li>Reports VL53L5X distance grid summary.</li>
+              <li>Room camera reports still-frame posture analysis every 5 seconds.</li>
+              <li>Shower node reports VL53L5X depth grid summary only.</li>
+              <li>Microphone input is not required for this prototype.</li>
             </ul>
             <div className="inline-status">
               <Radio size={16} />

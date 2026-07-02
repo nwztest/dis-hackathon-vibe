@@ -241,14 +241,14 @@ p {
   max-width: 680px;
 }
 
-.facility-grid,
+.home-grid,
 .room-grid {
   display: grid;
   gap: 16px;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
-.facility-card,
+.home-card,
 .panel,
 .setup-card,
 .room-card,
@@ -260,13 +260,13 @@ p {
   box-shadow: var(--shadow);
 }
 
-.facility-card {
+.home-card {
   display: grid;
   gap: 22px;
   padding: 22px;
 }
 
-.facility-card-top,
+.home-card-top,
 .room-card-top,
 .page-heading,
 .topbar,
@@ -278,7 +278,7 @@ p {
   gap: 16px;
 }
 
-.facility-card-top svg {
+.home-card-top svg {
   color: var(--primary);
 }
 
@@ -434,6 +434,39 @@ dd {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.home-strip {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.home-summary {
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 14px 16px;
+}
+
+.home-summary.attention {
+  border-color: var(--warning);
+}
+
+.home-summary strong {
+  align-items: center;
+  background: var(--surface-alt);
+  border-radius: 6px;
+  display: inline-flex;
+  font-size: 18px;
+  height: 34px;
+  justify-content: center;
+  min-width: 34px;
+  padding: 0 8px;
 }
 
 .summary-grid {

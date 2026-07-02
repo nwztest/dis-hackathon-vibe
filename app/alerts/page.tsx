@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ClipboardCheck, ListFilter } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { SeverityBadge } from "@/components/Status";
-import { alerts, roomLabel } from "@/lib/mock-data";
+import { alerts, homeAddress, homeById, roomLabel } from "@/lib/mock-data";
 
 export default function AlertsPage() {
   return (
@@ -11,7 +11,7 @@ export default function AlertsPage() {
         <div className="page-heading">
           <div>
             <h1>Alerts</h1>
-            <p>Review open, acknowledged, and resolved fall-detection events.</p>
+            <p>Review open, acknowledged, and resolved home safety events.</p>
           </div>
           <button type="button"><ListFilter size={16} /> Filters</button>
         </div>
@@ -28,13 +28,13 @@ export default function AlertsPage() {
                 <ClipboardCheck size={18} />
                 <div>
                   <h2>{roomLabel(alert.roomId)}</h2>
-                  <p>{alert.reason}</p>
+                  <p>{homeAddress(alert.homeId)} · {homeById(alert.homeId).seniorPhone} · {alert.reason}</p>
                 </div>
               </div>
               <SeverityBadge severity={alert.severity} />
               <dl>
                 <div><dt>Confidence</dt><dd>{alert.confidence}%</dd></div>
-                <div><dt>Stillness</dt><dd>{alert.stillnessSeconds}s</dd></div>
+                <div><dt>Duration</dt><dd>{alert.duration}</dd></div>
                 <div><dt>Opened</dt><dd>{alert.openedAt}</dd></div>
               </dl>
               <Link className="secondary-button" href={`/rooms/${alert.roomId}`}>Open detail</Link>
