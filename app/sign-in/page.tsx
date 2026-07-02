@@ -22,7 +22,7 @@ export default function SignInPage() {
             </span>
             <input type="password" placeholder="Password" />
           </label>
-          <Link className="primary-button full" href="/homes">
+          <Link className="primary-button full" href="/dashboard">
             Sign in
           </Link>
         </form>

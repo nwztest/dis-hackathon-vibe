@@ -7,7 +7,6 @@ The interface uses mock data only. There is no authentication, MQTT, database, d
 ## Routes
 
 - `/sign-in`
-- `/homes`
 - `/dashboard`
 - `/rooms/bedroom-123`
 - `/alerts`

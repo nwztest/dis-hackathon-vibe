@@ -356,7 +356,6 @@ export const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/alerts", label: "Alerts", icon: Bell },
   { href: "/devices", label: "Devices", icon: Wifi },
-  { href: "/homes", label: "Homes", icon: Home },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 

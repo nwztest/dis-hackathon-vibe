@@ -1,4 +1,5 @@
-import { AlertTriangle, Filter } from "lucide-react";
+import Link from "next/link";
+import { AlertTriangle, Filter, Search } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { RoomCard } from "@/components/RoomCard";
 import { homeAddress, homeById, homes, rooms, statusCounts } from "@/lib/mock-data";
@@ -37,20 +38,43 @@ export default function DashboardPage() {
             </div>
           </section>
         ) : null}
-        <section className="home-strip" aria-label="Monitored homes">
-          {homes.map((home) => {
-            const homeRooms = rooms.filter((room) => room.homeId === home.id);
-            const needsAttention = homeRooms.some((room) => room.status === "danger" || room.status === "suspicious");
-            return (
-              <article className={needsAttention ? "home-summary attention" : "home-summary"} key={home.id}>
-                <div>
-                  <h2>{home.seniorName}</h2>
-                  <p>{homeAddress(home.id)} · {home.address}</p>
-                </div>
-                <strong>{homeRooms.filter((room) => room.status === "danger" || room.status === "suspicious").length}</strong>
-              </article>
-            );
-          })}
+        <section className="dashboard-home-panel" aria-label="Monitored homes">
+          <div className="section-toolbar">
+            <h2>Monitored homes</h2>
+            <div className="search-row compact">
+              <Search size={18} />
+              <input placeholder="Search senior, block, unit, or phone" />
+            </div>
+          </div>
+          <div className="home-table">
+            <div className="home-table-header">
+              <span>Senior</span>
+              <span>Phone</span>
+              <span>Medical details</span>
+              <span>Areas</span>
+              <span>Open alerts</span>
+            </div>
+            {homes.map((home) => {
+              const homeRooms = rooms.filter((room) => room.homeId === home.id);
+              const openAlerts = homeRooms.filter((room) => room.status === "danger" || room.status === "suspicious");
+              const firstRoom = homeRooms[0];
+              return (
+                <article className={openAlerts.length > 0 ? "home-table-row attention" : "home-table-row"} key={home.id}>
+                  <div>
+                    <strong>{home.seniorName}</strong>
+                    <span>{homeAddress(home.id)} · {home.address}</span>
+                  </div>
+                  <span>{home.seniorPhone}</span>
+                  <span>{home.medicalDetails}</span>
+                  <span>{homeRooms.map((room) => room.name).join(", ")}</span>
+                  <div className="home-alert-cell">
+                    <strong>{openAlerts.length}</strong>
+                    {firstRoom ? <Link className="text-link" href={`/rooms/${firstRoom.id}`}>Open</Link> : null}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         </section>
         <section className="summary-grid">
           {Object.entries(counts).map(([status, count]) => (
