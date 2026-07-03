@@ -1,8 +1,13 @@
 import { AppShell } from "@/components/AppShell";
+import { requireCurrentProfile } from "@/lib/auth";
 
-export default function SettingsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function SettingsPage() {
+  const profile = await requireCurrentProfile("/settings");
+
   return (
-    <AppShell>
+    <AppShell profile={profile ?? undefined}>
       <main className="page-content">
         <div className="page-heading">
           <div>

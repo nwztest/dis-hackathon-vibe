@@ -6,26 +6,31 @@ import { DashboardSearchView } from "@/components/DashboardSearchView";
 import { DashboardStatusFilter } from "@/components/DashboardStatusFilter";
 import { formatHomeAddress } from "@/lib/mock-data";
 import { getDashboardData } from "@/lib/data";
+import { requireCurrentProfile } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
+  const profile = await requireCurrentProfile("/dashboard");
   const { homes, rooms, counts } = await getDashboardData();
+  const canManageHomes = profile?.role === "admin";
   const activeAlert = rooms.find((room) => room.status === "danger");
   const activeHome = activeAlert ? homes.find((home) => home.id === activeAlert.homeId) : null;
 
   return (
-    <AppShell>
+    <AppShell profile={profile ?? undefined}>
       <main className="page-content">
         <div className="page-heading">
           <div>
             <h1>Home safety watch</h1>
             <p>Live room and shower monitoring for seniors living in their own HDB homes.</p>
           </div>
-          <div className="filter-row">
-            <AddHomeButton />
-            <AddRoomButton homes={homes} />
-          </div>
+          {canManageHomes ? (
+            <div className="filter-row">
+              <AddHomeButton />
+              <AddRoomButton homes={homes} />
+            </div>
+          ) : null}
         </div>
         {activeAlert && activeHome ? (
           <section className="alert-panel danger">
@@ -44,7 +49,7 @@ export default async function DashboardPage() {
           </section>
         ) : null}
         <DashboardStatusFilter counts={counts} total={rooms.length} />
-        <DashboardSearchView homes={homes} rooms={rooms} />
+        <DashboardSearchView canManageHomes={canManageHomes} homes={homes} rooms={rooms} />
       </main>
     </AppShell>
   );

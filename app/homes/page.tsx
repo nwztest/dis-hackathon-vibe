@@ -1,5 +1,9 @@
 import { redirect } from "next/navigation";
+import { requireCurrentProfile } from "@/lib/auth";
 
-export default function HomesPage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomesPage() {
+  await requireCurrentProfile("/homes");
   redirect("/dashboard");
 }

@@ -1,8 +1,13 @@
 import Link from "next/link";
 import { CheckCircle2, Move3D, Ruler, ShieldCheck } from "lucide-react";
 import { SetupShell } from "@/components/SetupShell";
+import { requireCurrentProfile } from "@/lib/auth";
 
-export default function SetupCalibrationPage() {
+export const dynamic = "force-dynamic";
+
+export default async function SetupCalibrationPage() {
+  await requireCurrentProfile("/setup/calibration");
+
   return (
     <SetupShell currentStep={3}>
       <section className="setup-card narrow">

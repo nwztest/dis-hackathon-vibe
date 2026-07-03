@@ -5,17 +5,19 @@ import { AppShell } from "@/components/AppShell";
 import { StatusBadge } from "@/components/Status";
 import { getRoomDetail } from "@/lib/data";
 import { formatHomeAddress } from "@/lib/mock-data";
+import { requireCurrentProfile } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function RoomDetailPage({ params }: { params: Promise<{ roomId: string }> }) {
   const { roomId } = await params;
+  const profile = await requireCurrentProfile(`/rooms/${roomId}`);
   const { room, home, alert, events } = await getRoomDetail(roomId);
   const hasAlert = room.status === "danger" || room.status === "suspicious";
   const isShower = room.type === "shower";
 
   return (
-    <AppShell>
+    <AppShell profile={profile ?? undefined}>
       <main className="page-content">
         <div className="page-heading">
           <div>

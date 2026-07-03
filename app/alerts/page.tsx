@@ -5,14 +5,16 @@ import { AppShell } from "@/components/AppShell";
 import { SeverityBadge } from "@/components/Status";
 import { getAlerts, getHomes, getRooms } from "@/lib/data";
 import { formatHomeAddress } from "@/lib/mock-data";
+import { requireCurrentProfile } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function AlertsPage() {
+  const profile = await requireCurrentProfile("/alerts");
   const [alerts, homes, rooms] = await Promise.all([getAlerts(), getHomes(), getRooms()]);
 
   return (
-    <AppShell>
+    <AppShell profile={profile ?? undefined}>
       <main className="page-content">
         <div className="page-heading">
           <div>

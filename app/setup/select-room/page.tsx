@@ -3,10 +3,12 @@ import { Search, Wifi, WifiOff, Wrench } from "lucide-react";
 import { SetupShell } from "@/components/SetupShell";
 import { getDevices, getHomes, getRooms } from "@/lib/data";
 import { formatHomeAddress } from "@/lib/mock-data";
+import { requireCurrentProfile } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function SetupSelectRoomPage() {
+  await requireCurrentProfile("/setup/select-room");
   const [devices, rooms, homes] = await Promise.all([getDevices(), getRooms(), getHomes()]);
 
   return (

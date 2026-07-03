@@ -1,8 +1,13 @@
 import Link from "next/link";
 import { CheckCircle2, Network } from "lucide-react";
 import { SetupShell } from "@/components/SetupShell";
+import { requireCurrentProfile } from "@/lib/auth";
 
-export default function SetupCompletePage() {
+export const dynamic = "force-dynamic";
+
+export default async function SetupCompletePage() {
+  await requireCurrentProfile("/setup/complete");
+
   return (
     <SetupShell currentStep={4}>
       <section className="setup-card narrow">

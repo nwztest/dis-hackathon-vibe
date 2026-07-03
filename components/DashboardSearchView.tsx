@@ -6,9 +6,11 @@ import { DashboardHomeGroup } from "@/components/DashboardHomeGroup";
 import { formatHomeAddress, type Room, type SeniorHome } from "@/lib/mock-data";
 
 export function DashboardSearchView({
+  canManageHomes,
   homes,
   rooms,
 }: {
+  canManageHomes?: boolean;
   homes: SeniorHome[];
   rooms: Room[];
 }) {
@@ -64,6 +66,7 @@ export function DashboardSearchView({
         <section className="home-group-list">
           {filteredHomes.map((home) => (
             <DashboardHomeGroup
+              canManageHomes={canManageHomes}
               home={home}
               homes={homes}
               rooms={rooms.filter((room) => room.homeId === home.id)}

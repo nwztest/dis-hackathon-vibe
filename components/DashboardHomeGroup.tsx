@@ -14,10 +14,12 @@ const statusRank: Record<RoomStatus, number> = {
 };
 
 export function DashboardHomeGroup({
+  canManageHomes = true,
   home,
   homes,
   rooms,
 }: {
+  canManageHomes?: boolean;
   home: SeniorHome;
   homes: SeniorHome[];
   rooms: Room[];
@@ -47,7 +49,7 @@ export function DashboardHomeGroup({
       </div>
       <div className="home-group-actions">
         <button type="button"><Phone size={16} /> Call</button>
-        <AddRoomButton homes={homes} defaultHomeId={home.id} variant="secondary" />
+        {canManageHomes ? <AddRoomButton homes={homes} defaultHomeId={home.id} variant="secondary" /> : null}
         {firstAlertRoom ? (
           <Link className="secondary-button" href={`/rooms/${firstAlertRoom.id}`}>Open first alert</Link>
         ) : (

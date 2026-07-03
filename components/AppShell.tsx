@@ -3,14 +3,26 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, Bell, HelpCircle, ShieldCheck, UserRound } from "lucide-react";
+import { useState } from "react";
+import { AlertTriangle, Bell, HelpCircle, LogOut, ShieldCheck, UserRound } from "lucide-react";
 import { navItems } from "@/lib/mock-data";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/client";
+import type { CurrentProfile } from "@/lib/auth";
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+export function AppShell({
+  children,
+  profile,
+}: {
+  children: React.ReactNode;
+  profile?: CurrentProfile;
+}) {
   const pathname = usePathname();
   const router = useRouter();
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileName = profile?.name ?? "Account";
+  const profileEmail = profile?.email ?? "Not signed in";
+  const profileRole = profile?.role ?? "guest";
 
   async function signOut() {
     if (hasSupabaseEnv()) {
@@ -65,9 +77,42 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <button className="icon-button" aria-label="Notifications" type="button">
               <Bell size={18} />
             </button>
-            <button className="icon-button" aria-label="Sign out" type="button" onClick={signOut}>
-              <UserRound size={18} />
-            </button>
+            <div className="profile-menu">
+              <button
+                aria-expanded={profileOpen}
+                aria-label="View profile"
+                className="profile-button"
+                type="button"
+                onClick={() => setProfileOpen((open) => !open)}
+              >
+                <UserRound size={18} />
+                <span>{profileName}</span>
+              </button>
+              {profileOpen ? (
+                <div className="profile-popover">
+                  <div>
+                    <strong>{profileName}</strong>
+                    <span>{profileEmail}</span>
+                  </div>
+                  <dl>
+                    <div>
+                      <dt>Role</dt>
+                      <dd>{profileRole}</dd>
+                    </div>
+                    {profile?.phone ? (
+                      <div>
+                        <dt>Phone</dt>
+                        <dd>{profile.phone}</dd>
+                      </div>
+                    ) : null}
+                  </dl>
+                  <button type="button" onClick={signOut}>
+                    <LogOut size={16} />
+                    Sign out
+                  </button>
+                </div>
+              ) : null}
+            </div>
           </div>
         </header>
         {children}

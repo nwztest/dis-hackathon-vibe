@@ -1,8 +1,13 @@
 import Link from "next/link";
 import { Keyboard, Radio, Router } from "lucide-react";
 import { SetupShell } from "@/components/SetupShell";
+import { requireCurrentProfile } from "@/lib/auth";
 
-export default function SetupIdentifyPage() {
+export const dynamic = "force-dynamic";
+
+export default async function SetupIdentifyPage() {
+  await requireCurrentProfile("/setup/identify");
+
   return (
     <SetupShell currentStep={2}>
       <section className="setup-card">

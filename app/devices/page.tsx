@@ -3,14 +3,16 @@ import { RefreshCw, Router, Search } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { getDevices, getHomes, getRooms } from "@/lib/data";
 import { formatHomeAddress } from "@/lib/mock-data";
+import { requireCurrentProfile } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function DevicesPage() {
+  const profile = await requireCurrentProfile("/devices");
   const [devices, rooms, homes] = await Promise.all([getDevices(), getRooms(), getHomes()]);
 
   return (
-    <AppShell>
+    <AppShell profile={profile ?? undefined}>
       <main className="page-content">
         <div className="page-heading">
           <div>
