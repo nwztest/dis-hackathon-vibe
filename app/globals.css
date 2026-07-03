@@ -518,6 +518,10 @@ dd {
   padding: 28px;
 }
 
+.page-content.narrow {
+  max-width: 760px;
+}
+
 .page-heading {
   align-items: flex-end;
 }
@@ -838,7 +842,9 @@ dd {
 
 .status-badge.unoccupied,
 .status-badge.occupied,
-.status-pill.online {
+.status-pill.online,
+.status-pill.caregiver,
+.status-pill.admin {
   background: var(--ok-bg);
   color: var(--ok);
 }
@@ -854,7 +860,8 @@ dd {
 }
 
 .status-badge.offline,
-.status-pill.offline {
+.status-pill.offline,
+.status-pill.unapproved {
   background: var(--surface-alt);
   color: var(--offline);
 }
@@ -868,6 +875,11 @@ dd {
 .status-pill.unassigned {
   background: var(--surface-alt);
   color: var(--muted);
+}
+
+.status-pill.family {
+  background: #f1ecdf;
+  color: #6f5524;
 }
 
 .alert-panel {
@@ -1038,6 +1050,10 @@ dd {
   grid-template-columns: 1.5fr 1fr 0.8fr 1fr 1.4fr;
 }
 
+.user-table {
+  grid-template-columns: 1.4fr 0.9fr 0.7fr 0.9fr 1.4fr;
+}
+
 .table-row div:first-child {
   align-items: center;
   display: flex;
@@ -1050,6 +1066,40 @@ dd {
   display: block;
   font-size: 12px;
   width: 100%;
+}
+
+.muted-note {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.pending-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+}
+
+.pending-panel > svg {
+  color: var(--primary);
+}
+
+.pending-panel > div {
+  display: grid;
+  gap: 8px;
+}
+
+.pending-detail {
+  align-items: center;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  gap: 10px;
+  padding: 12px;
 }
 
 .settings-grid {
@@ -1301,6 +1351,7 @@ dd {
 
   .alert-row,
   .device-table,
+  .user-table,
   .nested-room-row,
   .home-group-meta,
   .dashboard-search-panel {

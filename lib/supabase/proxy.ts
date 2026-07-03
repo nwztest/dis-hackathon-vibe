@@ -38,9 +38,14 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  if (claims && request.nextUrl.pathname === "/sign-in") {
+  if (claims && (request.nextUrl.pathname === "/" || request.nextUrl.pathname === "/sign-in")) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", claims.sub)
+      .maybeSingle();
     const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/dashboard";
+    redirectUrl.pathname = profile?.role === "admin" || profile?.role === "caregiver" ? "/dashboard" : "/pending-approval";
     redirectUrl.search = "";
     return NextResponse.redirect(redirectUrl);
   }

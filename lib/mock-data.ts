@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   ShowerHead,
   SlidersHorizontal,
+  Users,
   UserRound,
   Wifi,
   WifiOff,
@@ -356,6 +357,7 @@ export const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/alerts", label: "Alerts", icon: Bell },
   { href: "/devices", label: "Devices", icon: Wifi },
+  { href: "/users", label: "Users", icon: Users, roles: ["admin"] },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 

@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
+import type { UserRole } from "@/lib/auth";
 import {
   alerts as mockAlerts,
   devices as mockDevices,
@@ -34,6 +35,15 @@ export type RoomStatusEvent = {
   reason: string;
   confidence?: number;
   eventTime: string;
+};
+
+export type UserProfileRecord = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: UserRole;
+  createdAt: string;
 };
 
 type HomeRow = {
@@ -93,6 +103,20 @@ type EventRow = {
   reason: string | null;
   confidence: number | null;
   event_time: string;
+};
+
+type UserProfileRow = {
+  id: string;
+  name: string | null;
+  email?: string | null;
+  phone: string | null;
+  role: UserRole;
+  created_at: string;
+};
+
+type SupabaseError = {
+  code?: string;
+  message?: string;
 };
 
 export async function getDashboardData() {
@@ -160,6 +184,55 @@ export async function getDevices(): Promise<DeviceRecord[]> {
   const { data, error } = await supabase.from("devices").select("*").order("device_uid");
   if (error) throw error;
   return ((data ?? []) as DeviceRow[]).map(mapDevice);
+}
+
+export async function getUserProfiles(): Promise<UserProfileRecord[]> {
+  if (!hasSupabaseEnv()) {
+    return [
+      {
+        id: "prototype-user",
+        name: "Prototype admin",
+        email: "mock-data@careguard.local",
+        phone: "",
+        role: "admin",
+        createdAt: "Prototype",
+      },
+    ];
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id, name, email, phone, role, created_at")
+    .order("created_at", { ascending: false });
+
+  if (isMissingColumnError(error, "email")) {
+    const { data: fallbackData, error: fallbackError } = await supabase
+      .from("profiles")
+      .select("id, name, phone, role, created_at")
+      .order("created_at", { ascending: false });
+
+    if (fallbackError) throw fallbackError;
+    return ((fallbackData ?? []) as UserProfileRow[]).map((profile) => mapUserProfile(profile, "Migration needed"));
+  }
+
+  if (error) throw error;
+  return ((data ?? []) as UserProfileRow[]).map((profile) => mapUserProfile(profile));
+}
+
+function mapUserProfile(profile: UserProfileRow, fallbackEmail = "No email"): UserProfileRecord {
+  return {
+    id: profile.id,
+    name: profile.name || "Unnamed user",
+    email: profile.email || fallbackEmail,
+    phone: profile.phone || "",
+    role: profile.role,
+    createdAt: formatDateTime(profile.created_at),
+  };
+}
+
+function isMissingColumnError(error: SupabaseError | null, columnName: string) {
+  return Boolean(error?.code === "42703" && error.message?.includes(columnName));
 }
 
 export async function getRoomDetail(roomId: string) {
@@ -310,6 +383,18 @@ function mapEvent(row: EventRow): RoomStatusEvent {
 
 function formatTime(value: string) {
   return new Intl.DateTimeFormat("en-SG", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Asia/Singapore",
+  }).format(new Date(value));
+}
+
+function formatDateTime(value: string) {
+  return new Intl.DateTimeFormat("en-SG", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,

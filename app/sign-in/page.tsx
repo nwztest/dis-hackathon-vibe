@@ -1,8 +1,17 @@
 import { LockKeyhole, ShieldCheck } from "lucide-react";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { SignInForm } from "@/components/SignInForm";
+import { getSignedInDestination } from "@/lib/auth";
 
-export default function SignInPage() {
+export const dynamic = "force-dynamic";
+
+export default async function SignInPage() {
+  const destination = await getSignedInDestination();
+  if (destination) {
+    redirect(destination);
+  }
+
   return (
     <main className="auth-page">
       <section className="auth-card">

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { requireAdminProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 
@@ -85,6 +86,31 @@ export async function acknowledgeAlertAction(alertId: string): Promise<void> {
 
 export async function resolveAlertAction(alertId: string): Promise<void> {
   await updateAlert(alertId, "resolved");
+}
+
+export async function updateUserRoleAction(profileId: string, role: "unapproved" | "caregiver"): Promise<void> {
+  if (!hasSupabaseEnv()) {
+    return;
+  }
+
+  const currentProfile = await requireAdminProfile("/users");
+  if (!currentProfile) return;
+  if (currentProfile.id === profileId) return;
+
+  const supabase = await createClient();
+  const { data: target, error: targetError } = await supabase
+    .from("profiles")
+    .select("id, role")
+    .eq("id", profileId)
+    .single();
+
+  if (targetError) throw new Error(targetError.message);
+  if (target?.role === "admin") return;
+
+  const { error } = await supabase.from("profiles").update({ role }).eq("id", profileId);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/users");
 }
 
 async function updateAlert(alertId: string, status: "acknowledged" | "resolved"): Promise<ActionState> {

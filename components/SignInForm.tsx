@@ -67,7 +67,7 @@ export function SignInForm() {
       }
 
       setMessageTone("success");
-      setMessage("Account created. Check email confirmation settings, then sign in.");
+      setMessage("Account created. Confirm your email, then wait for an admin to approve dashboard access.");
       setMode("sign-in");
     });
   }

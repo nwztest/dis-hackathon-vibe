@@ -23,6 +23,7 @@ export function AppShell({
   const profileName = profile?.name ?? "Account";
   const profileEmail = profile?.email ?? "Not signed in";
   const profileRole = profile?.role ?? "guest";
+  const canUseApp = profileRole === "admin" || profileRole === "caregiver";
 
   async function signOut() {
     if (hasSupabaseEnv()) {
@@ -46,7 +47,7 @@ export function AppShell({
           </div>
         </div>
         <nav className="side-nav" aria-label="Primary navigation">
-          {navItems.map((item) => {
+          {navItems.filter((item) => canUseApp && (!item.roles || item.roles.includes(profileRole))).map((item) => {
             const active =
               pathname === item.href ||
               (item.href === "/dashboard" && pathname.startsWith("/rooms"));
@@ -59,12 +60,14 @@ export function AppShell({
             );
           })}
         </nav>
-        <div className="sidebar-footer">
-          <Link className="nav-link" href="/setup/select-room">
-            <HelpCircle size={18} />
-            <span>Device setup</span>
-          </Link>
-        </div>
+        {canUseApp ? (
+          <div className="sidebar-footer">
+            <Link className="nav-link" href="/setup/select-room">
+              <HelpCircle size={18} />
+              <span>Device setup</span>
+            </Link>
+          </div>
+        ) : null}
       </aside>
       <div className="workspace">
         <header className="topbar">
