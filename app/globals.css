@@ -183,6 +183,29 @@ p {
   gap: 18px;
 }
 
+.auth-switch {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: grid;
+  gap: 4px;
+  grid-template-columns: 1fr 1fr;
+  padding: 4px;
+}
+
+.auth-switch button {
+  background: transparent;
+  border: 0;
+  min-height: 34px;
+  padding: 7px 10px;
+}
+
+.auth-switch button.active {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-weight: 700;
+}
+
 .form-stack label {
   color: var(--text);
   display: grid;
@@ -196,9 +219,14 @@ p {
   justify-content: space-between;
 }
 
-.split-label a {
+.split-label a,
+.split-label .text-button {
   color: var(--primary);
   font-size: 13px;
+}
+
+.split-label .text-button {
+  font-weight: 650;
 }
 
 .privacy-note {

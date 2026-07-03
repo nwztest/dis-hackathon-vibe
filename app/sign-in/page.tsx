@@ -9,7 +9,7 @@ export default function SignInPage() {
         <div className="auth-header">
           <ShieldCheck size={36} />
           <h1>CareGuard</h1>
-          <p>Sign in to monitor senior homes.</p>
+          <p>Access the senior home monitoring dashboard.</p>
         </div>
         <Suspense>
           <SignInForm />
