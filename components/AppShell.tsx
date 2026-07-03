@@ -2,11 +2,24 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { AlertTriangle, Bell, HelpCircle, ShieldCheck, UserRound } from "lucide-react";
 import { navItems } from "@/lib/mock-data";
+import { hasSupabaseEnv } from "@/lib/supabase/env";
+import { createClient } from "@/lib/supabase/client";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function signOut() {
+    if (hasSupabaseEnv()) {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+    }
+    router.push("/sign-in");
+    router.refresh();
+  }
 
   return (
     <div className="app-shell">
@@ -52,7 +65,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <button className="icon-button" aria-label="Notifications" type="button">
               <Bell size={18} />
             </button>
-            <button className="icon-button" aria-label="User profile" type="button">
+            <button className="icon-button" aria-label="Sign out" type="button" onClick={signOut}>
               <UserRound size={18} />
             </button>
           </div>

@@ -4,12 +4,15 @@ import { AppShell } from "@/components/AppShell";
 import { AddHomeButton, AddRoomButton } from "@/components/DashboardModals";
 import { DashboardSearchView } from "@/components/DashboardSearchView";
 import { DashboardStatusFilter } from "@/components/DashboardStatusFilter";
-import { homeAddress, homeById, homes, rooms, statusCounts } from "@/lib/mock-data";
+import { formatHomeAddress } from "@/lib/mock-data";
+import { getDashboardData } from "@/lib/data";
 
-export default function DashboardPage() {
-  const counts = statusCounts();
+export const dynamic = "force-dynamic";
+
+export default async function DashboardPage() {
+  const { homes, rooms, counts } = await getDashboardData();
   const activeAlert = rooms.find((room) => room.status === "danger");
-  const activeHome = activeAlert ? homeById(activeAlert.homeId) : null;
+  const activeHome = activeAlert ? homes.find((home) => home.id === activeAlert.homeId) : null;
 
   return (
     <AppShell>
@@ -30,7 +33,7 @@ export default function DashboardPage() {
               <AlertTriangle size={22} />
               <div>
                 <h2>{activeHome.seniorName}: danger in {activeAlert.name}</h2>
-                <p>{homeAddress(activeHome.id)} · {activeHome.seniorPhone} · {activeAlert.alertReason}</p>
+                <p>{formatHomeAddress(activeHome)} · {activeHome.seniorPhone} · {activeAlert.alertReason}</p>
               </div>
             </div>
             <div className="button-row">

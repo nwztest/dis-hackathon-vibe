@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { LockKeyhole, ShieldCheck } from "lucide-react";
+import { Suspense } from "react";
+import { SignInForm } from "@/components/SignInForm";
 
 export default function SignInPage() {
   return (
@@ -10,22 +11,9 @@ export default function SignInPage() {
           <h1>CareGuard</h1>
           <p>Sign in to monitor senior homes.</p>
         </div>
-        <form className="form-stack">
-          <label>
-            Email address
-            <input type="email" placeholder="name@example.com" />
-          </label>
-          <label>
-            <span className="split-label">
-              Password
-              <a href="#">Forgot password?</a>
-            </span>
-            <input type="password" placeholder="Password" />
-          </label>
-          <Link className="primary-button full" href="/dashboard">
-            Sign in
-          </Link>
-        </form>
+        <Suspense>
+          <SignInForm />
+        </Suspense>
         <div className="privacy-note">
           <LockKeyhole size={18} />
           <p>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Camera, Phone, ShowerHead, WifiOff, Wrench } from "lucide-react";
 import { StatusBadge } from "@/components/Status";
 import { AddRoomButton } from "@/components/DashboardModals";
-import { homeAddress, type Room, type RoomStatus, type SeniorHome } from "@/lib/mock-data";
+import { formatHomeAddress, type Room, type RoomStatus, type SeniorHome } from "@/lib/mock-data";
 
 const statusRank: Record<RoomStatus, number> = {
   danger: 5,
@@ -34,7 +34,7 @@ export function DashboardHomeGroup({
       <div className="home-group-head">
         <div>
           <h2>{home.seniorName}</h2>
-          <p>{homeAddress(home.id)} · {home.address}</p>
+          <p>{formatHomeAddress(home)} · {home.address}</p>
         </div>
         <div className="home-group-status">
           <StatusBadge status={worstStatus} />

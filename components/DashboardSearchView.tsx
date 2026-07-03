@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { DashboardHomeGroup } from "@/components/DashboardHomeGroup";
-import { homeAddress, type Room, type SeniorHome } from "@/lib/mock-data";
+import { formatHomeAddress, type Room, type SeniorHome } from "@/lib/mock-data";
 
 export function DashboardSearchView({
   homes,
@@ -29,7 +29,7 @@ export function DashboardSearchView({
         home.blockNumber,
         home.unitNumber,
         home.address,
-        homeAddress(home.id),
+        formatHomeAddress(home),
         ...homeRooms.flatMap((room) => [
           room.name,
           room.type,

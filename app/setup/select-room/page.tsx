@@ -1,9 +1,14 @@
 import Link from "next/link";
 import { Search, Wifi, WifiOff, Wrench } from "lucide-react";
 import { SetupShell } from "@/components/SetupShell";
-import { devices, homeAddress, homeById, rooms } from "@/lib/mock-data";
+import { getDevices, getHomes, getRooms } from "@/lib/data";
+import { formatHomeAddress } from "@/lib/mock-data";
 
-export default function SetupSelectRoomPage() {
+export const dynamic = "force-dynamic";
+
+export default async function SetupSelectRoomPage() {
+  const [devices, rooms, homes] = await Promise.all([getDevices(), getRooms(), getHomes()]);
+
   return (
     <SetupShell currentStep={1}>
       <section className="setup-card">
@@ -22,7 +27,7 @@ export default function SetupSelectRoomPage() {
         </div>
         <div className="setup-room-grid">
           {rooms.map((room) => {
-            const home = homeById(room.homeId);
+            const home = homes.find((item) => item.id === room.homeId);
             const device = devices.find((item) => item.roomId === room.id);
             const deviceStatus = device?.status ?? "unassigned";
             const StatusIcon =
@@ -38,8 +43,8 @@ export default function SetupSelectRoomPage() {
               <button className="setup-room-card" type="button" key={room.id}>
                 <div className="setup-room-card-head">
                   <div>
-                    <strong>{home.seniorName} · {room.name}</strong>
-                    <span>{homeAddress(room.homeId)} · {room.type === "shower" ? "Shower ToF" : "Room camera"}</span>
+                    <strong>{home?.seniorName ?? "Unknown senior"} · {room.name}</strong>
+                    <span>{home ? formatHomeAddress(home) : "Unknown home"} · {room.type === "shower" ? "Shower ToF" : "Room camera"}</span>
                   </div>
                   <span className={`status-pill ${deviceStatus}`}>{deviceStatus}</span>
                 </div>

@@ -1,9 +1,14 @@
 import Link from "next/link";
 import { RefreshCw, Router, Search } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import { devices, homeAddress, roomById, roomLabel } from "@/lib/mock-data";
+import { getDevices, getHomes, getRooms } from "@/lib/data";
+import { formatHomeAddress } from "@/lib/mock-data";
 
-export default function DevicesPage() {
+export const dynamic = "force-dynamic";
+
+export default async function DevicesPage() {
+  const [devices, rooms, homes] = await Promise.all([getDevices(), getRooms(), getHomes()]);
+
   return (
     <AppShell>
       <main className="page-content">
@@ -27,11 +32,12 @@ export default function DevicesPage() {
             <span>Actions</span>
           </div>
           {devices.map((device) => {
-            const room = roomById(device.roomId);
+            const room = rooms.find((item) => item.id === device.roomId);
+            const home = room ? homes.find((item) => item.id === room.homeId) : undefined;
             return (
               <article className="table-row device-table" key={device.id}>
                 <div><Router size={18} /><strong>{device.id}</strong><small>{device.hardware}</small></div>
-                <span>{roomLabel(device.roomId)}<small>{homeAddress(room.homeId)}</small></span>
+                <span>{home?.seniorName ?? "Unknown senior"} · {room?.name ?? "Unknown room"}<small>{home ? formatHomeAddress(home) : "Unknown home"}</small></span>
                 <span className={`status-pill ${device.status}`}>{device.status}</span>
                 <span>{device.heartbeat}<small>{device.signal} · firmware {device.firmware} · {device.privacy}</small></span>
                 <div className="button-row">

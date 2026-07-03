@@ -682,6 +682,12 @@ dd {
   padding: 10px 12px;
 }
 
+.form-note.success {
+  background: var(--ok-bg);
+  border-color: var(--ok);
+  color: var(--ok);
+}
+
 .room-card {
   color: inherit;
   display: grid;

@@ -1,13 +1,16 @@
 import Link from "next/link";
 import { AlertTriangle, Camera, Droplets, Move3D, Ruler, Timer } from "lucide-react";
+import { acknowledgeAlertAction, resolveAlertAction } from "@/app/actions";
 import { AppShell } from "@/components/AppShell";
 import { StatusBadge } from "@/components/Status";
-import { homeAddress, homeById, roomById } from "@/lib/mock-data";
+import { getRoomDetail } from "@/lib/data";
+import { formatHomeAddress } from "@/lib/mock-data";
+
+export const dynamic = "force-dynamic";
 
 export default async function RoomDetailPage({ params }: { params: Promise<{ roomId: string }> }) {
   const { roomId } = await params;
-  const room = roomById(roomId);
-  const home = homeById(room.homeId);
+  const { room, home, alert, events } = await getRoomDetail(roomId);
   const hasAlert = room.status === "danger" || room.status === "suspicious";
   const isShower = room.type === "shower";
 
@@ -18,7 +21,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ roo
           <div>
             <Link className="text-link" href="/dashboard">Back to dashboard</Link>
             <h1>{room.name}</h1>
-            <p>{home.seniorName} · {homeAddress(home.id)} · Device {room.deviceId}</p>
+            <p>{home.seniorName} · {formatHomeAddress(home)} · Device {room.deviceId}</p>
           </div>
           <StatusBadge status={room.status} />
         </div>
@@ -34,8 +37,16 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ roo
             <div className="button-row">
               <button type="button">Call senior</button>
               <button type="button">Call contact</button>
-              <button type="button">Acknowledge</button>
-              <button type="button">Resolve</button>
+              {alert ? (
+                <>
+                  <form action={acknowledgeAlertAction.bind(null, alert.id)}>
+                    <button type="submit">Acknowledge</button>
+                  </form>
+                  <form action={resolveAlertAction.bind(null, alert.id)}>
+                    <button type="submit">Resolve</button>
+                  </form>
+                </>
+              ) : null}
             </div>
           </section>
         ) : null}
@@ -53,7 +64,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ roo
           <article className="panel">
             <h2>Current situation</h2>
             <dl className="definition-list">
-              <div><dt>Address</dt><dd>{homeAddress(home.id)}</dd></div>
+              <div><dt>Address</dt><dd>{formatHomeAddress(home)}</dd></div>
               <div><dt>Area</dt><dd>{room.type === "shower" ? "Shower" : "Room"}</dd></div>
               <div><dt>Time in status</dt><dd>{room.timeInStatus}</dd></div>
               <div><dt>Last device heartbeat</dt><dd>{room.lastSeen}</dd></div>
@@ -83,21 +94,9 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ roo
           <article className="panel full">
             <h2>Event timeline</h2>
             <ol className="timeline">
-              {isShower ? (
-                <>
-                  <li><strong>08:42</strong><span>Depth map compared against clutter-tolerant empty-shower baseline.</span></li>
-                  <li><strong>08:43</strong><span>Small shuffled toiletries ignored; large low blob remained visible.</span></li>
-                  <li><strong>08:43</strong><span>Status held at suspicious until the duration threshold is crossed.</span></li>
-                  <li><strong>08:44</strong><span>Baseline refresh is blocked while a large blob is present.</span></li>
-                </>
-              ) : (
-                <>
-                  <li><strong>08:42</strong><span>Still photo classified a person lying on the floor.</span></li>
-                  <li><strong>08:42</strong><span>Floor posture persisted across the next 5-second analysis frame.</span></li>
-                  <li><strong>08:43</strong><span>Danger alert opened after the 1-minute floor threshold.</span></li>
-                  <li><strong>08:43</strong><span>No microphone signal is required for this alert.</span></li>
-                </>
-              )}
+              {events.map((event) => (
+                <li key={event.id}><strong>{event.eventTime}</strong><span>{event.reason}</span></li>
+              ))}
             </ol>
           </article>
         </section>

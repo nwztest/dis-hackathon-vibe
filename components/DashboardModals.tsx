@@ -1,9 +1,10 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useTransition } from "react";
 import type { ReactNode } from "react";
 import { Plus, X } from "lucide-react";
 import type { SeniorHome } from "@/lib/mock-data";
+import { createHomeAction, createRoomAction, type ActionState } from "@/app/actions";
 
 type ButtonVariant = "primary" | "secondary" | "plain";
 
@@ -15,11 +16,15 @@ function buttonClass(variant: ButtonVariant) {
 
 export function AddHomeButton({ variant = "primary" }: { variant?: ButtonVariant }) {
   const [open, setOpen] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [state, setState] = useState<ActionState | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitted(true);
+    const formData = new FormData(event.currentTarget);
+    startTransition(async () => {
+      setState(await createHomeAction(formData));
+    });
   }
 
   return (
@@ -29,21 +34,22 @@ export function AddHomeButton({ variant = "primary" }: { variant?: ButtonVariant
         Add home
       </button>
       {open ? (
-        <ModalFrame title="Add home" onClose={() => { setOpen(false); setSubmitted(false); }}>
+        <ModalFrame title="Add home" onClose={() => { setOpen(false); setState(null); }}>
           <form className="modal-form" onSubmit={onSubmit}>
-            <label>Senior name<input placeholder="Tan Ah Kow" /></label>
-            <label>Phone<input placeholder="+65 9123 4567" /></label>
-            <label>Emergency contact<input placeholder="Tan Mei Ling" /></label>
-            <label>Medical details<textarea placeholder="Diabetes, fall risk, mild hypertension" rows={3} /></label>
+            <label>Senior name<input name="seniorName" placeholder="Tan Ah Kow" required /></label>
+            <label>Phone<input name="seniorPhone" placeholder="+65 9123 4567" /></label>
+            <label>Emergency contact<input name="emergencyContactName" placeholder="Tan Mei Ling" /></label>
+            <label>Emergency contact phone<input name="emergencyContactPhone" placeholder="+65 9876 5432" /></label>
+            <label>Medical details<textarea name="medicalDetails" placeholder="Diabetes, fall risk, mild hypertension" rows={3} /></label>
             <div className="form-grid">
-              <label>Block number<input placeholder="123" /></label>
-              <label>Unit number<input placeholder="08-456" /></label>
+              <label>Block number<input name="blockNumber" placeholder="123" required /></label>
+              <label>Unit number<input name="unitNumber" placeholder="08-456" required /></label>
             </div>
-            <label>Address<input placeholder="Jurong West Street 41" /></label>
-            {submitted ? <p className="form-note">UI-only prototype: this would create the home in the database.</p> : null}
+            <label>Address<input name="address" placeholder="Jurong West Street 41" /></label>
+            {state ? <p className={state.ok ? "form-note success" : "form-note"}>{state.message}</p> : null}
             <div className="modal-actions">
-              <button type="button" onClick={() => { setOpen(false); setSubmitted(false); }}>Cancel</button>
-              <button className="primary-button" type="submit">Create home</button>
+              <button type="button" onClick={() => { setOpen(false); setState(null); }}>Cancel</button>
+              <button className="primary-button" type="submit" disabled={isPending}>{isPending ? "Creating..." : "Create home"}</button>
             </div>
           </form>
         </ModalFrame>
@@ -62,11 +68,15 @@ export function AddRoomButton({
   variant?: ButtonVariant;
 }) {
   const [open, setOpen] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [state, setState] = useState<ActionState | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitted(true);
+    const formData = new FormData(event.currentTarget);
+    startTransition(async () => {
+      setState(await createRoomAction(formData));
+    });
   }
 
   return (
@@ -76,37 +86,37 @@ export function AddRoomButton({
         Add room
       </button>
       {open ? (
-        <ModalFrame title="Add room" onClose={() => { setOpen(false); setSubmitted(false); }}>
+        <ModalFrame title="Add room" onClose={() => { setOpen(false); setState(null); }}>
           <form className="modal-form" onSubmit={onSubmit}>
             <label>
               Home
-              <select defaultValue={defaultHomeId ?? homes[0]?.id}>
+              <select name="homeId" defaultValue={defaultHomeId ?? homes[0]?.id} required>
                 {homes.map((home) => (
                   <option value={home.id} key={home.id}>{home.seniorName} · Blk {home.blockNumber}, #{home.unitNumber}</option>
                 ))}
               </select>
             </label>
-            <label>Room name<input placeholder="Bedroom" /></label>
+            <label>Room name<input name="roomName" placeholder="Bedroom" required /></label>
             <div className="form-grid">
               <label>
                 Room type
-                <select defaultValue="room">
+                <select name="roomType" defaultValue="room">
                   <option value="room">Room</option>
                   <option value="shower">Shower</option>
                 </select>
               </label>
               <label>
                 Device type
-                <select defaultValue="room_camera">
+                <select name="deviceType" defaultValue="room_camera">
                   <option value="room_camera">Room camera</option>
                   <option value="tof_shower">Shower ToF</option>
                 </select>
               </label>
             </div>
-            {submitted ? <p className="form-note">UI-only prototype: this would create the room in the database.</p> : null}
+            {state ? <p className={state.ok ? "form-note success" : "form-note"}>{state.message}</p> : null}
             <div className="modal-actions">
-              <button type="button" onClick={() => { setOpen(false); setSubmitted(false); }}>Cancel</button>
-              <button className="primary-button" type="submit">Create room</button>
+              <button type="button" onClick={() => { setOpen(false); setState(null); }}>Cancel</button>
+              <button className="primary-button" type="submit" disabled={isPending}>{isPending ? "Creating..." : "Create room"}</button>
             </div>
           </form>
         </ModalFrame>

@@ -1,8 +1,19 @@
 # CareGuard Home Safety Dashboard
 
-UI-only Next.js prototype for senior home fall detection in a Singapore HDB context.
+Next.js prototype for senior home fall detection in a Singapore HDB context.
 
-The interface uses mock data only. There is no authentication, MQTT, database, device command, or realtime backend in this phase.
+Supabase backs the non-hardware app surfaces when env vars are configured. Without env vars, the app falls back to mock data so local builds and UI checks still work.
+
+## Supabase
+
+Project: `orange-pointer`
+
+```text
+NEXT_PUBLIC_SUPABASE_URL=https://tntaawhzconpxqfwnoce.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...
+```
+
+The initial remote migration creates homes, rooms, devices, alerts, room status events, audit events, profiles, RLS policies, and seed data. Hardware ingestion, MQTT, raw telemetry, and camera storage are intentionally deferred.
 
 ## Routes
 

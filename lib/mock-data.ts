@@ -399,6 +399,10 @@ export function roomLabel(roomId: string) {
 
 export function homeAddress(homeId: string) {
   const home = homeById(homeId);
+  return formatHomeAddress(home);
+}
+
+export function formatHomeAddress(home: Pick<SeniorHome, "blockNumber" | "unitNumber">) {
   return `Blk ${home.blockNumber}, #${home.unitNumber}`;
 }
 
