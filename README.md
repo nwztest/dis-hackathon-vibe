@@ -19,6 +19,7 @@ The initial remote migration creates homes, rooms, devices, alerts, room status 
 
 - `/sign-in`
 - `/dashboard`
+- `/demo/camera`
 - `/rooms/bedroom-123`
 - `/alerts`
 - `/devices`
@@ -29,3 +30,17 @@ The initial remote migration creates homes, rooms, devices, alerts, room status 
 - `/settings`
 
 Stitch reference exports are stored in `stitch-reference/`.
+
+## Laptop Camera Worker
+
+The webcam demo keeps inference outside the Next.js app. Run the Python worker locally:
+
+```bash
+cd worker
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn main:app --host 0.0.0.0 --port 8000
+```
+
+Set `INFERENCE_WORKER_URL=http://localhost:8000` in the Next app. The worker supports `WORKER_MODE=mock` for quick demos and `WORKER_MODE=yolo` or `auto` for Ultralytics YOLO pose inference.
