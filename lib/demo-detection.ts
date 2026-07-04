@@ -17,6 +17,7 @@ export type DemoInferenceInput = {
   bloodDetected?: boolean;
   confidence?: number;
   evidence?: string;
+  annotatedImageBase64?: string;
 };
 
 export type DemoRuleState = {
@@ -61,6 +62,8 @@ export function evaluateRoomCameraInference(input: DemoInferenceInput, previous:
   const isLying = input.personPosture === "lying";
   const isOnFloor = input.personLocation === "floor";
   const isRestingSurface = input.personLocation === "bed" || input.personLocation === "sofa" || input.personLocation === "chair";
+  const hasDetectedPosture =
+    input.personPosture === "lying" || input.personPosture === "sitting" || input.personPosture === "standing";
   const hasMovement = input.movement === "small" || input.movement === "active";
   const hasNoMovement = input.movement === "none";
   const floorLyingStartedAt = isLying && isOnFloor ? previous.floorLyingStartedAt ?? capturedAt.toISOString() : undefined;
@@ -120,6 +123,11 @@ export function evaluateRoomCameraInference(input: DemoInferenceInput, previous:
     status = "occupied";
     reason = "lying_on_bed_sofa_chair_occupied";
     evidence = input.evidence || `Person is lying on ${input.personLocation}.`;
+    occupied = true;
+  } else if (hasDetectedPosture) {
+    status = "occupied";
+    reason = "person_detected";
+    evidence = input.evidence || `Person detected ${input.personPosture}.`;
     occupied = true;
   } else if (input.personLocation && input.personLocation !== "unknown") {
     status = "occupied";

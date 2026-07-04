@@ -1337,11 +1337,20 @@ dd {
   padding: 0;
 }
 
-.demo-camera-preview video {
+.demo-camera-preview video,
+.demo-camera-preview img {
   background: #111;
   height: 100%;
   object-fit: cover;
   width: 100%;
+}
+
+.demo-camera-preview .hidden-video {
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  width: 1px;
 }
 
 .demo-camera-controls {

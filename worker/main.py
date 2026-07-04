@@ -4,12 +4,19 @@ import base64
 import io
 import os
 from functools import lru_cache
+from pathlib import Path
 from typing import Any, Literal
 
 import numpy as np
 from fastapi import FastAPI, Header, HTTPException
 from pydantic import BaseModel, Field
 from PIL import Image
+from dotenv import load_dotenv
+
+
+worker_dir = Path(__file__).resolve().parent
+load_dotenv(worker_dir.parent / ".env")
+load_dotenv(worker_dir / ".env", override=True)
 
 
 FrameRate = Literal["5s", "2s", "1fps", "2fps"]
@@ -41,6 +48,7 @@ class InferFrameResponse(BaseModel):
     bloodDetected: bool = False
     confidence: float = Field(default=0, ge=0, le=100)
     evidence: str = ""
+    annotatedImageBase64: str | None = None
 
 
 @app.get("/health")
@@ -50,6 +58,7 @@ def health() -> dict[str, Any]:
         "ok": True,
         "mode": mode,
         "model": os.getenv("YOLO_MODEL", "yolov8n-pose.pt"),
+        "showYoloBoxes": show_yolo_boxes(),
         "yoloAvailable": yolo_available(),
     }
 
@@ -87,6 +96,10 @@ def require_worker_secret(authorization: str | None) -> None:
 def worker_mode() -> str:
     mode = os.getenv("WORKER_MODE", "auto").strip().lower()
     return mode if mode in {"auto", "mock", "yolo"} else "auto"
+
+
+def show_yolo_boxes() -> bool:
+    return os.getenv("SHOW_YOLO_BOXES", "false").strip().lower() in {"1", "true", "yes", "on"}
 
 
 def decode_image(image_base64: str) -> Image.Image:
@@ -190,6 +203,7 @@ def yolo_response(payload: InferFrameRequest, image: Image.Image, blood_detected
     results = model.predict(np.asarray(image), verbose=False)
     result = results[0] if results else None
     person = best_person_pose(result)
+    annotated_image = annotated_image_base64(result) if show_yolo_boxes() else None
 
     if not person:
         return InferFrameResponse(
@@ -199,6 +213,7 @@ def yolo_response(payload: InferFrameRequest, image: Image.Image, blood_detected
             bloodDetected=blood_detected,
             confidence=78 if blood_detected else 45,
             evidence="YOLO pose did not find a confident person.",
+            annotatedImageBase64=annotated_image,
         )
 
     posture = estimate_posture(person["box"], person["keypoints"])
@@ -218,7 +233,21 @@ def yolo_response(payload: InferFrameRequest, image: Image.Image, blood_detected
         bloodDetected=blood_detected,
         confidence=confidence,
         evidence=evidence,
+        annotatedImageBase64=annotated_image,
     )
+
+
+def annotated_image_base64(result: Any) -> str | None:
+    if result is None:
+        return None
+    try:
+        plotted = result.plot()
+        image = Image.fromarray(plotted[:, :, ::-1])
+        buffer = io.BytesIO()
+        image.save(buffer, format="JPEG", quality=72)
+        return "data:image/jpeg;base64," + base64.b64encode(buffer.getvalue()).decode("ascii")
+    except Exception:
+        return None
 
 
 def best_person_pose(result: Any) -> dict[str, Any] | None:

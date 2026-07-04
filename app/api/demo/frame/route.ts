@@ -68,7 +68,13 @@ export async function POST(request: NextRequest) {
   const supabase = hasSupabaseAdminEnv() ? createAdminClient() : await createClient();
   try {
     const result = await applyDemoInferenceResult(supabase, input);
-    return NextResponse.json({ ok: true, result });
+    return NextResponse.json({
+      ok: true,
+      result: {
+        ...result,
+        annotatedImageBase64: inference.annotatedImageBase64,
+      },
+    });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Demo result could not be saved." }, { status: 500 });
   }

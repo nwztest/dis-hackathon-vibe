@@ -18,6 +18,7 @@ type DemoResult = {
   reason?: string;
   evidence?: string;
   confidence?: number;
+  annotatedImageBase64?: string;
 };
 
 export function DemoCameraClient({ rooms }: { rooms: DemoCameraRoom[] }) {
@@ -136,7 +137,13 @@ export function DemoCameraClient({ rooms }: { rooms: DemoCameraRoom[] }) {
   return (
     <section className="demo-camera-grid">
       <article className="panel demo-camera-preview">
-        <video ref={videoRef} muted playsInline />
+        {lastResult?.annotatedImageBase64 ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img alt="YOLO annotated frame" src={lastResult.annotatedImageBase64} />
+        ) : (
+          <video ref={videoRef} muted playsInline />
+        )}
+        {lastResult?.annotatedImageBase64 ? <video ref={videoRef} muted playsInline className="hidden-video" /> : null}
         <canvas ref={canvasRef} hidden />
       </article>
       <article className="panel demo-camera-controls">

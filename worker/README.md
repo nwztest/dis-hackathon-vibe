@@ -14,6 +14,8 @@ pip install -r requirements.txt
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
+The worker loads env vars from the repo root `.env` and then `worker/.env`, with `worker/.env` taking priority.
+
 Then set the Next app env:
 
 ```env
@@ -54,5 +56,13 @@ YOLO_MODEL=yolov8n-pose.pt
 ```
 
 The worker uses pose keypoints to estimate posture and a simple lower-frame heuristic for floor location. Bed/sofa/chair classification needs room-zone calibration or a custom detector; until then the worker reports `unknown` for those surfaces unless using a demo scenario.
+
+Set this when you want the worker response to include a debug image with YOLO boxes/keypoints:
+
+```env
+SHOW_YOLO_BOXES=true
+```
+
+Leave it `false` for normal demos because annotated images make responses larger.
 
 `numpy` is pinned to `1.26.x` because Ultralytics currently requires NumPy `<2.0` on macOS.
