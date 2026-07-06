@@ -59,6 +59,7 @@ def health() -> dict[str, Any]:
         "mode": mode,
         "model": os.getenv("YOLO_MODEL", "yolov8n-pose.pt"),
         "showYoloBoxes": show_yolo_boxes(),
+        "bloodDetectionEnabled": blood_detection_enabled(),
         "yoloAvailable": yolo_available(),
     }
 
@@ -68,7 +69,7 @@ def infer_frame(payload: InferFrameRequest, authorization: str | None = Header(d
     require_worker_secret(authorization)
 
     image = decode_image(payload.imageBase64)
-    blood_detected = detect_blood_like_region(image)
+    blood_detected = blood_detection_enabled() and detect_blood_like_region(image)
     mode = worker_mode()
 
     if mode == "mock" or (mode == "auto" and not yolo_available()):
@@ -100,6 +101,10 @@ def worker_mode() -> str:
 
 def show_yolo_boxes() -> bool:
     return os.getenv("SHOW_YOLO_BOXES", "false").strip().lower() in {"1", "true", "yes", "on"}
+
+
+def blood_detection_enabled() -> bool:
+    return os.getenv("ENABLE_BLOOD_DETECTION", "false").strip().lower() in {"1", "true", "yes", "on"}
 
 
 def decode_image(image_base64: str) -> Image.Image:
@@ -217,16 +222,15 @@ def yolo_response(payload: InferFrameRequest, image: Image.Image, blood_detected
         )
 
     posture = estimate_posture(person["box"], person["keypoints"])
-    location = estimate_location(person["box"], image.height, posture)
     movement = "unknown"
     confidence = float(round(person["confidence"] * 100, 1))
-    evidence = f"YOLO pose estimated {posture} posture at {location}."
+    evidence = f"YOLO pose estimated {posture} posture."
 
     return InferFrameResponse(
         roomId=payload.roomId,
         capturedAt=payload.capturedAt,
         frameRate=payload.frameRate,
-        personLocation=location,
+        personLocation="unknown",
         personPosture=posture,
         movement=movement,
         faceExpression="unknown",
@@ -287,27 +291,19 @@ def estimate_posture(box: list[float], keypoints: list[list[float]]) -> PersonPo
     height = max(1.0, y2 - y1)
     aspect = width / height
 
-    if aspect > 1.25:
-        return "lying"
-
     shoulder_hip_angle = torso_angle_degrees(keypoints)
     if shoulder_hip_angle is not None:
         if shoulder_hip_angle < 35:
             return "lying"
         if shoulder_hip_angle > 62:
             return "standing"
+        return "sitting"
 
-    if height > width * 1.6:
+    if height > width * 1.35:
         return "standing"
+    if aspect > 1.55:
+        return "lying"
     return "sitting"
-
-
-def estimate_location(box: list[float], image_height: int, posture: PersonPosture) -> PersonLocation:
-    _, _, _, y2 = box
-    bottom_ratio = y2 / max(1, image_height)
-    if posture == "lying" and bottom_ratio > 0.62:
-        return "floor"
-    return "unknown"
 
 
 def torso_angle_degrees(keypoints: list[list[float]]) -> float | None:

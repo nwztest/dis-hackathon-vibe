@@ -55,7 +55,7 @@ Default model:
 YOLO_MODEL=yolov8n-pose.pt
 ```
 
-The worker uses pose keypoints to estimate posture and a simple lower-frame heuristic for floor location. Bed/sofa/chair classification needs room-zone calibration or a custom detector; until then the worker reports `unknown` for those surfaces unless using a demo scenario.
+The worker uses pose keypoints to estimate posture. Live YOLO mode reports room location as `unknown`; floor, bed, sofa, and chair labels need room-zone calibration or a custom detector. Mock scenarios can still return those locations for controlled demos.
 
 Set this when you want the worker response to include a debug image with YOLO boxes/keypoints:
 
@@ -64,5 +64,13 @@ SHOW_YOLO_BOXES=true
 ```
 
 Leave it `false` for normal demos because annotated images make responses larger.
+
+Live blood detection is disabled by default because the simple color heuristic is too noisy for public demos:
+
+```env
+ENABLE_BLOOD_DETECTION=false
+```
+
+Use `DEMO_SCENARIO=blood` for a controlled blood-alert demo. Only set `ENABLE_BLOOD_DETECTION=true` when deliberately testing the experimental red-region heuristic.
 
 `numpy` is pinned to `1.26.x` because Ultralytics currently requires NumPy `<2.0` on macOS.

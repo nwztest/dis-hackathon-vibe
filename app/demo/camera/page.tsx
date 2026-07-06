@@ -28,7 +28,7 @@ export default async function DemoCameraPage() {
         <div className="page-heading">
           <div>
             <h1>Demo camera</h1>
-            <p>Use this laptop camera as a temporary room camera for YOLO worker demos.</p>
+            <p>Use this laptop camera as a temporary room camera for posture-based YOLO demos.</p>
           </div>
         </div>
         <DemoCameraClient rooms={cameraRooms} />

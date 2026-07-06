@@ -22,6 +22,7 @@ export type DemoInferenceInput = {
 
 export type DemoRuleState = {
   currentStatus?: RoomStatus;
+  lyingStartedAt?: string;
   floorLyingStartedAt?: string;
   negativeFloorStartedAt?: string;
   noMovementStartedAt?: string;
@@ -61,11 +62,13 @@ export function evaluateRoomCameraInference(input: DemoInferenceInput, previous:
   const nowMs = capturedAt.getTime();
   const isLying = input.personPosture === "lying";
   const isOnFloor = input.personLocation === "floor";
+  const isUnknownLocation = input.personLocation === "unknown" || !input.personLocation;
   const isRestingSurface = input.personLocation === "bed" || input.personLocation === "sofa" || input.personLocation === "chair";
   const hasDetectedPosture =
     input.personPosture === "lying" || input.personPosture === "sitting" || input.personPosture === "standing";
   const hasMovement = input.movement === "small" || input.movement === "active";
   const hasNoMovement = input.movement === "none";
+  const lyingStartedAt = isLying && isUnknownLocation ? previous.lyingStartedAt ?? capturedAt.toISOString() : undefined;
   const floorLyingStartedAt = isLying && isOnFloor ? previous.floorLyingStartedAt ?? capturedAt.toISOString() : undefined;
   const negativeFloorStartedAt =
     isLying && isOnFloor && input.faceExpression === "negative"
@@ -73,6 +76,7 @@ export function evaluateRoomCameraInference(input: DemoInferenceInput, previous:
       : undefined;
   const noMovementStartedAt =
     isLying && isRestingSurface && hasNoMovement ? previous.noMovementStartedAt ?? capturedAt.toISOString() : undefined;
+  const lyingDurationMs = elapsedMs(lyingStartedAt, nowMs);
   const floorDurationMs = elapsedMs(floorLyingStartedAt, nowMs);
   const negativeFloorDurationMs = elapsedMs(negativeFloorStartedAt, nowMs);
   const noMovementDurationMs = elapsedMs(noMovementStartedAt, nowMs);
@@ -113,6 +117,18 @@ export function evaluateRoomCameraInference(input: DemoInferenceInput, previous:
     reason = "lying_on_floor_watch";
     evidence = input.evidence || "Person is lying on the floor; waiting for danger threshold.";
     occupied = true;
+  } else if (isLying && isUnknownLocation && lyingDurationMs >= floorDangerMs) {
+    status = "danger";
+    severity = "danger";
+    reason = "lying_posture_more_than_60_seconds";
+    evidence = "Person appears to be lying down for more than 1 minute; room location is not classified in this demo.";
+    occupied = true;
+  } else if (isLying && isUnknownLocation) {
+    status = "suspicious";
+    severity = "suspicious";
+    reason = "lying_posture_watch";
+    evidence = "Person appears to be lying down; room location is not classified in this demo.";
+    occupied = true;
   } else if (isLying && isRestingSurface && noMovementDurationMs >= noMovementDangerMs) {
     status = "danger";
     severity = "danger";
@@ -150,6 +166,7 @@ export function evaluateRoomCameraInference(input: DemoInferenceInput, previous:
       frameIntervalSeconds: frameRateIntervalMs(input.frameRate) / 1000,
       lastInferenceAt: capturedAt.toISOString(),
       currentStatus: status,
+      lyingStartedAt,
       floorLyingStartedAt,
       negativeFloorStartedAt,
       noMovementStartedAt,
@@ -169,6 +186,7 @@ export function evaluateRoomCameraInference(input: DemoInferenceInput, previous:
 export function previousRuleState(metadata: Record<string, unknown> | null | undefined): DemoRuleState {
   return {
     currentStatus: roomStatusValue(metadata, "currentStatus"),
+    lyingStartedAt: stringValue(metadata, "lyingStartedAt"),
     floorLyingStartedAt: stringValue(metadata, "floorLyingStartedAt"),
     negativeFloorStartedAt: stringValue(metadata, "negativeFloorStartedAt"),
     noMovementStartedAt: stringValue(metadata, "noMovementStartedAt"),
