@@ -40,6 +40,31 @@ export function DemoCameraClient({ rooms }: { rooms: DemoCameraRoom[] }) {
     intervalRef.current = null;
   }, []);
 
+  const waitForVideoFrame = useCallback(async () => {
+    const currentVideo = videoRef.current;
+    if (!currentVideo) return false;
+    if (currentVideo.readyState >= 2 && currentVideo.videoWidth > 0 && currentVideo.videoHeight > 0) return true;
+    const readyVideo: HTMLVideoElement = currentVideo;
+
+    return new Promise<boolean>((resolve) => {
+      const timeout = window.setTimeout(() => {
+        readyVideo.removeEventListener("loadeddata", onReady);
+        readyVideo.removeEventListener("canplay", onReady);
+        resolve(readyVideo.readyState >= 2 && readyVideo.videoWidth > 0 && readyVideo.videoHeight > 0);
+      }, 1200);
+
+      function onReady() {
+        window.clearTimeout(timeout);
+        readyVideo.removeEventListener("loadeddata", onReady);
+        readyVideo.removeEventListener("canplay", onReady);
+        resolve(readyVideo.videoWidth > 0 && readyVideo.videoHeight > 0);
+      }
+
+      readyVideo.addEventListener("loadeddata", onReady);
+      readyVideo.addEventListener("canplay", onReady);
+    });
+  }, []);
+
   const sendFrame = useCallback(async () => {
     if (!videoRef.current || !canvasRef.current || !selectedRoomId || inFlightRef.current) return;
     if (videoRef.current.readyState < 2) return;
@@ -117,6 +142,7 @@ export function DemoCameraClient({ rooms }: { rooms: DemoCameraRoom[] }) {
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
       }
+      await waitForVideoFrame();
       setCameraState("active");
       setMessage("Camera active. Sending demo frames to the worker.");
     } catch {
@@ -130,6 +156,7 @@ export function DemoCameraClient({ rooms }: { rooms: DemoCameraRoom[] }) {
     streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = null;
     if (videoRef.current) videoRef.current.srcObject = null;
+    setLastResult(null);
     setCameraState("idle");
     setMessage("Camera stopped.");
   }
@@ -137,13 +164,11 @@ export function DemoCameraClient({ rooms }: { rooms: DemoCameraRoom[] }) {
   return (
     <section className="demo-camera-grid">
       <article className="panel demo-camera-preview">
+        <video ref={videoRef} muted playsInline />
         {lastResult?.annotatedImageBase64 ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img alt="YOLO annotated frame" src={lastResult.annotatedImageBase64} />
-        ) : (
-          <video ref={videoRef} muted playsInline />
-        )}
-        {lastResult?.annotatedImageBase64 ? <video ref={videoRef} muted playsInline className="hidden-video" /> : null}
+        ) : null}
         <canvas ref={canvasRef} hidden />
       </article>
       <article className="panel demo-camera-controls">
