@@ -31,6 +31,37 @@ Authorization: Bearer replace_with_shared_worker_secret
 
 The Next app already sends this header when its own `DEMO_WORKER_SECRET` is configured.
 
+## Railway Deploy
+
+This repo includes `railway.json` and `worker/Dockerfile` so Railway deploys only the FastAPI worker from the `worker` directory.
+
+1. Create a Railway project from the GitHub repo.
+2. In the Railway service settings, generate a public domain.
+3. Set these Railway service variables:
+
+```env
+WORKER_MODE=auto
+YOLO_MODEL=yolov8n-pose.pt
+SHOW_YOLO_BOXES=false
+ENABLE_BLOOD_DETECTION=false
+DEMO_WORKER_SECRET=replace_with_shared_worker_secret
+```
+
+Use `SHOW_YOLO_BOXES=true` only when you need debug frames, because annotated images make responses larger.
+
+4. Set these Vercel env vars on the Next.js app:
+
+```env
+INFERENCE_WORKER_URL=https://your-railway-domain.up.railway.app
+DEMO_WORKER_SECRET=replace_with_shared_worker_secret
+```
+
+5. Check the deployed worker:
+
+```bash
+curl https://your-railway-domain.up.railway.app/health
+```
+
 ## Modes
 
 - `WORKER_MODE=auto` default: use YOLO if available, otherwise mock.

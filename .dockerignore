@@ -1,0 +1,12 @@
+.git
+.next
+node_modules
+__pycache__
+*.pyc
+.venv
+.env
+worker/.env
+worker/.venv
+worker/__pycache__
+worker/*.pyc
+npm-debug.log

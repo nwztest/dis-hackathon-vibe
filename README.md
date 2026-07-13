@@ -44,3 +44,5 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
 Set `INFERENCE_WORKER_URL=http://localhost:8000` in the Next app. The worker supports `WORKER_MODE=mock` for quick demos and `WORKER_MODE=yolo` or `auto` for Ultralytics YOLO pose inference.
+
+For a public demo, deploy the worker as a separate Railway service. This repo includes `railway.json` and `worker/Dockerfile`; set Railway's public service URL as `INFERENCE_WORKER_URL` in Vercel, and use the same `DEMO_WORKER_SECRET` in both services.
