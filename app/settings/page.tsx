@@ -18,7 +18,7 @@ export default async function SettingsPage() {
         </div>
         <section className="settings-grid">
           <SettingsPanel title="Home profiles" rows={["Block and unit required", "Senior phone required", "Medical details visible on alerts"]} />
-          <SettingsPanel title="Room camera rules" rows={["Still frame analysis every 5 sec", "Live demo watches lying posture", "Room zones require calibration", "Blood detection disabled in live demo"]} />
+          <SettingsPanel title="Room camera rules" rows={["Fall transitions require 1-2 fps", "Persistent lying remains on watch", "Room zones require calibration", "Blood detection disabled in live demo"]} />
           <SettingsPanel title="Shower ToF rules" rows={["No camera in shower", "Ignore small shuffled toiletries", "Large low blob opens suspicious", "Do not update baseline while large blob is present"]} />
           <SettingsPanel title="Notifications" rows={["Danger alerts: enabled", "Suspicious alerts: enabled", "Offline devices: after 90 sec"]} />
           <SettingsPanel title="Responder roles" rows={["Caregiver: acknowledge", "Family contact: call senior", "Admin: thresholds and devices"]} />

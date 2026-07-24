@@ -73,6 +73,9 @@ export async function POST(request: NextRequest) {
       result: {
         ...result,
         annotatedImageBase64: inference.annotatedImageBase64,
+        fallStage: inference.fallStage,
+        fallDetected: inference.fallDetected,
+        fallConfidence: inference.fallConfidence,
       },
     });
   } catch (error) {

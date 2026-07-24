@@ -75,6 +75,10 @@ export async function applyDemoInferenceResult(
 
   const previousReason = stringValue(roomRow.status_metadata, "alertReason");
   const shouldWriteEvent = roomRow.current_status !== decision.status || previousReason !== decision.reason;
+  const decisionConfidence =
+    input.fallDetected || input.fallStage === "candidate"
+      ? input.fallConfidence ?? input.confidence
+      : input.confidence;
 
   if (shouldWriteEvent) {
     const { error: eventError } = await supabase.from("room_status_events").insert({
@@ -83,7 +87,7 @@ export async function applyDemoInferenceResult(
       device_id: (device as DeviceRow | null)?.id ?? null,
       status: decision.status,
       reason: decision.evidence,
-      confidence: input.confidence ?? null,
+      confidence: decisionConfidence ?? null,
       event_time: capturedAt.toISOString(),
       metadata,
     });
@@ -106,7 +110,35 @@ export async function applyDemoInferenceResult(
 
     if (existingAlert?.id) {
       alertId = existingAlert.id;
-    } else {
+    } else if (decision.reason === "fall_detected") {
+      const { data: candidateAlert, error: candidateAlertError } = await supabase
+        .from("alerts")
+        .select("id")
+        .eq("room_id", input.roomId)
+        .eq("status", "open")
+        .eq("reason", "possible_fall_transition")
+        .maybeSingle();
+
+      if (candidateAlertError) throw new Error(candidateAlertError.message);
+
+      if (candidateAlert?.id) {
+        const { error: promoteError } = await supabase
+          .from("alerts")
+          .update({
+            severity: "danger",
+            reason: decision.reason,
+            confidence: decisionConfidence ?? null,
+            duration: timeInStatus,
+            evidence: decision.evidence,
+          })
+          .eq("id", candidateAlert.id);
+
+        if (promoteError) throw new Error(promoteError.message);
+        alertId = candidateAlert.id;
+      }
+    }
+
+    if (!alertId) {
       const { data: insertedAlert, error: alertError } = await supabase
         .from("alerts")
         .insert({
@@ -116,7 +148,7 @@ export async function applyDemoInferenceResult(
           severity: decision.severity,
           status: "open",
           reason: decision.reason,
-          confidence: input.confidence ?? null,
+          confidence: decisionConfidence ?? null,
           duration: timeInStatus,
           evidence: decision.evidence,
           opened_at: capturedAt.toISOString(),

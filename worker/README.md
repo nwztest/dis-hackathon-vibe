@@ -44,6 +44,7 @@ WORKER_MODE=auto
 YOLO_MODEL=yolov8n-pose.pt
 SHOW_YOLO_BOXES=false
 ENABLE_BLOOD_DETECTION=false
+ENABLE_FALL_DETECTION=true
 DEMO_WORKER_SECRET=replace_with_shared_worker_secret
 ```
 
@@ -74,6 +75,7 @@ Useful demo scenarios:
 DEMO_SCENARIO=floor_suspicious
 DEMO_SCENARIO=floor_danger
 DEMO_SCENARIO=bed_occupied
+DEMO_SCENARIO=fall
 DEMO_SCENARIO=blood
 DEMO_SCENARIO=empty
 ```
@@ -87,6 +89,14 @@ YOLO_MODEL=yolov8n-pose.pt
 ```
 
 The worker uses pose keypoints to estimate posture. Live YOLO mode reports room location as `unknown`; floor, bed, sofa, and chair labels need room-zone calibration or a custom detector. Mock scenarios can still return those locations for controlled demos.
+
+Fall detection is temporal rather than a single-frame classification. The worker tracks each room independently and looks for rapid body descent plus an upright-to-lying orientation change. It first returns `fallStage: "candidate"` and only returns `fallStage: "confirmed"` with `fallDetected: true` when a following frame still shows a lying posture. Use `1 fps` or `2 fps` for this flow:
+
+```env
+ENABLE_FALL_DETECTION=true
+```
+
+At the five-second capture setting, persistent lying detection still works, but the worker deliberately does not claim that it observed fall velocity. Temporal state is held in worker memory, so production deployment should use one sticky worker per room stream or move the state to a shared low-latency store such as Redis.
 
 Set this when you want the worker response to include a debug image with YOLO boxes/keypoints:
 

@@ -18,6 +18,9 @@ type DemoResult = {
   reason?: string;
   evidence?: string;
   confidence?: number;
+  fallStage?: "none" | "candidate" | "confirmed";
+  fallDetected?: boolean;
+  fallConfidence?: number;
   annotatedImageBase64?: string;
 };
 
@@ -217,6 +220,7 @@ export function DemoCameraClient({ rooms }: { rooms: DemoCameraRoom[] }) {
           <div><dt>Selected rate</dt><dd>{frameRateOptions.find((option) => option.value === frameRate)?.label}</dd></div>
           <div><dt>Last frame</dt><dd>{lastSentAt || "Not sent"}</dd></div>
           <div><dt>Latest status</dt><dd>{lastResult?.status ?? selectedRoom?.status ?? "Unknown"}</dd></div>
+          <div><dt>Fall detection</dt><dd>{fallDetectionLabel(lastResult)}</dd></div>
         </dl>
         <p className="form-note">{message}</p>
         {lastResult ? (
@@ -247,4 +251,10 @@ function captureImage(video: HTMLVideoElement, canvas: HTMLCanvasElement) {
 
   context.drawImage(video, 0, 0, canvas.width, canvas.height);
   return canvas.toDataURL("image/jpeg", 0.62);
+}
+
+function fallDetectionLabel(result: DemoResult | null) {
+  if (!result?.fallStage || result.fallStage === "none") return "No transition";
+  const confidence = typeof result.fallConfidence === "number" ? ` · ${Math.round(result.fallConfidence)}%` : "";
+  return `${result.fallStage}${confidence}`;
 }

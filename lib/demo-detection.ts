@@ -5,6 +5,7 @@ export type DemoPersonLocation = "floor" | "bed" | "sofa" | "chair" | "unknown";
 export type DemoPersonPosture = "lying" | "sitting" | "standing" | "unknown";
 export type DemoMovement = "none" | "small" | "active" | "unknown";
 export type DemoFaceExpression = "negative" | "neutral" | "unknown";
+export type DemoFallStage = "none" | "candidate" | "confirmed";
 
 export type DemoInferenceInput = {
   roomId: string;
@@ -15,6 +16,9 @@ export type DemoInferenceInput = {
   movement?: DemoMovement;
   faceExpression?: DemoFaceExpression;
   bloodDetected?: boolean;
+  fallStage?: DemoFallStage;
+  fallDetected?: boolean;
+  fallConfidence?: number;
   confidence?: number;
   evidence?: string;
   annotatedImageBase64?: string;
@@ -92,6 +96,18 @@ export function evaluateRoomCameraInference(input: DemoInferenceInput, previous:
     severity = "danger";
     reason = "blood_detected";
     evidence = input.evidence || "Blood-like region detected in room camera frame.";
+    occupied = true;
+  } else if (input.fallDetected || input.fallStage === "confirmed") {
+    status = "danger";
+    severity = "danger";
+    reason = "fall_detected";
+    evidence = input.evidence || "A rapid upright-to-lying transition was confirmed across consecutive camera frames.";
+    occupied = true;
+  } else if (input.fallStage === "candidate") {
+    status = "suspicious";
+    severity = "suspicious";
+    reason = "possible_fall_transition";
+    evidence = input.evidence || "A possible fall transition was detected; awaiting confirmation from the next frame.";
     occupied = true;
   } else if (isLying && isOnFloor && hasMovement) {
     status = "danger";
@@ -176,6 +192,9 @@ export function evaluateRoomCameraInference(input: DemoInferenceInput, previous:
       movement: input.movement ?? "unknown",
       faceExpression: input.faceExpression ?? "unknown",
       bloodDetected: Boolean(input.bloodDetected),
+      fallStage: input.fallStage ?? "none",
+      fallDetected: Boolean(input.fallDetected),
+      fallConfidence: input.fallConfidence,
       confidence: input.confidence,
       alertReason: reason,
       evidence,
