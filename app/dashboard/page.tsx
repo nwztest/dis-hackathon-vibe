@@ -3,7 +3,6 @@ import { AlertTriangle } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { AddHomeButton, AddRoomButton } from "@/components/DashboardModals";
 import { DashboardSearchView } from "@/components/DashboardSearchView";
-import { DashboardStatusFilter } from "@/components/DashboardStatusFilter";
 import { formatHomeAddress } from "@/lib/mock-data";
 import { getDashboardData } from "@/lib/data";
 import { requireCurrentProfile } from "@/lib/auth";
@@ -48,8 +47,7 @@ export default async function DashboardPage() {
             </div>
           </section>
         ) : null}
-        <DashboardStatusFilter counts={counts} total={rooms.length} />
-        <DashboardSearchView canManageHomes={canManageHomes} homes={homes} rooms={rooms} />
+        <DashboardSearchView canManageHomes={canManageHomes} counts={counts} homes={homes} rooms={rooms} />
       </main>
     </AppShell>
   );

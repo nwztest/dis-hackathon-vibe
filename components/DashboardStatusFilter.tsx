@@ -1,6 +1,8 @@
 import type { RoomStatus } from "@/lib/mock-data";
 
-const filterItems: Array<{ key: "all" | RoomStatus; label: string }> = [
+export type DashboardStatusFilterKey = "all" | "danger" | "suspicious" | "offline" | "maintenance";
+
+const filterItems: Array<{ key: DashboardStatusFilterKey; label: string }> = [
   { key: "all", label: "All" },
   { key: "danger", label: "Danger" },
   { key: "suspicious", label: "Suspicious" },
@@ -9,10 +11,14 @@ const filterItems: Array<{ key: "all" | RoomStatus; label: string }> = [
 ];
 
 export function DashboardStatusFilter({
+  activeFilter,
   counts,
+  onFilterChange,
   total,
 }: {
+  activeFilter: DashboardStatusFilterKey;
   counts: Record<RoomStatus, number>;
+  onFilterChange: (filter: DashboardStatusFilterKey) => void;
   total: number;
 }) {
   return (
@@ -20,7 +26,13 @@ export function DashboardStatusFilter({
       {filterItems.map((item) => {
         const count = item.key === "all" ? total : counts[item.key];
         return (
-          <button className={item.key === "all" ? "active" : ""} type="button" key={item.key}>
+          <button
+            aria-pressed={activeFilter === item.key}
+            className={activeFilter === item.key ? "active" : ""}
+            type="button"
+            key={item.key}
+            onClick={() => onFilterChange(item.key)}
+          >
             <span>{item.label}</span>
             <strong>{count}</strong>
           </button>

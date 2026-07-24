@@ -3,25 +3,32 @@
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { DashboardHomeGroup } from "@/components/DashboardHomeGroup";
-import { formatHomeAddress, type Room, type SeniorHome } from "@/lib/mock-data";
+import { DashboardStatusFilter, type DashboardStatusFilterKey } from "@/components/DashboardStatusFilter";
+import { formatHomeAddress, type Room, type RoomStatus, type SeniorHome } from "@/lib/mock-data";
 
 export function DashboardSearchView({
   canManageHomes,
+  counts,
   homes,
   rooms,
 }: {
   canManageHomes?: boolean;
+  counts: Record<RoomStatus, number>;
   homes: SeniorHome[];
   rooms: Room[];
 }) {
   const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<DashboardStatusFilterKey>("all");
   const normalizedQuery = query.trim().toLowerCase();
 
-  const filteredHomes = useMemo(() => {
-    if (!normalizedQuery) return homes;
-
-    return homes.filter((home) => {
+  const filteredHomeGroups = useMemo(() => {
+    return homes.flatMap((home) => {
       const homeRooms = rooms.filter((room) => room.homeId === home.id);
+      const statusFilteredRooms = statusFilter === "all" ? homeRooms : homeRooms.filter((room) => room.status === statusFilter);
+      if (statusFilteredRooms.length === 0) return [];
+
+      if (!normalizedQuery) return [{ home, rooms: statusFilteredRooms }];
+
       const searchable = [
         home.seniorName,
         home.seniorPhone,
@@ -32,7 +39,7 @@ export function DashboardSearchView({
         home.unitNumber,
         home.address,
         formatHomeAddress(home),
-        ...homeRooms.flatMap((room) => [
+        ...statusFilteredRooms.flatMap((room) => [
           room.name,
           room.type,
           room.status,
@@ -44,12 +51,18 @@ export function DashboardSearchView({
         .join(" ")
         .toLowerCase();
 
-      return searchable.includes(normalizedQuery);
+      return searchable.includes(normalizedQuery) ? [{ home, rooms: statusFilteredRooms }] : [];
     });
-  }, [homes, normalizedQuery, rooms]);
+  }, [homes, normalizedQuery, rooms, statusFilter]);
 
   return (
     <>
+      <DashboardStatusFilter
+        activeFilter={statusFilter}
+        counts={counts}
+        onFilterChange={setStatusFilter}
+        total={rooms.length}
+      />
       <section className="dashboard-search-panel" aria-label="Search homes">
         <div className="search-row">
           <Search size={18} />
@@ -60,16 +73,16 @@ export function DashboardSearchView({
             onChange={(event) => setQuery(event.target.value)}
           />
         </div>
-        <span>{filteredHomes.length} of {homes.length} homes</span>
+        <span>{filteredHomeGroups.length} of {homes.length} homes</span>
       </section>
-      {filteredHomes.length > 0 ? (
+      {filteredHomeGroups.length > 0 ? (
         <section className="home-group-list">
-          {filteredHomes.map((home) => (
+          {filteredHomeGroups.map(({ home, rooms: filteredRooms }) => (
             <DashboardHomeGroup
               canManageHomes={canManageHomes}
               home={home}
               homes={homes}
-              rooms={rooms.filter((room) => room.homeId === home.id)}
+              rooms={filteredRooms}
               key={home.id}
             />
           ))}
@@ -77,7 +90,7 @@ export function DashboardSearchView({
       ) : (
         <section className="empty-state">
           <h2>No matching homes</h2>
-          <p>Try a senior name, block number, unit number, address, phone number, or room name.</p>
+          <p>Try another search term or status filter.</p>
         </section>
       )}
     </>
