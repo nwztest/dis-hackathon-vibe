@@ -25,7 +25,18 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ roo
             <h1>{room.name}</h1>
             <p>{home.seniorName} · {formatHomeAddress(home)} · Device {room.deviceId}</p>
           </div>
-          <StatusBadge status={room.status} />
+          <div className="page-heading-actions">
+            {room.deviceType === "room_camera" ? (
+              <Link
+                className="primary-button"
+                href={`/demo/camera?roomId=${encodeURIComponent(room.id)}`}
+              >
+                <Camera size={16} />
+                Access camera
+              </Link>
+            ) : null}
+            <StatusBadge status={room.status} />
+          </div>
         </div>
         {hasAlert ? (
           <section className={`alert-panel ${room.status}`}>

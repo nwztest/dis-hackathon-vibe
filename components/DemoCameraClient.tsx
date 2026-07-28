@@ -24,8 +24,16 @@ type DemoResult = {
   annotatedImageBase64?: string;
 };
 
-export function DemoCameraClient({ rooms }: { rooms: DemoCameraRoom[] }) {
-  const [selectedRoomId, setSelectedRoomId] = useState(rooms[0]?.id ?? "");
+export function DemoCameraClient({
+  rooms,
+  initialRoomId,
+}: {
+  rooms: DemoCameraRoom[];
+  initialRoomId?: string;
+}) {
+  const [selectedRoomId, setSelectedRoomId] = useState(
+    rooms.some((room) => room.id === initialRoomId) ? initialRoomId! : (rooms[0]?.id ?? ""),
+  );
   const [frameRate, setFrameRate] = useState<DemoFrameRate>("5s");
   const [cameraState, setCameraState] = useState<"idle" | "starting" | "active" | "error">("idle");
   const [message, setMessage] = useState("Camera is idle.");

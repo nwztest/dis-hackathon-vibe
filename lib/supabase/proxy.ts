@@ -45,7 +45,7 @@ export async function updateSession(request: NextRequest) {
       .eq("id", claims.sub)
       .maybeSingle();
     const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = profile?.role === "admin" || profile?.role === "caregiver" ? "/dashboard" : "/pending-approval";
+    redirectUrl.pathname = profile?.role === "admin" || profile?.role === "caregiver" ? "/alerts" : "/pending-approval";
     redirectUrl.search = "";
     return NextResponse.redirect(redirectUrl);
   }

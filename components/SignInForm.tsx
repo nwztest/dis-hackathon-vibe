@@ -18,14 +18,14 @@ export function SignInForm() {
   const [message, setMessage] = useState(initialMessage);
   const [messageTone, setMessageTone] = useState<"default" | "success">("default");
   const [isPending, startTransition] = useTransition();
-  const next = searchParams.get("next") ?? "/dashboard";
+  const next = searchParams.get("next") ?? "/alerts";
   const isSignIn = mode === "sign-in";
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (!hasSupabaseEnv()) {
-      router.push("/dashboard");
+      router.push("/alerts");
       return;
     }
 
@@ -54,7 +54,7 @@ export function SignInForm() {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/confirm?next=/dashboard`,
+          emailRedirectTo: `${window.location.origin}/auth/confirm?next=/alerts`,
           data: {
             name,
           },
@@ -166,7 +166,7 @@ export function SignInForm() {
         {isPending ? "Working..." : isSignIn ? "Sign in" : "Create account"}
       </button>
       {!hasSupabaseEnv() ? (
-        <Link className="text-link" href="/dashboard">Continue with mock data</Link>
+        <Link className="text-link" href="/alerts">Continue with mock data</Link>
       ) : null}
     </form>
   );

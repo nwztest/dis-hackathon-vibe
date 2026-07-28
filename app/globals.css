@@ -390,6 +390,19 @@ dd {
   display: flex;
   gap: 10px;
   padding: 10px 12px;
+  position: relative;
+}
+
+.nav-alert-indicator {
+  background: var(--danger);
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgb(180 35 24 / 18%);
+  height: 10px;
+  position: absolute;
+  right: 8px;
+  top: 7px;
+  width: 10px;
 }
 
 .nav-link.active {
@@ -435,6 +448,17 @@ dd {
   background: var(--danger);
   border-color: var(--danger);
   color: #fff;
+}
+
+.emergency-services-button {
+  align-items: center;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  display: inline-flex;
+  gap: 8px;
+  justify-content: center;
+  min-height: 40px;
+  padding: 9px 14px;
 }
 
 .icon-button {
@@ -531,6 +555,11 @@ dd {
   gap: 6px;
 }
 
+.page-heading > .page-heading-actions {
+  align-items: end;
+  justify-items: end;
+}
+
 .filter-row {
   display: flex;
   flex-wrap: wrap;
@@ -562,6 +591,45 @@ dd {
 
 .status-filter strong {
   font-size: 13px;
+}
+
+.incident-summary {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.incident-summary > div {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 4px;
+  padding: 16px;
+}
+
+.incident-summary strong {
+  font-size: 24px;
+}
+
+.incident-summary span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.incident-summary > div {
+  align-items: center;
+  grid-template-columns: auto auto 1fr;
+}
+
+.incident-summary > div.urgent {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+}
+
+.incident-summary > div.urgent svg {
+  color: var(--danger);
 }
 
 .dashboard-search-panel {
@@ -1030,6 +1098,136 @@ dd {
   margin: 0;
 }
 
+.incident-section {
+  display: grid;
+  gap: 12px;
+}
+
+.incident-section-heading {
+  align-items: flex-end;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.incident-section-heading > div {
+  display: grid;
+  gap: 4px;
+}
+
+.incident-section-heading > strong {
+  align-items: center;
+  background: var(--surface-alt);
+  border-radius: 999px;
+  display: inline-flex;
+  height: 30px;
+  justify-content: center;
+  min-width: 30px;
+  padding: 0 9px;
+}
+
+.incident-list {
+  display: grid;
+  gap: 12px;
+}
+
+.incident-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--warning);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(260px, 1.4fr) minmax(280px, 1fr) auto;
+  padding: 18px;
+}
+
+.incident-card.danger {
+  border-left-color: var(--danger);
+}
+
+.incident-card-main {
+  display: grid;
+  gap: 7px;
+}
+
+.incident-title-row {
+  align-items: center;
+  display: flex;
+  gap: 9px;
+}
+
+.incident-title-row > span {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.incident-evidence {
+  font-size: 13px;
+}
+
+.incident-facts {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+  margin: 0;
+}
+
+.incident-actions {
+  align-content: center;
+  display: grid;
+  gap: 8px;
+  justify-items: stretch;
+  min-width: 150px;
+}
+
+.incident-actions form,
+.incident-actions button,
+.incident-actions .secondary-button {
+  width: 100%;
+}
+
+.incident-actions .secondary-button {
+  justify-content: center;
+}
+
+.incident-actions .text-link {
+  padding: 4px;
+  text-align: center;
+}
+
+.call-options {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: grid;
+  gap: 6px;
+  padding: 6px;
+}
+
+.action-error {
+  color: var(--danger);
+  font-size: 12px;
+  max-width: 180px;
+}
+
+.incident-empty {
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--muted);
+  display: flex;
+  gap: 9px;
+  padding: 16px;
+}
+
+.incident-empty svg {
+  color: var(--ok);
+}
+
 .table-header,
 .table-row {
   align-items: center;
@@ -1406,12 +1604,22 @@ dd {
     flex-direction: column;
   }
 
+  .page-heading > .page-heading-actions {
+    align-items: start;
+    justify-items: start;
+  }
+
   .alert-row,
+  .incident-card,
   .device-table,
   .user-table,
   .nested-room-row,
   .home-group-meta,
   .dashboard-search-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .incident-summary {
     grid-template-columns: 1fr;
   }
 

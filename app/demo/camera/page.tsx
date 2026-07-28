@@ -6,8 +6,13 @@ import { requireCurrentProfile } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
-export default async function DemoCameraPage() {
+export default async function DemoCameraPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ roomId?: string }>;
+}) {
   const profile = await requireCurrentProfile("/demo/camera");
+  const { roomId } = await searchParams;
   const [homes, rooms] = await Promise.all([getHomes(), getRooms()]);
   const cameraRooms: DemoCameraRoom[] = rooms
     .filter((room) => room.type === "room" && room.deviceType === "room_camera")
@@ -31,7 +36,7 @@ export default async function DemoCameraPage() {
             <p>Use this laptop camera as a temporary room camera for posture-based YOLO demos.</p>
           </div>
         </div>
-        <DemoCameraClient rooms={cameraRooms} />
+        <DemoCameraClient rooms={cameraRooms} initialRoomId={roomId} />
       </main>
     </AppShell>
   );

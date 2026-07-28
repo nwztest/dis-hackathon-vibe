@@ -9,7 +9,7 @@ export default async function PendingApprovalPage() {
   const profile = await requireCurrentProfile("/pending-approval", ["admin", "caregiver", "family", "unapproved"]);
 
   if (profile?.role === "admin" || profile?.role === "caregiver") {
-    redirect("/dashboard");
+    redirect("/alerts");
   }
 
   return (

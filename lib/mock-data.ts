@@ -354,8 +354,8 @@ export const devices = [
 ];
 
 export const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/alerts", label: "Alerts", icon: Bell },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/devices", label: "Devices", icon: Wifi },
   { href: "/demo/camera", label: "Demo camera", icon: Camera },
   { href: "/users", label: "Users", icon: Users, roles: ["admin"] },
