@@ -47,4 +47,4 @@ Set `INFERENCE_WORKER_URL=http://localhost:8000` in the Next app. The worker sup
 
 For a public demo, deploy the worker as a separate Railway service. This repo includes `railway.json` and `worker/Dockerfile`; set Railway's public service URL as `INFERENCE_WORKER_URL` in Vercel, and use the same `DEMO_WORKER_SECRET` in both services.
 
-This is a test commit.
+This is a test commit, I am testing this right now.
