@@ -1175,9 +1175,15 @@ dd {
 
 .incident-facts {
   display: grid;
-  gap: 14px;
-  grid-template-columns: repeat(4, minmax(62px, 1fr));
+  column-gap: clamp(16px, 2vw, 32px);
+  grid-template-columns:
+    minmax(72px, 0.8fr)
+    minmax(72px, 0.8fr)
+    minmax(86px, 1fr)
+    minmax(180px, 2fr);
+  row-gap: 6px;
   margin: 0;
+  width: 100%;
 }
 
 .incident-facts > div {
@@ -1196,10 +1202,17 @@ dd {
   white-space: nowrap;
 }
 
+.incident-facts > div:last-child dd {
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
+}
+
 .incident-actions {
-  align-items: center;
+  align-items: stretch;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 8px;
   justify-content: flex-end;
   position: relative;
@@ -1723,6 +1736,7 @@ dd {
 
   .incident-facts {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 12px;
   }
 
   .modal-backdrop {
