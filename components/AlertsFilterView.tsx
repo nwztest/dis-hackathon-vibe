@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, Camera, Clock3, Phone, ShieldCheck } from "lucide-react";
-import { useEffect, useState, useTransition } from "react";
+import { AlertTriangle, Camera, Clock3, Ellipsis, Phone, ShieldCheck } from "lucide-react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { acknowledgeAlertAction, escalateAlertAction, resolveAlertAction } from "@/app/actions";
 import { SeverityBadge } from "@/components/Status";
 import { formatHomeAddress, type AlertRecord, type SeniorHome, type Room } from "@/lib/mock-data";
@@ -163,12 +163,32 @@ function IncidentCard({
   const router = useRouter();
   const room = rooms.find((item) => item.id === alert.roomId);
   const home = homes.find((item) => item.id === alert.homeId);
-  const [callOptionsOpen, setCallOptionsOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const [actionError, setActionError] = useState("");
   const [isPending, startTransition] = useTransition();
+  const actionsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!moreOpen) return;
+
+    function closeMore(event: MouseEvent | KeyboardEvent) {
+      if (event instanceof KeyboardEvent && event.key !== "Escape") return;
+      if (event instanceof MouseEvent && actionsRef.current?.contains(event.target as Node)) return;
+      setMoreOpen(false);
+    }
+
+    document.addEventListener("mousedown", closeMore);
+    document.addEventListener("keydown", closeMore);
+
+    return () => {
+      document.removeEventListener("mousedown", closeMore);
+      document.removeEventListener("keydown", closeMore);
+    };
+  }, [moreOpen]);
 
   function changeStatus(status: "acknowledged" | "resolved") {
     setActionError("");
+    setMoreOpen(false);
     startTransition(async () => {
       try {
         if (status === "acknowledged") {
@@ -186,6 +206,7 @@ function IncidentCard({
 
   function upgradeToDanger() {
     setActionError("");
+    setMoreOpen(false);
     startTransition(async () => {
       try {
         await escalateAlertAction(alert.id);
@@ -214,43 +235,7 @@ function IncidentCard({
         <div><dt>Confidence</dt><dd>{alert.confidence}%</dd></div>
         <div><dt>Location</dt><dd>{home ? formatHomeAddress(home) : "Unknown"}</dd></div>
       </dl>
-      <div className="incident-actions">
-        {room?.deviceType === "room_camera" ? (
-          <Link
-            className="secondary-button"
-            href={`/demo/camera?roomId=${encodeURIComponent(room.id)}`}
-          >
-            <Camera size={16} />
-            Access camera
-          </Link>
-        ) : null}
-        {home?.seniorPhone || home?.emergencyContactPhone ? (
-          <>
-            <button
-              aria-expanded={callOptionsOpen}
-              className="secondary-button"
-              onClick={() => setCallOptionsOpen((open) => !open)}
-              type="button"
-            >
-              <Phone size={16} />
-              Call
-            </button>
-            {callOptionsOpen ? (
-              <div className="call-options" aria-label="Choose who to call">
-                {home.emergencyContactPhone ? (
-                  <a className="secondary-button" href={`tel:${home.emergencyContactPhone}`}>
-                    Call Caregiver
-                  </a>
-                ) : null}
-                {home.seniorPhone ? (
-                  <a className="secondary-button" href={`tel:${home.seniorPhone}`}>
-                    Call Senior
-                  </a>
-                ) : null}
-              </div>
-            ) : null}
-          </>
-        ) : null}
+      <div className="incident-actions" ref={actionsRef}>
         {alert.status === "open" ? (
           <button
             className="primary-button"
@@ -260,24 +245,69 @@ function IncidentCard({
           >
             {isPending ? "Updating…" : "Acknowledge"}
           </button>
-        ) : null}
-        {alert.status !== "resolved" ? (
+        ) : (
           <button disabled={isPending} onClick={() => changeStatus("resolved")} type="button">
             {isPending ? "Updating…" : "Resolve"}
           </button>
-        ) : null}
-        {alert.severity === "suspicious" && alert.status !== "resolved" ? (
-          <button
-            className="danger-button"
-            disabled={isPending}
-            onClick={upgradeToDanger}
-            type="button"
-          >
-            {isPending ? "Updating…" : "Upgrade to Danger"}
-          </button>
+        )}
+        <button
+          aria-expanded={moreOpen}
+          className="incident-more-button"
+          onClick={() => setMoreOpen((open) => !open)}
+          type="button"
+        >
+          <Ellipsis size={17} />
+          More
+        </button>
+        {moreOpen ? (
+          <div aria-label="More alert actions" className="incident-more-menu" role="group">
+            {room?.deviceType === "room_camera" ? (
+              <Link
+                href={`/demo/camera?roomId=${encodeURIComponent(room.id)}`}
+              >
+                <Camera size={16} />
+                Access camera
+              </Link>
+            ) : null}
+            {home?.emergencyContactPhone ? (
+              <a href={`tel:${home.emergencyContactPhone}`}>
+                <Phone size={16} />
+                Call caregiver
+              </a>
+            ) : null}
+            {home?.seniorPhone ? (
+              <a href={`tel:${home.seniorPhone}`}>
+                <Phone size={16} />
+                Call senior
+              </a>
+            ) : null}
+            {alert.status === "open" ? (
+              <button
+                disabled={isPending}
+                onClick={() => changeStatus("resolved")}
+                type="button"
+              >
+                <ShieldCheck size={16} />
+                Resolve
+              </button>
+            ) : null}
+            {alert.severity === "suspicious" && alert.status !== "resolved" ? (
+              <button
+                className="danger-menu-item"
+                disabled={isPending}
+                onClick={upgradeToDanger}
+                type="button"
+              >
+                <AlertTriangle size={16} />
+                Upgrade to danger
+              </button>
+            ) : null}
+            <Link href={`/rooms/${alert.roomId}`}>
+              View room details
+            </Link>
+          </div>
         ) : null}
         {actionError ? <p className="action-error" role="alert">{actionError}</p> : null}
-        <Link className="text-link" href={`/rooms/${alert.roomId}`}>View room details</Link>
       </div>
     </article>
   );

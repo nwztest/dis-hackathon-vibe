@@ -1132,15 +1132,16 @@ dd {
 }
 
 .incident-card {
+  align-items: center;
   background: var(--surface);
   border: 1px solid var(--border);
   border-left: 4px solid var(--warning);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   display: grid;
-  gap: 18px;
-  grid-template-columns: minmax(260px, 1.4fr) minmax(280px, 1fr) auto;
-  padding: 18px;
+  gap: 16px;
+  grid-template-columns: minmax(250px, 1.3fr) minmax(330px, 1.4fr) auto;
+  padding: 13px 14px;
 }
 
 .incident-card.danger {
@@ -1149,7 +1150,8 @@ dd {
 
 .incident-card-main {
   display: grid;
-  gap: 7px;
+  gap: 4px;
+  min-width: 0;
 }
 
 .incident-title-row {
@@ -1165,52 +1167,101 @@ dd {
 }
 
 .incident-evidence {
+  overflow: hidden;
   font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .incident-facts {
   display: grid;
-  gap: 12px;
-  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  grid-template-columns: repeat(4, minmax(62px, 1fr));
   margin: 0;
 }
 
-.incident-actions {
-  align-content: center;
-  display: grid;
-  gap: 8px;
-  justify-items: stretch;
-  min-width: 150px;
+.incident-facts > div {
+  min-width: 0;
 }
 
-.incident-actions form,
+.incident-facts dt {
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+
+.incident-facts dd {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.incident-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  position: relative;
+}
+
 .incident-actions button,
 .incident-actions .secondary-button {
+  min-height: 36px;
+  padding: 7px 11px;
+  white-space: nowrap;
+}
+
+.incident-more-button {
+  color: var(--muted);
+}
+
+.incident-more-menu {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(31, 35, 32, 0.16);
+  display: grid;
+  min-width: 190px;
+  padding: 6px;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 10;
+}
+
+.incident-more-menu a,
+.incident-more-menu button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: var(--text);
+  display: flex;
+  font-weight: 500;
+  gap: 9px;
+  justify-content: flex-start;
+  min-height: 36px;
+  padding: 8px 10px;
+  text-align: left;
   width: 100%;
 }
 
-.incident-actions .secondary-button {
-  justify-content: center;
-}
-
-.incident-actions .text-link {
-  padding: 4px;
-  text-align: center;
-}
-
-.call-options {
+.incident-more-menu a:hover,
+.incident-more-menu button:hover {
   background: var(--surface-alt);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  display: grid;
-  gap: 6px;
-  padding: 6px;
+}
+
+.incident-more-menu .danger-menu-item {
+  color: var(--danger);
 }
 
 .action-error {
   color: var(--danger);
+  flex-basis: 100%;
   font-size: 12px;
   max-width: 180px;
+  text-align: right;
 }
 
 .incident-empty {
@@ -1668,6 +1719,10 @@ dd {
 
   .form-grid {
     grid-template-columns: 1fr;
+  }
+
+  .incident-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .modal-backdrop {
