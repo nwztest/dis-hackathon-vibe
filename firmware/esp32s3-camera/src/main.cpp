@@ -99,6 +99,7 @@ void emitResult(const String &requestId, bool ok, const char *code, const String
   }
   serializeJson(response, Serial);
   Serial.println();
+  Serial.flush();
 }
 
 void emitBootEvent(const char *code, const String &message) {
@@ -256,10 +257,9 @@ void handleConfigure(const String &requestId, JsonObjectConst payload) {
   }
   config = next;
   WiFi.disconnect(true, false);
-  const bool connected = connectWifi();
-  emitResult(requestId, true, connected ? "configured" : "configured_wifi_pending",
-             connected ? "Configuration stored and Wi-Fi connected." : "Configuration stored; Wi-Fi will retry.");
-  nextUploadAt = millis();
+  emitResult(requestId, true, "configured",
+             "Configuration stored. Wi-Fi and API connectivity will be verified by the test frame.");
+  nextUploadAt = millis() + 250;
 }
 
 void handleCommand(const String &line) {

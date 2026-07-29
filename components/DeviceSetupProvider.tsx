@@ -20,6 +20,8 @@ type SerialResult = {
   message?: string;
   data?: Record<string, unknown>;
 };
+const SERIAL_COMMAND_TIMEOUT_MS = 90_000;
+const SERIAL_HANDSHAKE_TIMEOUT_MS = 15_000;
 export type ProvisionedDevice = {
   id: string;
   roomId: string;
@@ -161,11 +163,41 @@ export function DeviceSetupProvider({
       const port = await serial.requestPort({ filters: [{ usbVendorId: 0x303a }] });
       await port.open({ baudRate: 115200 });
       portRef.current = port;
-      setSerialConnected(true);
-      setSerialMessage("ESP32-S3 connected at 115200 baud");
       void readSerial(port);
+      setSerialMessage("Waiting for CareGuard firmware…");
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      const requestId = crypto.randomUUID();
+      const handshake = new Promise<SerialResult>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          pendingRef.current.delete(requestId);
+          reject(new Error("The serial port opened, but CareGuard firmware did not answer the status handshake."));
+        }, SERIAL_HANDSHAKE_TIMEOUT_MS);
+        pendingRef.current.set(requestId, { resolve, reject, timeout });
+      });
+      if (!port.writable) throw new Error("The selected serial port is not writable.");
+      const writer = port.writable.getWriter();
+      try {
+        await writer.write(new TextEncoder().encode(JSON.stringify({
+          protocolVersion: 1,
+          command: "status",
+          requestId,
+        }) + "\n"));
+      } finally {
+        writer.releaseLock();
+      }
+      const result = await handshake;
+      if (result.data?.cameraProfile !== "esp32s3_cam_common") {
+        throw new Error("The connected device is not running the expected ESP32-S3-CAM profile.");
+      }
+      setSerialConnected(true);
+      setSerialMessage("CareGuard ESP32-S3-CAM verified at 115200 baud");
     } catch (caught) {
       const message = caught instanceof Error ? caught.message : "Could not open the serial port.";
+      setSerialConnected(false);
+      void readerRef.current?.cancel();
+      void portRef.current?.close();
+      portRef.current = null;
       setError(message);
       throw caught;
     } finally {
@@ -181,8 +213,8 @@ export function DeviceSetupProvider({
     const response = new Promise<SerialResult>((resolve, reject) => {
       const timeout = setTimeout(() => {
         pendingRef.current.delete(requestId);
-        reject(new Error(`Device did not answer ${command} within 30 seconds.`));
-      }, 30_000);
+        reject(new Error(`Device did not answer ${command} within 90 seconds.`));
+      }, SERIAL_COMMAND_TIMEOUT_MS);
       pendingRef.current.set(requestId, { resolve, reject, timeout });
     });
     const writer = port.writable.getWriter();
