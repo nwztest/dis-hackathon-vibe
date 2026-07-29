@@ -1,6 +1,8 @@
 # CareGuard Demo Inference Worker
 
-FastAPI worker for the laptop-camera demo. The Next.js app sends compressed still frames to `POST /infer-frame`; this worker returns normalized room-camera facts that the app can turn into room status, events, and alerts.
+FastAPI worker for laptop and hardware cameras. The existing JSON/base64 demo uses
+`POST /infer-frame`; ESP32 hardware uses raw JPEG bytes at `POST /infer-frame-bytes`. Both paths
+return the same normalized room-camera facts. Hardware responses never include annotated images.
 
 YOLO runs here, not in Vercel.
 

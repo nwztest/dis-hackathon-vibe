@@ -13,7 +13,9 @@ NEXT_PUBLIC_SUPABASE_URL=https://tntaawhzconpxqfwnoce.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...
 ```
 
-The initial remote migration creates homes, rooms, devices, alerts, room status events, audit events, profiles, RLS policies, and seed data. Hardware ingestion, MQTT, raw telemetry, and camera storage are intentionally deferred.
+The migrations create homes, rooms, devices, alerts, room status events, audit events, profiles, RLS
+policies, and a service-only `device_credentials` table. Camera images are transient and are never
+stored by the application.
 
 ## Routes
 
@@ -30,6 +32,16 @@ The initial remote migration creates homes, rooms, devices, alerts, room status 
 - `/settings`
 
 Stitch reference exports are stored in `stitch-reference/`.
+
+## ESP32-S3 camera
+
+The binary hardware endpoint is `POST /api/devices/frame`. It accepts a raw JPEG up to 1 MB with
+`Authorization: Bearer <device-token>` and `X-Device-Id: <device-uid>`. The server derives the room,
+capture timestamp, and 2 FPS cadence from the authenticated device record.
+
+The PlatformIO project and Web Serial protocol are documented in
+`firmware/esp32s3-camera/README.md`. Apply all Supabase migrations and configure
+`SUPABASE_SECRET_KEY`, `INFERENCE_WORKER_URL`, and `DEMO_WORKER_SECRET` before provisioning.
 
 ## Laptop Camera Worker
 
