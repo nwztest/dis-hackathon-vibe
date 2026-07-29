@@ -40,4 +40,6 @@ an opaque `requestId`, and one of: `status`, `configure`, `test_frame`, `reboot`
 `configure` stores Wi-Fi, the HTTPS API origin, device ID, token, and cadence in NVS. Responses never
 echo Wi-Fi passwords or tokens. `factory_reset` erases the `careguard` NVS namespace.
 
-TLS uses the ESP32 certificate bundle. Insecure TLS mode is intentionally absent.
+Before its first HTTPS request, the firmware synchronizes UTC through NTP so certificate validity can
+be checked correctly. TLS pins Google Trust Services Root R1 for the configured Vercel API origin.
+Insecure TLS mode is intentionally absent.

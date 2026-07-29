@@ -5,17 +5,16 @@
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <esp_camera.h>
-#include <esp_crt_bundle.h>
+#include <time.h>
 
 #ifndef CARE_GUARD_FIRMWARE_VERSION
-#define CARE_GUARD_FIRMWARE_VERSION "0.1.0"
+#define CARE_GUARD_FIRMWARE_VERSION "0.1.2"
 #endif
 #ifndef CARE_GUARD_CAMERA_PROFILE
 #define CARE_GUARD_CAMERA_PROFILE "esp32s3_cam_common"
 #endif
 
 namespace {
-extern const uint8_t rootca_crt_bundle_start[] asm("_binary_data_cert_x509_crt_bundle_bin_start");
 constexpr uint32_t kProtocolVersion = 1;
 constexpr uint32_t kDefaultCaptureIntervalMs = 500;
 constexpr uint32_t kMinimumCaptureIntervalMs = 500;
@@ -23,7 +22,45 @@ constexpr uint32_t kMaximumCaptureIntervalMs = 60000;
 constexpr uint32_t kWifiTimeoutMs = 15000;
 constexpr uint32_t kInitialRetryMs = 1000;
 constexpr uint32_t kMaximumRetryMs = 30000;
+constexpr uint32_t kClockSyncTimeoutMs = 20000;
+constexpr time_t kMinimumValidEpoch = 1704067200;  // 2024-01-01 UTC
 constexpr size_t kMaximumSerialLine = 4096;
+
+// Vercel currently serves *.vercel.app through Google Trust Services.
+// Pin the issuing root directly because the CA bundle callback in
+// Arduino-ESP32 2.0.17 fails on Google's cross-signed GTS Root R1 chain.
+constexpr char kGtsRootR1[] = R"PEM(-----BEGIN CERTIFICATE-----
+MIIFVzCCAz+gAwIBAgINAgPlk28xsBNJiGuiFzANBgkqhkiG9w0BAQwFADBHMQsw
+CQYDVQQGEwJVUzEiMCAGA1UEChMZR29vZ2xlIFRydXN0IFNlcnZpY2VzIExMQzEU
+MBIGA1UEAxMLR1RTIFJvb3QgUjEwHhcNMTYwNjIyMDAwMDAwWhcNMzYwNjIyMDAw
+MDAwWjBHMQswCQYDVQQGEwJVUzEiMCAGA1UEChMZR29vZ2xlIFRydXN0IFNlcnZp
+Y2VzIExMQzEUMBIGA1UEAxMLR1RTIFJvb3QgUjEwggIiMA0GCSqGSIb3DQEBAQUA
+A4ICDwAwggIKAoICAQC2EQKLHuOhd5s73L+UPreVp0A8of2C+X0yBoJx9vaMf/vo
+27xqLpeXo4xL+Sv2sfnOhB2x+cWX3u+58qPpvBKJXqeqUqv4IyfLpLGcY9vXmX7w
+Cl7raKb0xlpHDU0QM+NOsROjyBhsS+z8CZDfnWQpJSMHobTSPS5g4M/SCYe7zUjw
+TcLCeoiKu7rPWRnWr4+wB7CeMfGCwcDfLqZtbBkOtdh+JhpFAz2weaSUKK0Pfybl
+qAj+lug8aJRT7oM6iCsVlgmy4HqMLnXWnOunVmSPlk9orj2XwoSPwLxAwAtcvfaH
+szVsrBhQf4TgTM2S0yDpM7xSma8ytSmzJSq0SPly4cpk9+aCEI3oncKKiPo4Zor8
+Y/kB+Xj9e1x3+naH+uzfsQ55lVe0vSbv1gHR6xYKu44LtcXFilWr06zqkUspzBmk
+MiVOKvFlRNACzqrOSbTqn3yDsEB750Orp2yjj32JgfpMpf/VjsPOS+C12LOORc92
+wO1AK/1TD7Cn1TsNsYqiA94xrcx36m97PtbfkSIS5r762DL8EGMUUXLeXdYWk70p
+aDPvOmbsB4om3xPXV2V4J95eSRQAogB/mqghtqmxlbCluQ0WEdrHbEg8QOB+DVrN
+VjzRlwW5y0vtOUucxD/SVRNuJLDWcfr0wbrM7Rv1/oFB2ACYPTrIrnqYNxgFlQID
+AQABo0IwQDAOBgNVHQ8BAf8EBAMCAYYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4E
+FgQU5K8rJnEaK0gnhS9SZizv8IkTcT4wDQYJKoZIhvcNAQEMBQADggIBAJ+qQibb
+C5u+/x6Wki4+omVKapi6Ist9wTrYggoGxval3sBOh2Z5ofmmWJyq+bXmYOfg6LEe
+QkEzCzc9zolwFcq1JKjPa7XSQCGYzyI0zzvFIoTgxQ6KfF2I5DUkzps+GlQebtuy
+h6f88/qBVRRiClmpIgUxPoLW7ttXNLwzldMXG+gnoot7TiYaelpkttGsN/H9oPM4
+7HLwEXWdyzRSjeZ2axfG34arJ45JK3VmgRAhpuo+9K4l/3wV3s6MJT/KYnAK9y8J
+ZgfIPxz88NtFMN9iiMG1D53Dn0reWVlHxYciNuaCp+0KueIHoI17eko8cdLiA6Ef
+MgfdG+RCzgwARWGAtQsgWSl4vflVy2PFPEz0tv/bal8xa5meLMFrUKTX5hgUvYU/
+Z6tGn6D/Qqc6f1zLXbBwHSs09dR2CQzreExZBfMzQsNhFRAbd03OIozUhfJFfbdT
+6u9AWpQKXCBfTkBdYiJ23//OYb2MI3jSNwLgjt7RETeJ9r/tSQdirpLsQBqvFAnZ
+0E6yove+7u7Y/9waLd64NnHi/Hm3lCXRSHNboTXns5lndcEZOitHTtNCjv0xyBZm
+2tIMPNuzjsmhDYAPexZ3FL//2wmUspO8IFgV6dtxQ/PeEMMA3KgqlbbC1j+Qa3bb
+bP6MvPJwNQzcmRk13NfIRmPVNnGuV/u3gm3c
+-----END CERTIFICATE-----
+)PEM";
 
 // nulllaborg common ESP32-S3-CAM profile.
 constexpr int kPinPwdn = -1;
@@ -59,6 +96,7 @@ struct DeviceConfig {
 
 struct UploadResult {
   bool wifiConnected = false;
+  bool clockSynchronized = false;
   bool apiReachable = false;
   bool inferenceAccepted = false;
   bool heartbeatUpdated = false;
@@ -70,6 +108,7 @@ Preferences preferences;
 DeviceConfig config;
 bool cameraReady = false;
 bool uploadInProgress = false;
+bool clockSyncConfigured = false;
 uint32_t nextUploadAt = 0;
 uint32_t retryDelayMs = kInitialRetryMs;
 String serialLine;
@@ -92,6 +131,7 @@ void emitResult(const String &requestId, bool ok, const char *code, const String
   data["captureIntervalMs"] = config.captureIntervalMs;
   if (!config.deviceId.isEmpty()) data["deviceId"] = config.deviceId;
   if (upload != nullptr) {
+    data["clockSynchronized"] = upload->clockSynchronized;
     data["apiReachable"] = upload->apiReachable;
     data["inferenceAccepted"] = upload->inferenceAccepted;
     data["heartbeatUpdated"] = upload->heartbeatUpdated;
@@ -185,6 +225,19 @@ bool connectWifi() {
   return WiFi.status() == WL_CONNECTED;
 }
 
+bool synchronizeClock() {
+  if (time(nullptr) >= kMinimumValidEpoch) return true;
+  if (!clockSyncConfigured) {
+    configTime(0, 0, "pool.ntp.org", "time.cloudflare.com", "time.google.com");
+    clockSyncConfigured = true;
+  }
+  const uint32_t startedAt = millis();
+  while (time(nullptr) < kMinimumValidEpoch && millis() - startedAt < kClockSyncTimeoutMs) {
+    delay(100);
+  }
+  return time(nullptr) >= kMinimumValidEpoch;
+}
+
 UploadResult captureAndUpload() {
   UploadResult result;
   if (uploadInProgress) {
@@ -198,6 +251,12 @@ UploadResult captureAndUpload() {
     uploadInProgress = false;
     return result;
   }
+  result.clockSynchronized = synchronizeClock();
+  if (!result.clockSynchronized) {
+    result.message = "Secure clock synchronization failed.";
+    uploadInProgress = false;
+    return result;
+  }
   camera_fb_t *frame = esp_camera_fb_get();
   if (frame == nullptr || frame->format != PIXFORMAT_JPEG) {
     if (frame != nullptr) esp_camera_fb_return(frame);
@@ -207,7 +266,7 @@ UploadResult captureAndUpload() {
   }
 
   WiFiClientSecure tls;
-  tls.setCACertBundle(rootca_crt_bundle_start);
+  tls.setCACert(kGtsRootR1);
   HTTPClient http;
   const String url = config.apiBaseUrl + "/api/devices/frame";
   if (!http.begin(tls, url)) {
@@ -226,7 +285,23 @@ UploadResult captureAndUpload() {
   result.apiReachable = result.httpStatus > 0;
   result.inferenceAccepted = result.httpStatus >= 200 && result.httpStatus < 300;
   result.heartbeatUpdated = result.inferenceAccepted;
-  result.message = result.inferenceAccepted ? "Test frame was accepted and applied." : "Frame upload was not accepted.";
+  if (result.inferenceAccepted) {
+    result.message = "Test frame was accepted and applied.";
+  } else if (result.httpStatus < 0) {
+    char tlsError[160] = {};
+    const int tlsErrorCode = tls.lastError(tlsError, sizeof(tlsError));
+    result.message = "HTTPS upload failed: ";
+    result.message += HTTPClient::errorToString(result.httpStatus);
+    if (tlsErrorCode != 0 && tlsError[0] != '\0') {
+      result.message += " (TLS ";
+      result.message += String(tlsErrorCode);
+      result.message += ": ";
+      result.message += tlsError;
+      result.message += ")";
+    }
+  } else {
+    result.message = "Frame upload was not accepted.";
+  }
   http.end();
   esp_camera_fb_return(frame);
   uploadInProgress = false;

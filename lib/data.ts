@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import type { UserRole } from "@/lib/auth";
+import { deviceStatusFromHeartbeat } from "@/lib/device-ingestion";
 import {
   alerts as mockAlerts,
   devices as mockDevices,
@@ -316,16 +317,27 @@ function mapHome(row: HomeRow): SeniorHome {
 
 function mapRoom(row: RoomRow, device?: DeviceRow | null, alert?: AlertRow | null): Room {
   const metadata = row.status_metadata ?? {};
+  const deviceStatus = device
+    ? deviceStatusFromHeartbeat(device.status, device.last_seen_at)
+    : "offline";
+  const hasActiveSafetyStatus =
+    Boolean(alert) && (row.current_status === "danger" || row.current_status === "suspicious");
+  const status: RoomStatus =
+    deviceStatus === "maintenance"
+      ? "maintenance"
+      : (deviceStatus === "offline" || deviceStatus === "unassigned") && !hasActiveSafetyStatus
+        ? "offline"
+        : row.current_status;
 
   return {
     id: row.id,
     homeId: row.home_id,
     name: row.name,
     type: row.type,
-    status: row.current_status,
-    occupied: row.occupied,
+    status,
+    occupied: status === "offline" || status === "maintenance" ? false : row.occupied,
     timeInStatus: row.time_in_status ?? "Just now",
-    lastSeen: device?.heartbeat_label ?? "No heartbeat",
+    lastSeen: heartbeatFromTimestamp(device?.last_seen_at ?? null, device?.heartbeat_label ?? null),
     deviceId: device?.device_uid ?? "Unassigned",
     deviceType: device?.device_type ?? (row.type === "shower" ? "tof_shower" : "room_camera"),
     alertReason: alert?.evidence ?? alert?.reason ?? undefined,
@@ -372,7 +384,7 @@ function mapDevice(row: DeviceRow): DeviceRecord {
     roomId: row.room_id,
     deviceType: row.device_type,
     firmware: row.firmware_version ?? "",
-    status: row.status,
+    status: deviceStatusFromHeartbeat(row.status, row.last_seen_at),
     heartbeat: heartbeatFromTimestamp(row.last_seen_at, row.heartbeat_label),
     signal: row.signal_label ?? "",
     hardware: row.hardware ?? "",

@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getCurrentProfile } from "@/lib/auth";
 import { generateDeviceToken, hashDeviceToken } from "@/lib/device-auth";
-import { DEFAULT_CAPTURE_INTERVAL_MS } from "@/lib/device-ingestion";
+import { DEFAULT_CAPTURE_INTERVAL_MS, deviceStatusFromHeartbeat } from "@/lib/device-ingestion";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hasSupabaseAdminEnv, hasSupabaseEnv } from "@/lib/supabase/env";
 
@@ -13,7 +13,7 @@ type ProvisionPayload = {
 };
 
 const CAMERA_PROFILE = "esp32s3_cam_common";
-const FIRMWARE_VERSION = "0.1.0";
+const FIRMWARE_VERSION = "0.1.2";
 
 export async function POST(request: NextRequest) {
   if (!hasSupabaseEnv() || !hasSupabaseAdminEnv()) {
@@ -178,13 +178,7 @@ export async function GET(request: NextRequest) {
   const { data: home } = room
     ? await supabase.from("homes").select("senior_name, block_number, unit_number").eq("id", room.home_id).maybeSingle()
     : { data: null };
-  const lastSeenAt = device.last_seen_at ? new Date(device.last_seen_at) : null;
-  const ageMs = lastSeenAt ? Date.now() - lastSeenAt.getTime() : Number.POSITIVE_INFINITY;
-  const derivedStatus = device.status === "maintenance" || device.status === "unassigned"
-    ? device.status
-    : ageMs <= 15_000
-      ? "online"
-      : "offline";
+  const derivedStatus = deviceStatusFromHeartbeat(device.status, device.last_seen_at);
 
   return NextResponse.json({
     ok: true,
