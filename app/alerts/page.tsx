@@ -11,9 +11,10 @@ export default async function AlertsPage() {
 
   return (
     <AppShell profile={profile ?? undefined}>
-      <main className="page-content">
+      <main className="page-content alerts-page">
         <div className="page-heading">
           <div>
+            <span className="page-eyebrow">Response center</span>
             <h1>Active alerts</h1>
             <p>A focused response queue for incidents that still need caregiver action.</p>
           </div>
