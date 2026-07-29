@@ -11,6 +11,12 @@ type SerialWriteOptions = {
   delay?: (milliseconds: number) => Promise<void>;
 };
 
+type SerialErrorResult = {
+  code?: string;
+  message?: string;
+  data?: Record<string, unknown>;
+};
+
 function defaultDelay(milliseconds: number) {
   return new Promise<void>((resolve) => setTimeout(resolve, milliseconds));
 }
@@ -36,4 +42,17 @@ export async function writeSerialLine(
       await delay(chunkDelayMs);
     }
   }
+}
+
+export function serialResultError(result: SerialErrorResult) {
+  const message = result.message || result.code || "Device command failed.";
+  const details: string[] = [];
+  if (result.code && result.code !== result.message) {
+    details.push(result.code);
+  }
+  const httpStatus = result.data?.httpStatus;
+  if (typeof httpStatus === "number" && httpStatus !== 0) {
+    details.push(httpStatus > 0 ? `HTTP ${httpStatus}` : `transport ${httpStatus}`);
+  }
+  return new Error(details.length > 0 ? `${message} (${details.join("; ")})` : message);
 }

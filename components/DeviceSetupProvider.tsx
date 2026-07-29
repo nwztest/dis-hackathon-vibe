@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { DeviceRecord } from "@/lib/data";
 import type { Room, SeniorHome } from "@/lib/mock-data";
-import { writeSerialLine } from "@/lib/serial-protocol";
+import { serialResultError, writeSerialLine } from "@/lib/serial-protocol";
 
 type SerialPortLike = {
   open(options: { baudRate: number }): Promise<void>;
@@ -126,7 +126,7 @@ export function DeviceSetupProvider({
     clearTimeout(pending.timeout);
     pendingRef.current.delete(message.requestId);
     message.ok === false
-      ? pending.reject(new Error(message.message || message.code || "Device command failed."))
+      ? pending.reject(serialResultError(message))
       : pending.resolve(message);
   }, []);
 

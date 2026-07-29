@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   SERIAL_WRITE_CHUNK_BYTES,
   SERIAL_WRITE_CHUNK_DELAY_MS,
+  serialResultError,
   writeSerialLine,
 } from "../lib/serial-protocol.ts";
 
@@ -36,4 +37,14 @@ test("serial line chunk size must be a positive integer", async () => {
     writeSerialLine({ write: async () => undefined }, "status\n", { chunkBytes: 0 }),
     /positive integer/,
   );
+});
+
+test("serial errors retain the device code and HTTP status", () => {
+  const error = serialResultError({
+    code: "test_frame_failed",
+    message: "Frame upload was not accepted.",
+    data: { httpStatus: 502 },
+  });
+
+  assert.equal(error.message, "Frame upload was not accepted. (test_frame_failed; HTTP 502)");
 });
