@@ -3,7 +3,16 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AlertTriangle, Bell, HelpCircle, LogOut, ShieldCheck, UserRound } from "lucide-react";
+import {
+  AlertTriangle,
+  Bell,
+  HelpCircle,
+  LogOut,
+  Menu,
+  ShieldCheck,
+  UserRound,
+  X,
+} from "lucide-react";
 import type { CurrentProfile } from "@/lib/auth";
 import { navItems } from "@/lib/mock-data";
 import { createClient } from "@/lib/supabase/client";
@@ -21,6 +30,7 @@ export function AppShellClient({
   const pathname = usePathname();
   const router = useRouter();
   const [profileOpen, setProfileOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showPendingDangerAlert, setShowPendingDangerAlert] = useState(hasPendingDangerAlert);
   const profileName = profile?.name ?? "Account";
   const profileEmail = profile?.email ?? "Not signed in";
@@ -30,6 +40,31 @@ export function AppShellClient({
   useEffect(() => {
     setShowPendingDangerAlert(hasPendingDangerAlert);
   }, [hasPendingDangerAlert]);
+
+  useEffect(() => {
+    setSidebarOpen(false);
+    setProfileOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!sidebarOpen) {
+      return;
+    }
+
+    function closeSidebar(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setSidebarOpen(false);
+      }
+    }
+
+    document.body.classList.add("mobile-nav-open");
+    window.addEventListener("keydown", closeSidebar);
+
+    return () => {
+      document.body.classList.remove("mobile-nav-open");
+      window.removeEventListener("keydown", closeSidebar);
+    };
+  }, [sidebarOpen]);
 
   useEffect(() => {
     function updateDangerIndicator(event: Event) {
@@ -51,15 +86,29 @@ export function AppShellClient({
 
   return (
     <div className="app-shell">
-      <aside className="sidebar">
+      <aside
+        aria-label="Main menu"
+        className={sidebarOpen ? "sidebar open" : "sidebar"}
+        id="primary-sidebar"
+      >
         <div className="brand-block">
-          <div className="brand-mark">
-            <ShieldCheck size={22} />
+          <div className="brand-identity">
+            <div className="brand-mark">
+              <ShieldCheck size={22} />
+            </div>
+            <div>
+              <div className="brand-name">CareGuard</div>
+              <div className="brand-role">Home safety dashboard</div>
+            </div>
           </div>
-          <div>
-            <div className="brand-name">CareGuard</div>
-            <div className="brand-role">Home safety dashboard</div>
-          </div>
+          <button
+            aria-label="Close navigation menu"
+            className="sidebar-close"
+            onClick={() => setSidebarOpen(false)}
+            type="button"
+          >
+            <X size={20} />
+          </button>
         </div>
         <nav className="side-nav" aria-label="Primary navigation">
           {navItems.filter((item) => canUseApp && (!item.roles || item.roles.includes(profileRole))).map((item) => {
@@ -69,7 +118,12 @@ export function AppShellClient({
             const Icon = item.icon;
             const showDangerIndicator = item.href === "/alerts" && showPendingDangerAlert;
             return (
-              <Link className={active ? "nav-link active" : "nav-link"} href={item.href} key={item.href}>
+              <Link
+                className={active ? "nav-link active" : "nav-link"}
+                href={item.href}
+                key={item.href}
+                onClick={() => setSidebarOpen(false)}
+              >
                 <Icon size={18} />
                 <span>{item.label}</span>
                 {showDangerIndicator ? (
@@ -86,16 +140,40 @@ export function AppShellClient({
         </nav>
         {canUseApp ? (
           <div className="sidebar-footer">
-            <Link className="nav-link" href="/setup/select-room">
+            <Link
+              className="nav-link"
+              href="/setup/select-room"
+              onClick={() => setSidebarOpen(false)}
+            >
               <HelpCircle size={18} />
               <span>Device setup</span>
             </Link>
           </div>
         ) : null}
       </aside>
+      <button
+        aria-hidden={!sidebarOpen}
+        aria-label="Close navigation menu"
+        className={sidebarOpen ? "sidebar-backdrop visible" : "sidebar-backdrop"}
+        onClick={() => setSidebarOpen(false)}
+        tabIndex={sidebarOpen ? 0 : -1}
+        type="button"
+      />
       <div className="workspace">
         <header className="topbar">
-          <div className="mobile-brand">CareGuard</div>
+          <div className="mobile-header-brand">
+            <button
+              aria-controls="primary-sidebar"
+              aria-expanded={sidebarOpen}
+              aria-label="Open navigation menu"
+              className="mobile-menu-button"
+              onClick={() => setSidebarOpen(true)}
+              type="button"
+            >
+              <Menu size={21} />
+            </button>
+            <div className="mobile-brand">CareGuard</div>
+          </div>
           <div className="topbar-actions">
             <a className="danger-button emergency-services-button" href="tel:995">
               <AlertTriangle size={16} />

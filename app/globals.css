@@ -343,9 +343,11 @@ dd {
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
   position: sticky;
   top: 0;
+  z-index: 10;
 }
 
 .brand-block {
@@ -353,7 +355,15 @@ dd {
   border-bottom: 1px solid var(--border);
   display: flex;
   gap: 12px;
+  justify-content: space-between;
   padding: 20px;
+}
+
+.brand-identity {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  min-width: 0;
 }
 
 .brand-mark {
@@ -415,6 +425,13 @@ dd {
   border-top: 1px solid var(--border);
   margin-top: auto;
   padding: 12px;
+}
+
+.sidebar-close,
+.mobile-menu-button,
+.sidebar-backdrop,
+.mobile-header-brand {
+  display: none;
 }
 
 .workspace {
@@ -1739,12 +1756,69 @@ dd {
 }
 
 @media (max-width: 900px) {
+  body.mobile-nav-open {
+    overflow: hidden;
+  }
+
   .app-shell {
     grid-template-columns: 1fr;
   }
 
   .sidebar {
-    display: none;
+    box-shadow: 8px 0 28px rgba(31, 35, 32, 0.18);
+    display: flex;
+    inset: 0 auto 0 0;
+    max-width: calc(100vw - 48px);
+    position: fixed;
+    transform: translateX(-105%);
+    transition: transform 180ms ease, visibility 180ms;
+    visibility: hidden;
+    width: 280px;
+    z-index: 40;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  .sidebar-close,
+  .mobile-menu-button {
+    display: inline-flex;
+    flex: 0 0 auto;
+    min-height: 40px;
+    padding: 8px;
+    width: 40px;
+  }
+
+  .sidebar-backdrop {
+    background: rgba(31, 35, 32, 0.38);
+    border: 0;
+    border-radius: 0;
+    display: block;
+    inset: 0;
+    min-height: 0;
+    opacity: 0;
+    padding: 0;
+    pointer-events: none;
+    position: fixed;
+    transition: opacity 180ms ease, visibility 180ms;
+    visibility: hidden;
+    width: 100%;
+    z-index: 35;
+  }
+
+  .sidebar-backdrop.visible {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  .mobile-header-brand {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    min-width: 0;
   }
 
   .mobile-brand {
@@ -1824,7 +1898,26 @@ dd {
   }
 
   .topbar {
+    gap: 8px;
     padding: 0 16px;
+  }
+
+  .topbar-actions {
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  .profile-button {
+    padding-inline: 9px;
+  }
+
+  .profile-button span {
+    display: none;
+  }
+
+  .profile-popover {
+    max-width: calc(100vw - 32px);
+    min-width: min(260px, calc(100vw - 32px));
   }
 
   .form-grid {
@@ -1839,5 +1932,12 @@ dd {
   .modal-backdrop {
     align-items: flex-start;
     padding: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebar-backdrop {
+    transition: none;
   }
 }
