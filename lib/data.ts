@@ -20,12 +20,17 @@ import {
 export type DeviceRecord = {
   id: string;
   roomId: string;
+  deviceType?: DeviceType;
   firmware: string;
   status: string;
   heartbeat: string;
   signal: string;
   hardware: string;
   privacy: string;
+  cameraProfile?: string;
+  captureIntervalMs?: number;
+  configuredAt?: string;
+  lastSeenAt?: string;
 };
 
 export type RoomStatusEvent = {
@@ -76,10 +81,14 @@ type DeviceRow = {
   device_type: DeviceType;
   status: string;
   firmware_version: string | null;
+  last_seen_at: string | null;
   heartbeat_label: string | null;
   signal_label: string | null;
   hardware: string | null;
   privacy: string | null;
+  camera_profile?: string | null;
+  capture_interval_ms?: number | null;
+  configured_at?: string | null;
 };
 
 type AlertRow = {
@@ -361,13 +370,31 @@ function mapDevice(row: DeviceRow): DeviceRecord {
   return {
     id: row.device_uid,
     roomId: row.room_id,
+    deviceType: row.device_type,
     firmware: row.firmware_version ?? "",
     status: row.status,
-    heartbeat: row.heartbeat_label ?? "No heartbeat",
+    heartbeat: heartbeatFromTimestamp(row.last_seen_at, row.heartbeat_label),
     signal: row.signal_label ?? "",
     hardware: row.hardware ?? "",
     privacy: row.privacy ?? "",
+    cameraProfile: row.camera_profile ?? undefined,
+    captureIntervalMs: row.capture_interval_ms ?? undefined,
+    configuredAt: row.configured_at ?? undefined,
+    lastSeenAt: row.last_seen_at ?? undefined,
   };
+}
+
+function heartbeatFromTimestamp(value: string | null, fallback: string | null) {
+  if (!value) return fallback ?? "No heartbeat";
+  const elapsedSeconds = Math.max(0, Math.floor((Date.now() - new Date(value).getTime()) / 1000));
+  if (!Number.isFinite(elapsedSeconds)) return fallback ?? "No heartbeat";
+  if (elapsedSeconds < 5) return "Just now";
+  if (elapsedSeconds < 60) return `${elapsedSeconds} sec ago`;
+  const minutes = Math.floor(elapsedSeconds / 60);
+  if (minutes < 60) return `${minutes} min ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hr ago`;
+  return `${Math.floor(hours / 24)} days ago`;
 }
 
 function mapEvent(row: EventRow): RoomStatusEvent {

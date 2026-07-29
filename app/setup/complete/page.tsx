@@ -1,39 +1,42 @@
+"use client";
+
 import Link from "next/link";
-import { CheckCircle2, Network } from "lucide-react";
+import { CheckCircle2, RefreshCw } from "lucide-react";
 import { SetupShell } from "@/components/SetupShell";
-import { requireCurrentProfile } from "@/lib/auth";
+import { useDeviceSetup } from "@/components/DeviceSetupProvider";
 
-export const dynamic = "force-dynamic";
-
-export default async function SetupCompletePage() {
-  await requireCurrentProfile("/setup/complete");
-
+export default function SetupCompletePage() {
+  const setup = useDeviceSetup();
+  const device = setup.provisionedDevice;
   return (
     <SetupShell currentStep={4}>
       <section className="setup-card narrow">
         <div className="complete-message">
           <CheckCircle2 size={44} />
-          <h1>Verification ready</h1>
-          <p>The selected home area is paired, calibrated, and ready to appear in the dashboard.</p>
+          <h1>{device?.status === "online" ? "Camera is online" : "Provisioning complete"}</h1>
+          <p>The assigned room and server-derived heartbeat below come from the device registry.</p>
         </div>
-        <article className="panel">
-          <h2>Device summary</h2>
-          <dl className="definition-list">
-            <div><dt>Device type</dt><dd>Room camera or ESP32 + VL53L5X</dd></div>
-            <div><dt>Assigned area</dt><dd>Blk 123, #08-456 · Bedroom</dd></div>
-            <div><dt>Connection</dt><dd>Online</dd></div>
-            <div><dt>Firmware</dt><dd>0.1.0</dd></div>
-            <div><dt>Local alert output</dt><dd>Servo flag available for demo</dd></div>
-            <div><dt>Dashboard state</dt><dd>Home safety monitoring</dd></div>
-          </dl>
-        </article>
-        <button className="secondary-button full" type="button" disabled>
-          <Network size={16} />
-          Test alert unavailable in UI-only prototype
+        {device ? (
+          <article className="panel">
+            <h2>Device summary</h2>
+            <dl className="definition-list">
+              <div><dt>Device</dt><dd>{device.id}</dd></div>
+              <div><dt>Assigned area</dt><dd>{device.homeLabel ? `${device.homeLabel} · ` : ""}{device.roomName}</dd></div>
+              <div><dt>Connection</dt><dd><span className={`status-pill ${device.status}`}>{device.status}</span></dd></div>
+              <div><dt>Firmware</dt><dd>{device.firmwareVersion}</dd></div>
+              <div><dt>Camera profile</dt><dd>{device.cameraProfile}</dd></div>
+              <div><dt>Cadence</dt><dd>{device.captureIntervalMs} ms · 2 FPS target</dd></div>
+              <div><dt>Last heartbeat</dt><dd>{device.lastSeenAt ? new Date(device.lastSeenAt).toLocaleString() : "Awaiting first accepted frame"}</dd></div>
+            </dl>
+          </article>
+        ) : <div className="setup-notice warning">No provisioned device is held in this setup session. Return to the provisioning step.</div>}
+        <button className="secondary-button full" type="button" onClick={() => void setup.refreshSummary()} disabled={!device || setup.busy}>
+          <RefreshCw size={16} /> Refresh heartbeat
         </button>
+        {setup.error && <div className="action-error">{setup.error}</div>}
         <div className="setup-actions">
-          <Link className="secondary-button" href="/settings">Review settings</Link>
-          <Link className="primary-button" href="/dashboard">Finish setup</Link>
+          <Link className="secondary-button" href="/setup/identify">Review setup</Link>
+          <Link className="primary-button" href="/devices">Finish setup</Link>
         </div>
       </section>
     </SetupShell>

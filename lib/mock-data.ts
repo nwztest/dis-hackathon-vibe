@@ -364,9 +364,9 @@ export const navItems = [
 
 export const setupSteps = [
   { href: "/setup/select-room", label: "Select area" },
-  { href: "/setup/identify", label: "Pair node" },
-  { href: "/setup/calibration", label: "Calibrate" },
-  { href: "/setup/complete", label: "Verify" },
+  { href: "/setup/identify", label: "Provision" },
+  { href: "/setup/calibration", label: "Test frame" },
+  { href: "/setup/complete", label: "Complete" },
 ];
 
 export const iconMap = {

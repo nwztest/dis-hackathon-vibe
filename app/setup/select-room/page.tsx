@@ -1,71 +1,53 @@
+"use client";
+
 import Link from "next/link";
-import { Search, Wifi, WifiOff, Wrench } from "lucide-react";
+import { Camera, Search, ShowerHead, Wifi, WifiOff, Wrench } from "lucide-react";
 import { SetupShell } from "@/components/SetupShell";
-import { getDevices, getHomes, getRooms } from "@/lib/data";
+import { useDeviceSetup } from "@/components/DeviceSetupProvider";
 import { formatHomeAddress } from "@/lib/mock-data";
-import { requireCurrentProfile } from "@/lib/auth";
 
-export const dynamic = "force-dynamic";
-
-export default async function SetupSelectRoomPage() {
-  await requireCurrentProfile("/setup/select-room");
-  const [devices, rooms, homes] = await Promise.all([getDevices(), getRooms(), getHomes()]);
-
+export default function SetupSelectRoomPage() {
+  const setup = useDeviceSetup();
   return (
     <SetupShell currentStep={1}>
       <section className="setup-card">
         <div className="section-heading">
-          <h1>Select target</h1>
-          <p>Choose the senior home area to install, replace, or recalibrate.</p>
+          <h1>Select camera room</h1>
+          <p>Choose an existing camera to rotate credentials, or a room where a replacement camera will be installed.</p>
         </div>
+        {setup.role !== "admin" && <div className="setup-notice">Device details are read-only. Only administrators can provision hardware.</div>}
         <div className="search-row compact">
           <Search size={18} />
-          <input placeholder="Search by senior, block, unit, or area" />
-          <select aria-label="Area type">
-            <option>All areas</option>
-            <option>Rooms</option>
-            <option>Showers</option>
-          </select>
+          <input aria-label="Search rooms" placeholder="Search by senior, block, unit, or area" />
         </div>
         <div className="setup-room-grid">
-          {rooms.map((room) => {
-            const home = homes.find((item) => item.id === room.homeId);
-            const device = devices.find((item) => item.roomId === room.id);
-            const deviceStatus = device?.status ?? "unassigned";
-            const StatusIcon =
-              deviceStatus === "offline" ? WifiOff : deviceStatus === "maintenance" ? Wrench : Wifi;
-            const setupAction =
-              deviceStatus === "offline"
-                ? "Replace or reconnect node"
-                : deviceStatus === "maintenance"
-                  ? "Resume after service"
-                  : "Recalibrate or replace node";
-
+          {setup.rooms.map((room) => {
+            const home = setup.homes.find((item) => item.id === room.homeId);
+            const device = setup.devices.find((item) => item.roomId === room.id);
+            const selected = setup.selectedRoomId === room.id;
+            const StatusIcon = device?.status === "offline" ? WifiOff : device?.status === "maintenance" ? Wrench : Wifi;
             return (
-              <button className="setup-room-card" type="button" key={room.id}>
+              <button className={`setup-room-card${selected ? " selected" : ""}`} type="button" key={room.id} onClick={() => setup.selectRoom(room.id)}>
                 <div className="setup-room-card-head">
                   <div>
                     <strong>{home?.seniorName ?? "Unknown senior"} · {room.name}</strong>
-                    <span>{home ? formatHomeAddress(home) : "Unknown home"} · {room.type === "shower" ? "Shower ToF" : "Room camera"}</span>
+                    <span>{home ? formatHomeAddress(home) : "Unknown home"}</span>
                   </div>
-                  <span className={`status-pill ${deviceStatus}`}>{deviceStatus}</span>
+                  <span className={`status-pill ${device?.status ?? "unassigned"}`}>{device?.status ?? "unassigned"}</span>
                 </div>
                 <div className="setup-device-meta">
-                  <span>
-                    <StatusIcon size={15} />
-                    {device?.id ?? "No device assigned"}
-                  </span>
+                  <span>{room.type === "room" ? <Camera size={15} /> : <ShowerHead size={15} />}{room.type === "room" ? "Room camera" : "Shower ToF"}</span>
+                  <span><StatusIcon size={15} />{device?.id ?? "No device assigned"}</span>
                   <span>{device?.heartbeat ?? "Not connected"}</span>
-                  <span>{device?.signal ?? "No signal"}{device ? ` · firmware ${device.firmware}` : ""}</span>
-                  <span>{setupAction}</span>
+                  <span>{room.type === "shower" ? "Existing ToF records preserved; provisioning is not available yet." : device ? "Existing device or replacement" : "New camera assignment"}</span>
                 </div>
               </button>
             );
           })}
         </div>
         <div className="setup-actions">
-          <Link className="secondary-button" href="/dashboard">Cancel setup</Link>
-          <Link className="primary-button" href="/setup/identify">Next step</Link>
+          <Link className="secondary-button" href="/devices">Cancel setup</Link>
+          <Link className={`primary-button${setup.selectedRoom?.type === "shower" ? " disabled" : ""}`} href={setup.selectedRoom?.type === "room" ? "/setup/identify" : "#"}>Next step</Link>
         </div>
       </section>
     </SetupShell>

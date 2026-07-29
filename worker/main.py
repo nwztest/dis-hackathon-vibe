@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, Literal
 
 import numpy as np
-from fastapi import FastAPI, Header, HTTPException
+from fastapi import FastAPI, Header, HTTPException, Request
 from pydantic import BaseModel, Field
 from PIL import Image, ImageDraw
 from dotenv import load_dotenv
@@ -109,8 +109,41 @@ def health() -> dict[str, Any]:
 @app.post("/infer-frame", response_model=InferFrameResponse)
 def infer_frame(payload: InferFrameRequest, authorization: str | None = Header(default=None)) -> InferFrameResponse:
     require_worker_secret(authorization)
-
     image = decode_image(payload.imageBase64)
+    return process_frame(payload, image, include_annotation=True)
+
+
+@app.post("/infer-frame-bytes", response_model=InferFrameResponse)
+async def infer_frame_bytes(
+    request: Request,
+    authorization: str | None = Header(default=None),
+    x_room_id: str | None = Header(default=None),
+    x_captured_at: str | None = Header(default=None),
+    x_frame_rate: str | None = Header(default=None),
+) -> InferFrameResponse:
+    require_worker_secret(authorization)
+    if not x_room_id or not x_captured_at or x_frame_rate not in {"5s", "2s", "1fps", "2fps"}:
+        raise HTTPException(status_code=400, detail="Valid X-Room-Id, X-Captured-At, and X-Frame-Rate headers are required.")
+    content_type = request.headers.get("content-type", "").split(";", 1)[0].strip().lower()
+    if content_type != "image/jpeg":
+        raise HTTPException(status_code=415, detail="Content-Type must be image/jpeg.")
+    body = await request.body()
+    if len(body) > 1024 * 1024:
+        raise HTTPException(status_code=413, detail="JPEG exceeds the 1 MB limit.")
+    payload = InferFrameRequest(
+        roomId=x_room_id,
+        capturedAt=x_captured_at,
+        frameRate=x_frame_rate,
+        imageBase64="",
+    )
+    return process_frame(payload, decode_image_bytes(body), include_annotation=False)
+
+
+def process_frame(
+    payload: InferFrameRequest,
+    image: Image.Image,
+    include_annotation: bool,
+) -> InferFrameResponse:
     blood_detected = blood_detection_enabled() and detect_blood_like_region(image)
     mode = worker_mode()
 
@@ -121,7 +154,7 @@ def infer_frame(payload: InferFrameRequest, authorization: str | None = Header(d
         raise HTTPException(status_code=503, detail="Ultralytics YOLO is not installed or could not be loaded.")
 
     try:
-        return yolo_response(payload, image, blood_detected)
+        return yolo_response(payload, image, blood_detected, include_annotation)
     except Exception as exc:
         if mode == "yolo":
             raise HTTPException(status_code=500, detail=f"YOLO inference failed: {exc}") from exc
@@ -157,10 +190,21 @@ def decode_image(image_base64: str) -> Image.Image:
     raw = image_base64.split(",", 1)[1] if "," in image_base64 else image_base64
     try:
         data = base64.b64decode(raw, validate=True)
-        image = Image.open(io.BytesIO(data))
-        return image.convert("RGB")
+        return decode_image_bytes(data)
     except Exception as exc:
         raise HTTPException(status_code=400, detail="imageBase64 is not a valid image.") from exc
+
+
+def decode_image_bytes(data: bytes) -> Image.Image:
+    try:
+        image = Image.open(io.BytesIO(data))
+        image.verify()
+        image = Image.open(io.BytesIO(data))
+        if image.format != "JPEG":
+            raise ValueError("Image is not JPEG.")
+        return image.convert("RGB")
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail="Body is not a valid JPEG image.") from exc
 
 
 def detect_blood_like_region(image: Image.Image) -> bool:
@@ -261,7 +305,12 @@ def yolo_available() -> bool:
         return False
 
 
-def yolo_response(payload: InferFrameRequest, image: Image.Image, blood_detected: bool) -> InferFrameResponse:
+def yolo_response(
+    payload: InferFrameRequest,
+    image: Image.Image,
+    blood_detected: bool,
+    include_annotation: bool = True,
+) -> InferFrameResponse:
     model = load_yolo_model()
     results = model.predict(np.asarray(image), verbose=False)
     result = results[0] if results else None
@@ -269,7 +318,7 @@ def yolo_response(payload: InferFrameRequest, image: Image.Image, blood_detected
 
     if not person:
         temporal = temporal_no_person(payload.roomId, payload.capturedAt)
-        annotated_image = annotated_image_base64(result, fall_label(temporal)) if show_yolo_boxes() else None
+        annotated_image = annotated_image_base64(result, fall_label(temporal)) if include_annotation and show_yolo_boxes() else None
         return InferFrameResponse(
             roomId=payload.roomId,
             capturedAt=payload.capturedAt,
@@ -294,7 +343,7 @@ def yolo_response(payload: InferFrameRequest, image: Image.Image, blood_detected
     )
     confidence = float(round(person["confidence"] * 100, 1))
     evidence = temporal.evidence or f"YOLO pose estimated {posture} posture."
-    annotated_image = annotated_image_base64(result, fall_label(temporal)) if show_yolo_boxes() else None
+    annotated_image = annotated_image_base64(result, fall_label(temporal)) if include_annotation and show_yolo_boxes() else None
 
     return InferFrameResponse(
         roomId=payload.roomId,

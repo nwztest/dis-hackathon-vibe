@@ -32,6 +32,7 @@ export type DemoApplyResult = DemoRuleDecision & {
 export async function applyDemoInferenceResult(
   supabase: SupabaseClientLike,
   input: DemoInferenceInput,
+  options: { deviceDatabaseId?: string } = {},
 ): Promise<DemoApplyResult> {
   const { data: room, error: roomError } = await supabase
     .from("rooms")
@@ -43,12 +44,20 @@ export async function applyDemoInferenceResult(
   const roomRow = room as RoomRow;
   if (roomRow.type !== "room") throw new Error("Demo camera inference can only update room camera areas.");
 
-  const { data: device } = await supabase
-    .from("devices")
-    .select("id")
-    .eq("room_id", input.roomId)
-    .eq("device_type", "room_camera")
-    .maybeSingle();
+  let device: DeviceRow | null = null;
+  if (options.deviceDatabaseId) {
+    device = { id: options.deviceDatabaseId };
+  } else {
+    const { data } = await supabase
+      .from("devices")
+      .select("id")
+      .eq("room_id", input.roomId)
+      .eq("device_type", "room_camera")
+      .eq("status", "online")
+      .limit(1)
+      .maybeSingle();
+    device = data as DeviceRow | null;
+  }
 
   const previous = previousRuleState(roomRow.status_metadata);
   previous.currentStatus = previous.currentStatus ?? roomRow.current_status;
@@ -84,7 +93,7 @@ export async function applyDemoInferenceResult(
     const { error: eventError } = await supabase.from("room_status_events").insert({
       home_id: roomRow.home_id,
       room_id: input.roomId,
-      device_id: (device as DeviceRow | null)?.id ?? null,
+      device_id: device?.id ?? null,
       status: decision.status,
       reason: decision.evidence,
       confidence: decisionConfidence ?? null,
@@ -144,7 +153,7 @@ export async function applyDemoInferenceResult(
         .insert({
           home_id: roomRow.home_id,
           room_id: input.roomId,
-          device_id: (device as DeviceRow | null)?.id ?? null,
+          device_id: device?.id ?? null,
           severity: decision.severity,
           status: "open",
           reason: decision.reason,

@@ -1,39 +1,45 @@
+"use client";
+
 import Link from "next/link";
-import { CheckCircle2, Move3D, Ruler, ShieldCheck } from "lucide-react";
+import { CheckCircle2, CircleDashed, CloudCog, HeartPulse, Wifi } from "lucide-react";
 import { SetupShell } from "@/components/SetupShell";
-import { requireCurrentProfile } from "@/lib/auth";
+import { useDeviceSetup } from "@/components/DeviceSetupProvider";
 
-export const dynamic = "force-dynamic";
-
-export default async function SetupCalibrationPage() {
-  await requireCurrentProfile("/setup/calibration");
-
+export default function SetupCalibrationPage() {
+  const setup = useDeviceSetup();
+  const checks = [
+    { key: "wifi", label: "Wi-Fi association", icon: Wifi },
+    { key: "api", label: "HTTPS device API", icon: CloudCog },
+    { key: "inference", label: "JPEG inference", icon: CheckCircle2 },
+    { key: "heartbeat", label: "Dashboard heartbeat", icon: HeartPulse },
+  ] as const;
   return (
     <SetupShell currentStep={3}>
       <section className="setup-card narrow">
         <div className="section-heading">
-          <h1>Calibrate sensors</h1>
-          <p>Confirm the area is empty before capturing the room camera reference or shower depth baseline.</p>
+          <h1>Verify a test frame</h1>
+          <p>The device captures one transient JPEG and reports each stage. The browser never receives the image.</p>
         </div>
-        <ul className="setup-checklist">
-          <li><CheckCircle2 size={16} /> Room camera sees bed, sofa, chair, and floor zones clearly.</li>
-          <li><CheckCircle2 size={16} /> Shower VL53L5X faces downward or diagonally toward the floor.</li>
-          <li><CheckCircle2 size={16} /> No person is inside the room or shower during baseline capture.</li>
-          <li><CheckCircle2 size={16} /> Small shower toiletries may remain; large blob changes should not be learned as baseline.</li>
-        </ul>
-        <div className="calibration-box">
-          <ShieldCheck size={36} />
-          <strong>Baseline capture ready</strong>
-          <span>Room cameras analyze still photos only. Showers remain depth-only.</span>
+        <div className="test-result-grid">
+          {checks.map(({ key, label, icon: Icon }) => {
+            const value = setup.testResults?.[key];
+            return (
+              <div className={`test-result ${value === true ? "passed" : value === false ? "failed" : ""}`} key={key}>
+                {value === undefined ? <CircleDashed size={19} /> : <Icon size={19} />}
+                <span>{label}</span><strong>{value === undefined ? "Pending" : value ? "Passed" : "Failed"}</strong>
+              </div>
+            );
+          })}
         </div>
-        <div className="metric-grid">
-          <div className="metric"><Move3D size={18} /><span>Room zones</span><strong>Mapped</strong></div>
-          <div className="metric"><Ruler size={18} /><span>Shower floor distance</span><strong>1.7 m</strong></div>
-          <div className="metric"><ShieldCheck size={18} /><span>Clutter tolerance</span><strong>Enabled</strong></div>
-        </div>
+        <button type="button" className="primary-button full" onClick={() => void setup.runTests()} disabled={!setup.serialConnected || setup.busy}>
+          {setup.busy ? "Testing…" : "Capture and upload test frame"}
+        </button>
+        {!setup.serialConnected && <div className="setup-notice warning">Return to step 2 and connect the provisioned camera over Web Serial.</div>}
+        {setup.testResults && <div className="setup-notice">{setup.testResults.message}</div>}
+        {setup.error && <div className="action-error">{setup.error}</div>}
         <div className="setup-actions">
           <Link className="secondary-button" href="/setup/identify">Back</Link>
-          <Link className="primary-button" href="/setup/complete">Next step</Link>
+          <Link className={`primary-button${!setup.testResults ? " disabled" : ""}`} href={setup.testResults ? "/setup/complete" : "#"}>Review device</Link>
         </div>
       </section>
     </SetupShell>

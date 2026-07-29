@@ -1,7 +1,11 @@
 from datetime import datetime, timedelta, timezone
+import base64
+import io
+import os
 import unittest
 
 import main
+from PIL import Image
 
 
 class FallDetectionTests(unittest.TestCase):
@@ -84,6 +88,41 @@ class FallDetectionTests(unittest.TestCase):
 
         self.assertEqual(result.fall_stage, "none")
         self.assertFalse(result.fall_detected)
+
+    def test_binary_and_base64_paths_produce_equivalent_normalized_results(self) -> None:
+        buffer = io.BytesIO()
+        Image.new("RGB", (32, 24), (12, 34, 56)).save(buffer, format="JPEG")
+        jpeg = buffer.getvalue()
+        payload = main.InferFrameRequest(
+            roomId="room-equivalence",
+            capturedAt="2026-07-29T00:00:00Z",
+            frameRate="2fps",
+            imageBase64=base64.b64encode(jpeg).decode("ascii"),
+        )
+        previous_mode = os.environ.get("WORKER_MODE")
+        previous_scenario = os.environ.get("DEMO_SCENARIO")
+        os.environ["WORKER_MODE"] = "mock"
+        os.environ["DEMO_SCENARIO"] = "empty"
+        try:
+            base64_result = main.process_frame(payload, main.decode_image(payload.imageBase64), True)
+            binary_result = main.process_frame(payload, main.decode_image_bytes(jpeg), False)
+        finally:
+            if previous_mode is None:
+                os.environ.pop("WORKER_MODE", None)
+            else:
+                os.environ["WORKER_MODE"] = previous_mode
+            if previous_scenario is None:
+                os.environ.pop("DEMO_SCENARIO", None)
+            else:
+                os.environ["DEMO_SCENARIO"] = previous_scenario
+
+        self.assertEqual(base64_result.model_dump(), binary_result.model_dump())
+
+    def test_binary_decoder_rejects_non_jpeg_images(self) -> None:
+        buffer = io.BytesIO()
+        Image.new("RGB", (8, 8), "white").save(buffer, format="PNG")
+        with self.assertRaises(main.HTTPException):
+            main.decode_image_bytes(buffer.getvalue())
 
     def test_slow_transition_to_lying_is_not_a_fall(self) -> None:
         started_at = datetime(2026, 7, 24, 1, 0, tzinfo=timezone.utc)

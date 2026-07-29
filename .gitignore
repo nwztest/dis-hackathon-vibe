@@ -9,3 +9,5 @@ worker/.venv/
 worker/*.pt
 worker/models/
 *.pyc
+.tools/
+firmware/**/.pio/
