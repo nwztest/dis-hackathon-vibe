@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { DeviceRecord } from "@/lib/data";
 import type { Room, SeniorHome } from "@/lib/mock-data";
+import { writeSerialLine } from "@/lib/serial-protocol";
 
 type SerialPortLike = {
   open(options: { baudRate: number }): Promise<void>;
@@ -178,11 +179,11 @@ export function DeviceSetupProvider({
       if (!port.writable) throw new Error("The selected serial port is not writable.");
       const writer = port.writable.getWriter();
       try {
-        await writer.write(new TextEncoder().encode(JSON.stringify({
+        await writeSerialLine(writer, JSON.stringify({
           protocolVersion: 1,
           command: "status",
           requestId,
-        }) + "\n"));
+        }) + "\n");
       } finally {
         writer.releaseLock();
       }
@@ -219,7 +220,7 @@ export function DeviceSetupProvider({
     });
     const writer = port.writable.getWriter();
     try {
-      await writer.write(new TextEncoder().encode(line));
+      await writeSerialLine(writer, line);
     } finally {
       writer.releaseLock();
     }

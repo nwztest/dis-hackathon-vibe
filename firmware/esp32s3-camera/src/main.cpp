@@ -322,6 +322,7 @@ void pollSerial() {
 }  // namespace
 
 void setup() {
+  Serial.setRxBufferSize(kMaximumSerialLine + 1);
   Serial.begin(115200);
   serialLine.reserve(kMaximumSerialLine);
   loadConfiguration();
