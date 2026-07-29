@@ -390,6 +390,19 @@ dd {
   display: flex;
   gap: 10px;
   padding: 10px 12px;
+  position: relative;
+}
+
+.nav-alert-indicator {
+  background: var(--danger);
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgb(180 35 24 / 18%);
+  height: 10px;
+  position: absolute;
+  right: 8px;
+  top: 7px;
+  width: 10px;
 }
 
 .nav-link.active {
@@ -435,6 +448,17 @@ dd {
   background: var(--danger);
   border-color: var(--danger);
   color: #fff;
+}
+
+.emergency-services-button {
+  align-items: center;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  display: inline-flex;
+  gap: 8px;
+  justify-content: center;
+  min-height: 40px;
+  padding: 9px 14px;
 }
 
 .icon-button {
@@ -531,6 +555,11 @@ dd {
   gap: 6px;
 }
 
+.page-heading > .page-heading-actions {
+  align-items: end;
+  justify-items: end;
+}
+
 .filter-row {
   display: flex;
   flex-wrap: wrap;
@@ -562,6 +591,45 @@ dd {
 
 .status-filter strong {
   font-size: 13px;
+}
+
+.incident-summary {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.incident-summary > div {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 4px;
+  padding: 16px;
+}
+
+.incident-summary strong {
+  font-size: 24px;
+}
+
+.incident-summary span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.incident-summary > div {
+  align-items: center;
+  grid-template-columns: auto auto 1fr;
+}
+
+.incident-summary > div.urgent {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+}
+
+.incident-summary > div.urgent svg {
+  color: var(--danger);
 }
 
 .dashboard-search-panel {
@@ -1030,6 +1098,200 @@ dd {
   margin: 0;
 }
 
+.incident-section {
+  display: grid;
+  gap: 12px;
+}
+
+.incident-section-heading {
+  align-items: flex-end;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.incident-section-heading > div {
+  display: grid;
+  gap: 4px;
+}
+
+.incident-section-heading > strong {
+  align-items: center;
+  background: var(--surface-alt);
+  border-radius: 999px;
+  display: inline-flex;
+  height: 30px;
+  justify-content: center;
+  min-width: 30px;
+  padding: 0 9px;
+}
+
+.incident-list {
+  display: grid;
+  gap: 12px;
+}
+
+.incident-card {
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--warning);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(250px, 1.3fr) minmax(330px, 1.4fr) auto;
+  padding: 13px 14px;
+}
+
+.incident-card.danger {
+  border-left-color: var(--danger);
+}
+
+.incident-card-main {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.incident-title-row {
+  align-items: center;
+  display: flex;
+  gap: 9px;
+}
+
+.incident-title-row > span {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.incident-evidence {
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.incident-facts {
+  display: grid;
+  column-gap: clamp(16px, 2vw, 32px);
+  grid-template-columns:
+    minmax(72px, 0.8fr)
+    minmax(72px, 0.8fr)
+    minmax(86px, 1fr)
+    minmax(180px, 2fr);
+  row-gap: 6px;
+  margin: 0;
+  width: 100%;
+}
+
+.incident-facts > div {
+  min-width: 0;
+}
+
+.incident-facts dt {
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+
+.incident-facts dd {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.incident-facts > div:last-child dd {
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.incident-actions {
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.incident-actions button,
+.incident-actions .secondary-button {
+  min-height: 36px;
+  padding: 7px 11px;
+  white-space: nowrap;
+}
+
+.incident-more-button {
+  color: var(--muted);
+}
+
+.incident-more-menu {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(31, 35, 32, 0.16);
+  display: grid;
+  min-width: 190px;
+  padding: 6px;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 10;
+}
+
+.incident-more-menu a,
+.incident-more-menu button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: var(--text);
+  display: flex;
+  font-weight: 500;
+  gap: 9px;
+  justify-content: flex-start;
+  min-height: 36px;
+  padding: 8px 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.incident-more-menu a:hover,
+.incident-more-menu button:hover {
+  background: var(--surface-alt);
+}
+
+.incident-more-menu .danger-menu-item {
+  color: var(--danger);
+}
+
+.action-error {
+  color: var(--danger);
+  flex-basis: 100%;
+  font-size: 12px;
+  max-width: 180px;
+  text-align: right;
+}
+
+.incident-empty {
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--muted);
+  display: flex;
+  gap: 9px;
+  padding: 16px;
+}
+
+.incident-empty svg {
+  color: var(--ok);
+}
+
 .table-header,
 .table-row {
   align-items: center;
@@ -1406,12 +1668,22 @@ dd {
     flex-direction: column;
   }
 
+  .page-heading > .page-heading-actions {
+    align-items: start;
+    justify-items: start;
+  }
+
   .alert-row,
+  .incident-card,
   .device-table,
   .user-table,
   .nested-room-row,
   .home-group-meta,
   .dashboard-search-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .incident-summary {
     grid-template-columns: 1fr;
   }
 
@@ -1460,6 +1732,11 @@ dd {
 
   .form-grid {
     grid-template-columns: 1fr;
+  }
+
+  .incident-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 12px;
   }
 
   .modal-backdrop {

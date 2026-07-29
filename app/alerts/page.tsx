@@ -14,8 +14,8 @@ export default async function AlertsPage() {
       <main className="page-content">
         <div className="page-heading">
           <div>
-            <h1>Alerts</h1>
-            <p>Review open, acknowledged, and resolved home safety events.</p>
+            <h1>Active alerts</h1>
+            <p>A focused response queue for incidents that still need caregiver action.</p>
           </div>
         </div>
         <AlertsFilterView alerts={alerts} homes={homes} rooms={rooms} />

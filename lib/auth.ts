@@ -72,7 +72,7 @@ export async function getSignedInDestination() {
   const profile = await getCurrentProfile();
   if (!profile) return null;
 
-  return approvedRoles.includes(profile.role) ? "/dashboard" : "/pending-approval";
+  return approvedRoles.includes(profile.role) ? "/alerts" : "/pending-approval";
 }
 
 export async function requireCurrentProfile(nextPath: string, allowedRoles: UserRole[] = approvedRoles) {

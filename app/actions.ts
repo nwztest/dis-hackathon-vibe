@@ -81,11 +81,33 @@ export async function createRoomAction(formData: FormData): Promise<ActionState>
 }
 
 export async function acknowledgeAlertAction(alertId: string): Promise<void> {
-  await updateAlert(alertId, "acknowledged");
+  const result = await updateAlert(alertId, "acknowledged");
+  if (!result.ok && hasSupabaseEnv()) throw new Error(result.message);
 }
 
 export async function resolveAlertAction(alertId: string): Promise<void> {
-  await updateAlert(alertId, "resolved");
+  const result = await updateAlert(alertId, "resolved");
+  if (!result.ok && hasSupabaseEnv()) throw new Error(result.message);
+}
+
+export async function escalateAlertAction(alertId: string): Promise<void> {
+  if (!hasSupabaseEnv()) return;
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("alerts")
+    .update({ severity: "danger" })
+    .eq("id", alertId)
+    .eq("severity", "suspicious")
+    .neq("status", "resolved")
+    .select("room_id")
+    .single();
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/alerts");
+  revalidatePath("/dashboard");
+  if (data?.room_id) revalidatePath(`/rooms/${data.room_id}`);
 }
 
 export async function updateUserRoleAction(profileId: string, role: "unapproved" | "caregiver"): Promise<void> {
