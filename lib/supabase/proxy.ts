@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { hasSupabaseEnv, supabasePublishableKey, supabaseUrl } from "./env";
 
-const publicPaths = new Set(["/", "/sign-in"]);
+const publicPaths = new Set(["/", "/sign-in", "/reset-password"]);
 
 export async function updateSession(request: NextRequest) {
   if (!hasSupabaseEnv() || !supabaseUrl || !supabasePublishableKey) {

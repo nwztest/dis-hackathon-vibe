@@ -17,9 +17,27 @@ The migrations create homes, rooms, devices, alerts, room status events, audit e
 policies, and a service-only `device_credentials` table. Camera images are transient and are never
 stored by the application.
 
+### Auth redirect configuration
+
+Add the deployed equivalents of these URLs to the Supabase Auth redirect allow list:
+
+```text
+http://localhost:3000/auth/confirm
+http://localhost:3000/auth/reset
+```
+
+The default Supabase recovery email works with `/auth/reset`. For a recovery link that can be opened
+in a different browser from the one where it was requested, configure the Reset password email
+template to send its token hash directly:
+
+```html
+<a href="{{ .RedirectTo }}?token_hash={{ .TokenHash }}&type=recovery">Reset password</a>
+```
+
 ## Routes
 
 - `/sign-in`
+- `/reset-password`
 - `/dashboard`
 - `/demo/camera`
 - `/rooms/bedroom-123`

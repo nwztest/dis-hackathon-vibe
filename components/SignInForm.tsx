@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useState, useTransition } from "react";
+import { FormEvent, MouseEvent, useState, useTransition } from "react";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/client";
 
@@ -13,10 +13,18 @@ export function SignInForm() {
   const searchParams = useSearchParams();
   const routeMessage = searchParams.get("message");
   const initialMessage =
-    routeMessage === "confirmation-error" ? "Confirmation link could not be verified. Try signing in or request a new account email." : "";
+    routeMessage === "confirmation-error"
+      ? "Confirmation link could not be verified. Try signing in or request a new account email."
+      : routeMessage === "recovery-error"
+        ? "That password reset link is invalid or has expired. Request a new link and try again."
+        : routeMessage === "password-updated"
+          ? "Your password has been updated. Sign in with your new password."
+          : "";
   const [mode, setMode] = useState<AuthMode>("sign-in");
   const [message, setMessage] = useState(initialMessage);
-  const [messageTone, setMessageTone] = useState<"default" | "success">("default");
+  const [messageTone, setMessageTone] = useState<"default" | "success">(
+    routeMessage === "password-updated" ? "success" : "default",
+  );
   const [isPending, startTransition] = useTransition();
   const next = searchParams.get("next") ?? "/alerts";
   const isSignIn = mode === "sign-in";
@@ -78,14 +86,19 @@ export function SignInForm() {
     setMessageTone("default");
   }
 
-  function onResetPassword(event: FormEvent<HTMLButtonElement>) {
+  function onResetPassword(event: MouseEvent<HTMLButtonElement>) {
     const form = event.currentTarget.form;
-    const formData = form ? new FormData(form) : null;
-    const email = String(formData?.get("email") ?? "");
+    const emailInput = form?.elements.namedItem("email");
 
-    if (!email) {
+    if (!(emailInput instanceof HTMLInputElement) || !emailInput.value.trim()) {
       setMessage("Enter your email address first.");
       setMessageTone("default");
+      emailInput instanceof HTMLInputElement && emailInput.focus();
+      return;
+    }
+
+    if (!emailInput.checkValidity()) {
+      emailInput.reportValidity();
       return;
     }
 
@@ -99,15 +112,15 @@ export function SignInForm() {
       setMessage("");
       setMessageTone("default");
       const supabase = createClient();
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/sign-in`,
+      const { error } = await supabase.auth.resetPasswordForEmail(emailInput.value.trim(), {
+        redirectTo: `${window.location.origin}/auth/reset`,
       });
       if (error) {
         setMessage(error.message);
         return;
       }
       setMessageTone("success");
-      setMessage("Password reset email sent.");
+      setMessage("If an account exists for that email, a password reset link has been sent.");
     });
   }
 
