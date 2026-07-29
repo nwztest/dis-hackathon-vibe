@@ -359,7 +359,7 @@ export const navItems = [
   { href: "/devices", label: "Devices", icon: Wifi },
   { href: "/demo/camera", label: "Demo camera", icon: Camera },
   { href: "/users", label: "Users", icon: Users, roles: ["admin"] },
-  { href: "/settings", label: "Settings", icon: Settings },
+  // { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 export const setupSteps = [
