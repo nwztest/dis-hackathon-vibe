@@ -36,6 +36,11 @@ export default function SetupCalibrationPage() {
         </button>
         {!setup.serialConnected && <div className="setup-notice warning">Return to step 2 and connect the provisioned camera over Web Serial.</div>}
         {setup.testResults && <div className="setup-notice">{setup.testResults.message}</div>}
+        {setup.localStreamUrl ? (
+          <a className="secondary-button full" href={setup.localStreamUrl} target="_blank" rel="noreferrer">
+            Open local live view
+          </a>
+        ) : null}
         {setup.error && <div className="action-error">{setup.error}</div>}
         <div className="setup-actions">
           <Link className="secondary-button" href="/setup/identify">Back</Link>

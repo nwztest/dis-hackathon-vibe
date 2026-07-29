@@ -43,3 +43,10 @@ echo Wi-Fi passwords or tokens. `factory_reset` erases the `careguard` NVS names
 Before its first HTTPS request, the firmware synchronizes UTC through NTP so certificate validity can
 be checked correctly. TLS pins Google Trust Services Root R1 for the configured Vercel API origin.
 Insecure TLS mode is intentionally absent.
+
+## Local live view
+
+Once connected to Wi-Fi, the device serves a token-protected MJPEG viewer over the local network.
+The serial `status` and `test_frame` results include `data.localStreamUrl`; open that URL from a
+browser on the same Wi-Fi. The viewer supports one client at a time, is not exposed through the
+cloud API, does not store frames, and targets 2 FPS.

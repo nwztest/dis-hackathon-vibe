@@ -58,6 +58,7 @@ type SetupContextValue = {
   secureContext: boolean;
   serialConnected: boolean;
   serialMessage: string;
+  localStreamUrl?: string;
   connectSerial(): Promise<void>;
   provision(input: { ssid: string; password: string; apiBaseUrl: string }): Promise<void>;
   runTests(): Promise<void>;
@@ -87,6 +88,7 @@ export function DeviceSetupProvider({
   const [secureContext, setSecureContext] = useState(false);
   const [serialConnected, setSerialConnected] = useState(false);
   const [serialMessage, setSerialMessage] = useState("Not connected");
+  const [localStreamUrl, setLocalStreamUrl] = useState<string>();
   const [provisionedDevice, setProvisionedDevice] = useState<ProvisionedDevice>();
   const [testResults, setTestResults] = useState<DeviceTestResults>();
   const [busy, setBusy] = useState(false);
@@ -110,6 +112,7 @@ export function DeviceSetupProvider({
     setDeviceUid(selectedDevice?.id ?? suggestedDeviceId(selectedRoom, homes));
     setProvisionedDevice(undefined);
     setTestResults(undefined);
+    setLocalStreamUrl(undefined);
     setError("");
   }, [selectedRoomId, selectedDevice?.id, selectedRoom, homes]);
 
@@ -191,6 +194,9 @@ export function DeviceSetupProvider({
       if (result.data?.cameraProfile !== "esp32s3_cam_common") {
         throw new Error("The connected device is not running the expected ESP32-S3-CAM profile.");
       }
+      if (typeof result.data.localStreamUrl === "string") {
+        setLocalStreamUrl(result.data.localStreamUrl);
+      }
       setSerialConnected(true);
       setSerialMessage("CareGuard ESP32-S3-CAM verified at 115200 baud");
     } catch (caught) {
@@ -260,6 +266,7 @@ export function DeviceSetupProvider({
       setSerialMessage(serialResult.message || "Configuration stored securely on the device");
       setProvisionedDevice(body.device);
       setTestResults(undefined);
+      setLocalStreamUrl(undefined);
     } catch (caught) {
       const message = caught instanceof Error ? caught.message : "Provisioning failed.";
       setError(message);
@@ -282,8 +289,12 @@ export function DeviceSetupProvider({
     setBusy(true);
     try {
       const status = await sendCommand("status");
+      if (typeof status.data?.localStreamUrl === "string") {
+        setLocalStreamUrl(status.data.localStreamUrl);
+      }
       const frame = await sendCommand("test_frame");
       const data = { ...(status.data ?? {}), ...(frame.data ?? {}) };
+      setLocalStreamUrl(typeof data.localStreamUrl === "string" ? data.localStreamUrl : undefined);
       await refreshSummary();
       setTestResults({
         wifi: data.wifiConnected === true,
@@ -314,10 +325,10 @@ export function DeviceSetupProvider({
   const value = useMemo<SetupContextValue>(() => ({
     rooms, homes, devices, role, selectedRoomId, selectedRoom, selectedDevice, deviceUid,
     setDeviceUid, selectRoom: setSelectedRoomId, provisioningConfigured, serialSupported,
-    secureContext, serialConnected, serialMessage, connectSerial, provision, runTests,
+    secureContext, serialConnected, serialMessage, localStreamUrl, connectSerial, provision, runTests,
     refreshSummary, provisionedDevice, testResults, busy, error,
   }), [rooms, homes, devices, role, selectedRoomId, selectedRoom, selectedDevice, deviceUid,
-    provisioningConfigured, serialSupported, secureContext, serialConnected, serialMessage,
+    provisioningConfigured, serialSupported, secureContext, serialConnected, serialMessage, localStreamUrl,
     connectSerial, provision, runTests, refreshSummary, provisionedDevice, testResults, busy, error]);
   return <SetupContext.Provider value={value}>{children}</SetupContext.Provider>;
 }

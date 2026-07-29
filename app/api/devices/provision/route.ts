@@ -13,7 +13,7 @@ type ProvisionPayload = {
 };
 
 const CAMERA_PROFILE = "esp32s3_cam_common";
-const FIRMWARE_VERSION = "0.1.2";
+const FIRMWARE_VERSION = "0.1.6";
 
 export async function POST(request: NextRequest) {
   if (!hasSupabaseEnv() || !hasSupabaseAdminEnv()) {
