@@ -391,9 +391,9 @@ export function AppShellClient({
               <AlertTriangle size={16} />
               Call Emergency Services
             </a>
-            <button className="icon-button" aria-label="Notifications" type="button">
+            {/* <button className="icon-button" aria-label="Notifications" type="button">
               <Bell size={18} />
-            </button>
+            </button> */}
             <div className="profile-menu">
               <button
                 aria-expanded={profileOpen}
