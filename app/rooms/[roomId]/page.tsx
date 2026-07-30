@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AlertTriangle, Camera, Droplets, Move3D, Ruler, Timer } from "lucide-react";
 import { acknowledgeAlertAction, resolveAlertAction } from "@/app/actions";
 import { AppShell } from "@/components/AppShell";
+import { DeleteRoomButton } from "@/components/DashboardModals";
 import { StatusBadge } from "@/components/Status";
 import { getRoomDetail } from "@/lib/data";
 import { formatHomeAddress } from "@/lib/mock-data";
@@ -34,6 +35,9 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ roo
                 <Camera size={16} />
                 Access camera
               </Link>
+            ) : null}
+            {profile?.role === "admin" ? (
+              <DeleteRoomButton afterDeleteHref="/dashboard" roomId={room.id} roomName={room.name} />
             ) : null}
             <StatusBadge status={room.status} />
           </div>

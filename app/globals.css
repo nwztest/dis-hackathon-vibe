@@ -467,6 +467,16 @@ dd {
   color: #fff;
 }
 
+.delete-button {
+  background: transparent;
+  border-color: #e3b5b0;
+  color: var(--danger);
+}
+
+.delete-button:hover {
+  background: var(--danger-bg);
+}
+
 .emergency-services-button {
   align-items: center;
   border: 1px solid var(--danger);
@@ -747,6 +757,10 @@ dd {
   font-size: 13px;
 }
 
+.empty-home-label {
+  color: var(--muted);
+}
+
 .home-group-meta {
   border-bottom: 1px solid var(--border);
   color: var(--muted);
@@ -828,6 +842,25 @@ dd {
   gap: 5px;
 }
 
+.nested-room-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.nested-room-actions .delete-button {
+  min-height: 34px;
+  padding: 6px 9px;
+}
+
+.empty-home-rooms {
+  display: grid;
+  gap: 4px;
+  padding: 18px;
+}
+
 .modal-backdrop {
   align-items: center;
   background: rgba(31, 35, 32, 0.32);
@@ -862,6 +895,11 @@ dd {
 }
 
 .modal-form {
+  display: grid;
+  gap: 14px;
+}
+
+.delete-confirmation {
   display: grid;
   gap: 14px;
 }

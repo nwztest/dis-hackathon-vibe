@@ -80,6 +80,107 @@ export async function createRoomAction(formData: FormData): Promise<ActionState>
   return { ok: true, message: "Room created in Supabase." };
 }
 
+export async function deleteHomeAction(homeId: string): Promise<ActionState> {
+  if (!hasSupabaseEnv()) {
+    return { ok: false, message: "Supabase env is not configured. The prototype home was not deleted." };
+  }
+
+  const currentProfile = await requireAdminProfile("/dashboard");
+  if (!currentProfile) return { ok: false, message: "Only admins can delete homes." };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("homes").delete().eq("id", homeId).select("id").maybeSingle();
+
+  if (error) return { ok: false, message: error.message };
+  if (!data) return { ok: false, message: "Home not found or you do not have permission to delete it." };
+
+  revalidateManagementPaths();
+  return { ok: true, message: "Home deleted." };
+}
+
+export async function deleteRoomAction(roomId: string): Promise<ActionState> {
+  if (!hasSupabaseEnv()) {
+    return { ok: false, message: "Supabase env is not configured. The prototype room was not deleted." };
+  }
+
+  const currentProfile = await requireAdminProfile("/dashboard");
+  if (!currentProfile) return { ok: false, message: "Only admins can delete rooms." };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("rooms").delete().eq("id", roomId).select("id").maybeSingle();
+
+  if (error) return { ok: false, message: error.message };
+  if (!data) return { ok: false, message: "Room not found or you do not have permission to delete it." };
+
+  revalidateManagementPaths();
+  return { ok: true, message: "Room deleted." };
+}
+
+export async function deleteCameraAction(deviceUid: string): Promise<ActionState> {
+  if (!hasSupabaseEnv()) {
+    return { ok: false, message: "Supabase env is not configured. The prototype camera was not deleted." };
+  }
+
+  const currentProfile = await requireAdminProfile("/devices");
+  if (!currentProfile) return { ok: false, message: "Only admins can delete cameras." };
+
+  const supabase = await createClient();
+  const { data: camera, error: cameraError } = await supabase
+    .from("devices")
+    .select("id, room_id, device_type")
+    .eq("device_uid", deviceUid)
+    .maybeSingle();
+
+  if (cameraError) return { ok: false, message: cameraError.message };
+  if (!camera) return { ok: false, message: "Camera not found or you do not have permission to delete it." };
+  if (camera.device_type !== "room_camera") {
+    return { ok: false, message: "Only room cameras can be deleted from the Devices tab." };
+  }
+
+  const { data: deletedCamera, error: deleteError } = await supabase
+    .from("devices")
+    .delete()
+    .eq("device_uid", deviceUid)
+    .eq("device_type", "room_camera")
+    .select("id")
+    .maybeSingle();
+
+  if (deleteError) return { ok: false, message: deleteError.message };
+  if (!deletedCamera) return { ok: false, message: "Camera was not deleted." };
+
+  const { count: remainingDeviceCount, error: remainingDevicesError } = await supabase
+    .from("devices")
+    .select("id", { count: "exact", head: true })
+    .eq("room_id", camera.room_id);
+
+  let successMessage = "Camera and its credentials deleted.";
+
+  if (remainingDevicesError) {
+    successMessage = "Camera deleted, but the room status could not be refreshed automatically.";
+  }
+
+  if (!remainingDevicesError && (remainingDeviceCount ?? 0) === 0) {
+    const { error: roomUpdateError } = await supabase
+      .from("rooms")
+      .update({
+        current_status: "offline",
+        occupied: false,
+        last_status_at: new Date().toISOString(),
+        time_in_status: "Just now",
+        status_metadata: {},
+      })
+      .eq("id", camera.room_id);
+
+    if (roomUpdateError) {
+      successMessage = "Camera deleted, but the room status could not be set to offline automatically.";
+    }
+  }
+
+  revalidateManagementPaths();
+  revalidatePath(`/rooms/${camera.room_id}`);
+  return { ok: true, message: successMessage };
+}
+
 export async function acknowledgeAlertAction(alertId: string): Promise<void> {
   const result = await updateAlert(alertId, "acknowledged");
   if (!result.ok && hasSupabaseEnv()) throw new Error(result.message);
@@ -168,4 +269,11 @@ function requiredString(formData: FormData, key: string) {
 function optionalString(formData: FormData, key: string) {
   const value = formData.get(key);
   return typeof value === "string" ? value.trim() : "";
+}
+
+function revalidateManagementPaths() {
+  revalidatePath("/dashboard");
+  revalidatePath("/alerts");
+  revalidatePath("/devices");
+  revalidatePath("/setup/select-room");
 }

@@ -2,9 +2,17 @@
 
 import { FormEvent, useState, useTransition } from "react";
 import type { ReactNode } from "react";
-import { Plus, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Plus, Trash2, X } from "lucide-react";
 import type { SeniorHome } from "@/lib/mock-data";
-import { createHomeAction, createRoomAction, type ActionState } from "@/app/actions";
+import {
+  createHomeAction,
+  createRoomAction,
+  deleteCameraAction,
+  deleteHomeAction,
+  deleteRoomAction,
+  type ActionState,
+} from "@/app/actions";
 
 type ButtonVariant = "primary" | "secondary" | "plain";
 
@@ -119,6 +127,133 @@ export function AddRoomButton({
               <button className="primary-button" type="submit" disabled={isPending}>{isPending ? "Creating..." : "Create room"}</button>
             </div>
           </form>
+        </ModalFrame>
+      ) : null}
+    </>
+  );
+}
+
+export function DeleteHomeButton({
+  homeId,
+  homeName,
+  roomCount,
+}: {
+  homeId: string;
+  homeName: string;
+  roomCount: number;
+}) {
+  return (
+    <DeleteEntityButton
+      description={
+        roomCount > 0
+          ? `This will also permanently delete ${roomCount} ${roomCount === 1 ? "room" : "rooms"} and their devices, alerts, and status history.`
+          : "This home has no rooms. Deleting it will permanently remove its senior profile."
+      }
+      entityId={homeId}
+      entityName={homeName}
+      entityType="home"
+    />
+  );
+}
+
+export function DeleteRoomButton({
+  afterDeleteHref,
+  roomId,
+  roomName,
+}: {
+  afterDeleteHref?: string;
+  roomId: string;
+  roomName: string;
+}) {
+  return (
+    <DeleteEntityButton
+      afterDeleteHref={afterDeleteHref}
+      description="This will permanently delete the room and its device, alerts, and status history."
+      entityId={roomId}
+      entityName={roomName}
+      entityType="room"
+    />
+  );
+}
+
+export function DeleteCameraButton({
+  cameraUid,
+  cameraName,
+}: {
+  cameraUid: string;
+  cameraName: string;
+}) {
+  return (
+    <DeleteEntityButton
+      description="This permanently revokes the camera credentials and removes it from the room. The room will remain and switch to offline if it has no other attached device."
+      entityId={cameraUid}
+      entityName={cameraName}
+      entityType="camera"
+    />
+  );
+}
+
+function DeleteEntityButton({
+  afterDeleteHref,
+  description,
+  entityId,
+  entityName,
+  entityType,
+}: {
+  afterDeleteHref?: string;
+  description: string;
+  entityId: string;
+  entityName: string;
+  entityType: "camera" | "home" | "room";
+}) {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [state, setState] = useState<ActionState | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const label = `Delete ${entityType}`;
+
+  function onDelete() {
+    startTransition(async () => {
+      const result = entityType === "home"
+        ? await deleteHomeAction(entityId)
+        : entityType === "room"
+          ? await deleteRoomAction(entityId)
+          : await deleteCameraAction(entityId);
+
+      if (result.ok) {
+        setOpen(false);
+        setState(null);
+        if (afterDeleteHref) router.push(afterDeleteHref);
+        router.refresh();
+        return;
+      }
+
+      setState(result);
+    });
+  }
+
+  return (
+    <>
+      <button className="delete-button" type="button" onClick={() => setOpen(true)}>
+        <Trash2 size={16} />
+        {label}
+      </button>
+      {open ? (
+        <ModalFrame title={`${label}?`} onClose={() => { setOpen(false); setState(null); }}>
+          <div className="delete-confirmation">
+            <p>
+              You are about to delete <strong>{entityName}</strong>.
+            </p>
+            <p>{description}</p>
+            {state ? <p className="form-note">{state.message}</p> : null}
+            <div className="modal-actions">
+              <button type="button" onClick={() => { setOpen(false); setState(null); }}>Cancel</button>
+              <button className="danger-button" type="button" disabled={isPending} onClick={onDelete}>
+                <Trash2 size={16} />
+                {isPending ? "Deleting..." : `Delete ${entityType}`}
+              </button>
+            </div>
+          </div>
         </ModalFrame>
       ) : null}
     </>
