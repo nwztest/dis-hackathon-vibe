@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { RefreshCw, Router, Search } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
+import { DeleteCameraButton } from "@/components/DashboardModals";
 import { getDevices, getHomes, getRooms } from "@/lib/data";
 import { formatHomeAddress } from "@/lib/mock-data";
 import { requireCurrentProfile } from "@/lib/auth";
@@ -42,6 +43,9 @@ export default async function DevicesPage() {
                 <div className="button-row">
                   <button type="button" disabled><RefreshCw size={14} /> Reboot</button>
                   <button type="button" disabled>Calibrate</button>
+                  {profile?.role === "admin" && device.deviceType === "room_camera"
+                    ? <DeleteCameraButton cameraUid={device.id} cameraName={device.id} />
+                    : null}
                 </div>
               </article>
             );

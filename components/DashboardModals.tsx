@@ -8,6 +8,7 @@ import type { SeniorHome } from "@/lib/mock-data";
 import {
   createHomeAction,
   createRoomAction,
+  deleteCameraAction,
   deleteHomeAction,
   deleteRoomAction,
   type ActionState,
@@ -175,6 +176,23 @@ export function DeleteRoomButton({
   );
 }
 
+export function DeleteCameraButton({
+  cameraUid,
+  cameraName,
+}: {
+  cameraUid: string;
+  cameraName: string;
+}) {
+  return (
+    <DeleteEntityButton
+      description="This permanently revokes the camera credentials and removes it from the room. The room will remain and switch to offline if it has no other attached device."
+      entityId={cameraUid}
+      entityName={cameraName}
+      entityType="camera"
+    />
+  );
+}
+
 function DeleteEntityButton({
   afterDeleteHref,
   description,
@@ -186,7 +204,7 @@ function DeleteEntityButton({
   description: string;
   entityId: string;
   entityName: string;
-  entityType: "home" | "room";
+  entityType: "camera" | "home" | "room";
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -196,8 +214,11 @@ function DeleteEntityButton({
 
   function onDelete() {
     startTransition(async () => {
-      const result =
-        entityType === "home" ? await deleteHomeAction(entityId) : await deleteRoomAction(entityId);
+      const result = entityType === "home"
+        ? await deleteHomeAction(entityId)
+        : entityType === "room"
+          ? await deleteRoomAction(entityId)
+          : await deleteCameraAction(entityId);
 
       if (result.ok) {
         setOpen(false);

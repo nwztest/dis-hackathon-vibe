@@ -116,6 +116,71 @@ export async function deleteRoomAction(roomId: string): Promise<ActionState> {
   return { ok: true, message: "Room deleted." };
 }
 
+export async function deleteCameraAction(deviceUid: string): Promise<ActionState> {
+  if (!hasSupabaseEnv()) {
+    return { ok: false, message: "Supabase env is not configured. The prototype camera was not deleted." };
+  }
+
+  const currentProfile = await requireAdminProfile("/devices");
+  if (!currentProfile) return { ok: false, message: "Only admins can delete cameras." };
+
+  const supabase = await createClient();
+  const { data: camera, error: cameraError } = await supabase
+    .from("devices")
+    .select("id, room_id, device_type")
+    .eq("device_uid", deviceUid)
+    .maybeSingle();
+
+  if (cameraError) return { ok: false, message: cameraError.message };
+  if (!camera) return { ok: false, message: "Camera not found or you do not have permission to delete it." };
+  if (camera.device_type !== "room_camera") {
+    return { ok: false, message: "Only room cameras can be deleted from the Devices tab." };
+  }
+
+  const { data: deletedCamera, error: deleteError } = await supabase
+    .from("devices")
+    .delete()
+    .eq("device_uid", deviceUid)
+    .eq("device_type", "room_camera")
+    .select("id")
+    .maybeSingle();
+
+  if (deleteError) return { ok: false, message: deleteError.message };
+  if (!deletedCamera) return { ok: false, message: "Camera was not deleted." };
+
+  const { count: remainingDeviceCount, error: remainingDevicesError } = await supabase
+    .from("devices")
+    .select("id", { count: "exact", head: true })
+    .eq("room_id", camera.room_id);
+
+  let successMessage = "Camera and its credentials deleted.";
+
+  if (remainingDevicesError) {
+    successMessage = "Camera deleted, but the room status could not be refreshed automatically.";
+  }
+
+  if (!remainingDevicesError && (remainingDeviceCount ?? 0) === 0) {
+    const { error: roomUpdateError } = await supabase
+      .from("rooms")
+      .update({
+        current_status: "offline",
+        occupied: false,
+        last_status_at: new Date().toISOString(),
+        time_in_status: "Just now",
+        status_metadata: {},
+      })
+      .eq("id", camera.room_id);
+
+    if (roomUpdateError) {
+      successMessage = "Camera deleted, but the room status could not be set to offline automatically.";
+    }
+  }
+
+  revalidateManagementPaths();
+  revalidatePath(`/rooms/${camera.room_id}`);
+  return { ok: true, message: successMessage };
+}
+
 export async function acknowledgeAlertAction(alertId: string): Promise<void> {
   const result = await updateAlert(alertId, "acknowledged");
   if (!result.ok && hasSupabaseEnv()) throw new Error(result.message);
