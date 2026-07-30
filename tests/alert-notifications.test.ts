@@ -6,6 +6,7 @@ import {
   notificationKey,
   removeAlertNotifications,
   seedAlertSnapshots,
+  shouldShowAlertNotificationOnPath,
   shouldNotifyForAlertChange,
   snapshotFromAlertRecord,
   type AlertNotification,
@@ -40,6 +41,12 @@ test("initial active alerts seed state without creating notification queue entri
   const snapshots = seedAlertSnapshots([suspiciousAlert]);
   assert.equal(snapshots.size, 1);
   assert.equal(snapshots.get("alert-1")?.severity, "suspicious");
+});
+
+test("notifications are suppressed on the alerts page", () => {
+  assert.equal(shouldShowAlertNotificationOnPath("/alerts"), false);
+  assert.equal(shouldShowAlertNotificationOnPath("/dashboard"), true);
+  assert.equal(shouldShowAlertNotificationOnPath("/rooms/room-1"), true);
 });
 
 test("new open alerts notify, while acknowledged and resolved inserts do not", () => {

@@ -22,6 +22,7 @@ import {
   notificationKey,
   removeAlertNotifications,
   seedAlertSnapshots,
+  shouldShowAlertNotificationOnPath,
   shouldNotifyForAlertChange,
   type AlertNotification,
   type AlertSnapshot,
@@ -78,6 +79,9 @@ export function AppShellClient({
 
   useEffect(() => {
     pathnameRef.current = pathname;
+    if (!shouldShowAlertNotificationOnPath(pathname)) {
+      setNotificationQueue([]);
+    }
   }, [pathname]);
 
   useEffect(() => {
@@ -169,6 +173,8 @@ export function AppShellClient({
     }
 
     async function enqueueFromRealtime(snapshot: AlertSnapshot) {
+      if (!shouldShowAlertNotificationOnPath(pathnameRef.current)) return;
+
       const key = notificationKey(snapshot);
       if (seenNotificationKeysRef.current.has(key)) return;
 
