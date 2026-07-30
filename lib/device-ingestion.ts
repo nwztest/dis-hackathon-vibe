@@ -1,6 +1,7 @@
 export const MAX_DEVICE_FRAME_BYTES = 1024 * 1024;
 export const DEVICE_FRAME_RATE = "2fps" as const;
 export const DEFAULT_CAPTURE_INTERVAL_MS = 500;
+export const DEVICE_OFFLINE_AFTER_MS = 15_000;
 
 export type DeviceState = {
   id: string;
@@ -67,4 +68,22 @@ export function safeFirmwareVersion(value: string | null) {
   if (!value) return null;
   const trimmed = value.trim();
   return /^[a-zA-Z0-9._+-]{1,32}$/.test(trimmed) ? trimmed : null;
+}
+
+export function deviceStatusFromHeartbeat(
+  storedStatus: string,
+  lastSeenAt: string | null,
+  now = new Date(),
+) {
+  if (storedStatus === "maintenance" || storedStatus === "unassigned") {
+    return storedStatus;
+  }
+  if (storedStatus !== "online" || !lastSeenAt) {
+    return "offline";
+  }
+  const lastSeenTime = new Date(lastSeenAt).getTime();
+  if (!Number.isFinite(lastSeenTime)) {
+    return "offline";
+  }
+  return now.getTime() - lastSeenTime <= DEVICE_OFFLINE_AFTER_MS ? "online" : "offline";
 }

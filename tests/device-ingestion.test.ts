@@ -8,6 +8,7 @@ import {
 } from "../lib/device-auth.ts";
 import {
   cadenceWaitMs,
+  deviceStatusFromHeartbeat,
   deviceStateError,
   findDeviceByUid,
   frameExceedsLimit,
@@ -78,4 +79,15 @@ test("cadence and worker errors map to explicit client responses", () => {
   assert.equal(mapWorkerErrorStatus(422), 422);
   assert.equal(mapWorkerErrorStatus(503), 503);
   assert.equal(mapWorkerErrorStatus(500), 502);
+});
+
+test("device status becomes offline after its heartbeat is stale", () => {
+  const now = new Date("2026-07-29T00:00:20.000Z");
+  assert.equal(deviceStatusFromHeartbeat("online", "2026-07-29T00:00:05.000Z", now), "online");
+  assert.equal(deviceStatusFromHeartbeat("online", "2026-07-29T00:00:04.999Z", now), "offline");
+  assert.equal(deviceStatusFromHeartbeat("online", null, now), "offline");
+  assert.equal(deviceStatusFromHeartbeat("online", "not-a-date", now), "offline");
+  assert.equal(deviceStatusFromHeartbeat("offline", "2026-07-29T00:00:19.000Z", now), "offline");
+  assert.equal(deviceStatusFromHeartbeat("maintenance", null, now), "maintenance");
+  assert.equal(deviceStatusFromHeartbeat("unassigned", null, now), "unassigned");
 });

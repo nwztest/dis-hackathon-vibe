@@ -27,6 +27,12 @@ export default function SetupCompletePage() {
               <div><dt>Camera profile</dt><dd>{device.cameraProfile}</dd></div>
               <div><dt>Cadence</dt><dd>{device.captureIntervalMs} ms · 2 FPS target</dd></div>
               <div><dt>Last heartbeat</dt><dd>{device.lastSeenAt ? new Date(device.lastSeenAt).toLocaleString() : "Awaiting first accepted frame"}</dd></div>
+              {setup.localStreamUrl ? (
+                <div>
+                  <dt>Local live view</dt>
+                  <dd><a className="text-link" href={setup.localStreamUrl} target="_blank" rel="noreferrer">Open on this Wi-Fi</a></dd>
+                </div>
+              ) : null}
             </dl>
           </article>
         ) : <div className="setup-notice warning">No provisioned device is held in this setup session. Return to the provisioning step.</div>}
