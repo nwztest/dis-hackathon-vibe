@@ -51,6 +51,10 @@ export function notificationKey(alert: Pick<AlertSnapshot, "id" | "severity">) {
   return `${alert.id}:${alert.severity}`;
 }
 
+export function shouldShowAlertNotificationOnPath(pathname: string) {
+  return pathname !== "/alerts";
+}
+
 export function enqueueAlertNotification(
   queue: AlertNotification[],
   notification: AlertNotification,
@@ -76,4 +80,3 @@ export function hasPendingDangerAlert(alerts: Iterable<AlertSnapshot>) {
   }
   return false;
 }
-
