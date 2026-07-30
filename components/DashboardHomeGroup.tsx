@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Camera, Phone, ShowerHead, WifiOff, Wrench } from "lucide-react";
 import { StatusBadge } from "@/components/Status";
-import { AddRoomButton } from "@/components/DashboardModals";
+import { AddRoomButton, DeleteHomeButton, DeleteRoomButton } from "@/components/DashboardModals";
 import { formatHomeAddress, type Room, type RoomStatus, type SeniorHome } from "@/lib/mock-data";
 
 const statusRank: Record<RoomStatus, number> = {
@@ -17,30 +17,42 @@ export function DashboardHomeGroup({
   canManageHomes = true,
   home,
   homes,
+  roomCount,
   rooms,
 }: {
   canManageHomes?: boolean;
   home: SeniorHome;
   homes: SeniorHome[];
+  roomCount: number;
   rooms: Room[];
 }) {
   const openAlertRooms = rooms.filter((room) => room.status === "danger" || room.status === "suspicious");
   const firstAlertRoom = openAlertRooms[0];
+  const hasRooms = rooms.length > 0;
   const worstStatus = rooms.reduce<RoomStatus>(
     (current, room) => (statusRank[room.status] > statusRank[current] ? room.status : current),
     "unoccupied",
   );
 
   return (
-    <section className={`home-group ${worstStatus}`}>
+    <section className={`home-group ${hasRooms ? worstStatus : "empty"}`}>
       <div className="home-group-head">
         <div>
           <h2>{home.seniorName}</h2>
           <p>{formatHomeAddress(home)} · {home.address}</p>
         </div>
         <div className="home-group-status">
-          <StatusBadge status={worstStatus} />
-          <span>{openAlertRooms.length} open alerts</span>
+          {hasRooms ? (
+            <>
+              <StatusBadge status={worstStatus} />
+              <span>{openAlertRooms.length} open alerts</span>
+            </>
+          ) : (
+            <>
+              <strong className="empty-home-label">No rooms</strong>
+              <span>Not currently monitored</span>
+            </>
+          )}
         </div>
       </div>
       <div className="home-group-meta">
@@ -50,6 +62,7 @@ export function DashboardHomeGroup({
       <div className="home-group-actions">
         <button type="button"><Phone size={16} /> Call</button>
         {canManageHomes ? <AddRoomButton homes={homes} defaultHomeId={home.id} variant="secondary" /> : null}
+        {canManageHomes ? <DeleteHomeButton homeId={home.id} homeName={home.seniorName} roomCount={roomCount} /> : null}
         {firstAlertRoom ? (
           <Link className="secondary-button" href={`/rooms/${firstAlertRoom.id}`}>Open first alert</Link>
         ) : (
@@ -57,15 +70,22 @@ export function DashboardHomeGroup({
         )}
       </div>
       <div className="nested-room-list">
-        {rooms.map((room) => (
-          <NestedRoomRow room={room} key={room.id} />
-        ))}
+        {hasRooms ? (
+          rooms.map((room) => (
+            <NestedRoomRow canManageHomes={canManageHomes} room={room} key={room.id} />
+          ))
+        ) : (
+          <div className="empty-home-rooms">
+            <h3>No rooms added</h3>
+            <p>This home remains visible so an admin can add a room or delete the home.</p>
+          </div>
+        )}
       </div>
     </section>
   );
 }
 
-function NestedRoomRow({ room }: { room: Room }) {
+function NestedRoomRow({ canManageHomes, room }: { canManageHomes: boolean; room: Room }) {
   const Icon = room.type === "shower" ? ShowerHead : Camera;
   const supportIcon =
     room.status === "offline" ? <WifiOff size={16} /> : room.status === "maintenance" ? <Wrench size={16} /> : null;
@@ -94,7 +114,10 @@ function NestedRoomRow({ room }: { room: Room }) {
         <span>{room.timeInStatus}</span>
         <span>{supportIcon} {room.lastSeen}</span>
       </div>
-      <Link className="text-link" href={`/rooms/${room.id}`}>Open</Link>
+      <div className="nested-room-actions">
+        <Link className="text-link" href={`/rooms/${room.id}`}>Open</Link>
+        {canManageHomes ? <DeleteRoomButton roomId={room.id} roomName={room.name} /> : null}
+      </div>
     </article>
   );
 }

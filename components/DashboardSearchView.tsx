@@ -50,9 +50,9 @@ export function DashboardSearchView({
     return homes.flatMap((home) => {
       const homeRooms = rooms.filter((room) => room.homeId === home.id);
       const statusFilteredRooms = statusFilter === "all" ? homeRooms : homeRooms.filter((room) => room.status === statusFilter);
-      if (statusFilteredRooms.length === 0) return [];
+      if (statusFilter !== "all" && statusFilteredRooms.length === 0) return [];
 
-      if (!normalizedQuery) return [{ home, rooms: statusFilteredRooms }];
+      if (!normalizedQuery) return [{ home, roomCount: homeRooms.length, rooms: statusFilteredRooms }];
 
       const searchable = [
         home.seniorName,
@@ -76,7 +76,9 @@ export function DashboardSearchView({
         .join(" ")
         .toLowerCase();
 
-      return searchable.includes(normalizedQuery) ? [{ home, rooms: statusFilteredRooms }] : [];
+      return searchable.includes(normalizedQuery)
+        ? [{ home, roomCount: homeRooms.length, rooms: statusFilteredRooms }]
+        : [];
     });
   }, [homes, normalizedQuery, rooms, statusFilter]);
 
@@ -102,11 +104,12 @@ export function DashboardSearchView({
       </section>
       {filteredHomeGroups.length > 0 ? (
         <section className="home-group-list">
-          {filteredHomeGroups.map(({ home, rooms: filteredRooms }) => (
+          {filteredHomeGroups.map(({ home, roomCount, rooms: filteredRooms }) => (
             <DashboardHomeGroup
               canManageHomes={canManageHomes}
               home={home}
               homes={homes}
+              roomCount={roomCount}
               rooms={filteredRooms}
               key={home.id}
             />

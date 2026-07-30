@@ -80,6 +80,42 @@ export async function createRoomAction(formData: FormData): Promise<ActionState>
   return { ok: true, message: "Room created in Supabase." };
 }
 
+export async function deleteHomeAction(homeId: string): Promise<ActionState> {
+  if (!hasSupabaseEnv()) {
+    return { ok: false, message: "Supabase env is not configured. The prototype home was not deleted." };
+  }
+
+  const currentProfile = await requireAdminProfile("/dashboard");
+  if (!currentProfile) return { ok: false, message: "Only admins can delete homes." };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("homes").delete().eq("id", homeId).select("id").maybeSingle();
+
+  if (error) return { ok: false, message: error.message };
+  if (!data) return { ok: false, message: "Home not found or you do not have permission to delete it." };
+
+  revalidateManagementPaths();
+  return { ok: true, message: "Home deleted." };
+}
+
+export async function deleteRoomAction(roomId: string): Promise<ActionState> {
+  if (!hasSupabaseEnv()) {
+    return { ok: false, message: "Supabase env is not configured. The prototype room was not deleted." };
+  }
+
+  const currentProfile = await requireAdminProfile("/dashboard");
+  if (!currentProfile) return { ok: false, message: "Only admins can delete rooms." };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("rooms").delete().eq("id", roomId).select("id").maybeSingle();
+
+  if (error) return { ok: false, message: error.message };
+  if (!data) return { ok: false, message: "Room not found or you do not have permission to delete it." };
+
+  revalidateManagementPaths();
+  return { ok: true, message: "Room deleted." };
+}
+
 export async function acknowledgeAlertAction(alertId: string): Promise<void> {
   const result = await updateAlert(alertId, "acknowledged");
   if (!result.ok && hasSupabaseEnv()) throw new Error(result.message);
@@ -168,4 +204,11 @@ function requiredString(formData: FormData, key: string) {
 function optionalString(formData: FormData, key: string) {
   const value = formData.get(key);
   return typeof value === "string" ? value.trim() : "";
+}
+
+function revalidateManagementPaths() {
+  revalidatePath("/dashboard");
+  revalidatePath("/alerts");
+  revalidatePath("/devices");
+  revalidatePath("/setup/select-room");
 }
