@@ -1,14 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { DashboardHomeGroup } from "@/components/DashboardHomeGroup";
 import { DashboardStatusFilter, type DashboardStatusFilterKey } from "@/components/DashboardStatusFilter";
-import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { formatHomeAddress, type Room, type RoomStatus, type SeniorHome } from "@/lib/mock-data";
-
-const dashboardRefreshIntervalMs = 5_000;
 
 export function DashboardSearchView({
   canManageHomes,
@@ -21,30 +17,9 @@ export function DashboardSearchView({
   homes: SeniorHome[];
   rooms: Room[];
 }) {
-  const router = useRouter();
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<DashboardStatusFilterKey>("all");
   const normalizedQuery = query.trim().toLowerCase();
-
-  useEffect(() => {
-    if (!hasSupabaseEnv()) return;
-
-    const refreshDashboard = () => {
-      if (document.visibilityState === "visible") router.refresh();
-    };
-
-    // A prefetched dashboard response can predate the latest camera result.
-    refreshDashboard();
-    const intervalId = window.setInterval(refreshDashboard, dashboardRefreshIntervalMs);
-    window.addEventListener("focus", refreshDashboard);
-    document.addEventListener("visibilitychange", refreshDashboard);
-
-    return () => {
-      window.clearInterval(intervalId);
-      window.removeEventListener("focus", refreshDashboard);
-      document.removeEventListener("visibilitychange", refreshDashboard);
-    };
-  }, [router]);
 
   const filteredHomeGroups = useMemo(() => {
     return homes.flatMap((home) => {

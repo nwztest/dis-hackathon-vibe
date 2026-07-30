@@ -886,6 +886,101 @@ dd {
   width: 100%;
 }
 
+.incident-notification-backdrop {
+  background: rgba(31, 35, 32, 0.48);
+  z-index: 50;
+}
+
+.incident-notification {
+  border-top: 5px solid var(--warning);
+  max-width: 600px;
+}
+
+.incident-notification.danger {
+  border-top-color: var(--danger);
+}
+
+.incident-notification-head,
+.incident-notification-title,
+.incident-notification-actions {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.incident-notification-head {
+  justify-content: space-between;
+}
+
+.incident-notification-title > div {
+  display: grid;
+  gap: 7px;
+}
+
+.incident-notification-icon {
+  align-items: center;
+  background: var(--warning-bg);
+  border-radius: 50%;
+  color: var(--warning);
+  display: inline-flex;
+  height: 44px;
+  justify-content: center;
+  width: 44px;
+}
+
+.incident-notification.danger .incident-notification-icon {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.incident-notification-location,
+.incident-notification-copy {
+  display: grid;
+  gap: 5px;
+}
+
+.incident-notification-location {
+  background: var(--surface-alt);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+}
+
+.incident-notification-location span {
+  color: var(--muted);
+}
+
+.incident-notification-copy > strong {
+  font-size: 17px;
+}
+
+.incident-notification-facts {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+}
+
+.incident-notification-facts > div {
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: 4px;
+  padding-top: 10px;
+}
+
+.incident-notification-facts dt {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.incident-notification-facts dd {
+  font-weight: 700;
+  margin: 0;
+}
+
+.incident-notification-actions {
+  justify-content: flex-end;
+}
+
 .modal-head,
 .modal-actions {
   align-items: center;
@@ -2055,6 +2150,15 @@ dd {
   .modal-backdrop {
     align-items: flex-start;
     padding: 12px;
+  }
+
+  .incident-notification-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .incident-notification-actions button {
+    width: 100%;
   }
 }
 

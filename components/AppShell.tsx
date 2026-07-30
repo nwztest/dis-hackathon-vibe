@@ -10,12 +10,10 @@ export async function AppShell({
   profile?: CurrentProfile;
 }) {
   const alerts = await getAlerts();
-  const hasPendingDangerAlert = alerts.some(
-    (alert) => alert.severity === "danger" && alert.status !== "resolved",
-  );
+  const activeAlerts = alerts.filter((alert) => alert.status !== "resolved");
 
   return (
-    <AppShellClient profile={profile} hasPendingDangerAlert={hasPendingDangerAlert}>
+    <AppShellClient profile={profile} initialActiveAlerts={activeAlerts}>
       {children}
     </AppShellClient>
   );

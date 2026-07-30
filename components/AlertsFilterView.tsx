@@ -23,6 +23,10 @@ export function AlertsFilterView({
   const activeCount = unacknowledged.length + acknowledged.length;
 
   useEffect(() => {
+    setVisibleAlerts(alerts);
+  }, [alerts]);
+
+  useEffect(() => {
     const hasPendingDangerAlert = visibleAlerts.some(
       (alert) => alert.severity === "danger" && alert.status !== "resolved",
     );
